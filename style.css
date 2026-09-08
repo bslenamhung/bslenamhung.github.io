@@ -45,3 +45,21 @@
 
 .clinic-tagline{display:flex;align-items:center;justify-content:center;gap:12px;margin:10px auto 28px;max-width:900px;font-family:Georgia,"Times New Roman",serif;font-size:clamp(18px,2.2vw,28px);font-style:italic;font-weight:700;letter-spacing:.02em;color:#9a5f74;text-align:center}.clinic-tagline::before,.clinic-tagline::after{content:"";width:72px;height:1px;background:linear-gradient(90deg,transparent,#c78da1,transparent)}.tagline-flower{font-family:Georgia,serif;font-size:20px;color:#c46c8b;line-height:1}.tagline-flower:first-child{margin-right:2px}.tagline-flower:last-child{margin-left:2px}
 .about-card-btn{width:100%;text-align:left;border:1px solid #e4e9eb;background:#fff;font:inherit;color:#24353f;display:flex;justify-content:space-between;align-items:center;cursor:pointer}.about-card-btn span{font-size:24px;color:#9a7252;line-height:1}.about-card-btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(38,50,56,.08)}.about-full{color:#4f5d66;line-height:1.85;font-size:16px;white-space:normal}.about-modal-card{max-width:760px}.about-modal-content h2{font-size:30px;margin:8px 0 16px}.about-modal-content .article-tag{margin-bottom:4px}
+
+
+/* V31 - 1 ảnh cho từng ô Hồ sơ chuyên môn */
+.about-links{align-items:stretch}
+.about-card-btn{position:relative;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:10px;min-height:190px;padding:14px;text-align:left}
+.about-card-media{display:block;position:relative;width:100%;height:105px;border-radius:12px;overflow:hidden;background:#f4f7f8;border:1px solid #e6ecee}
+.about-card-media img{display:none;width:100%;height:100%;object-fit:cover}
+.about-photo-placeholder{height:100%;display:grid;place-items:center;color:#7d8a91;font-weight:700;font-size:13px}
+.about-card-label{font-weight:700;color:#24353f;padding:0 2px}
+.about-arrow{position:absolute;right:14px;bottom:10px;color:#9a7252;font-size:24px;line-height:1}
+.about-admin-item{display:flex;flex-direction:column;gap:8px}
+.about-image-control{border-top:1px solid #edf0f1;padding-top:10px;margin-top:2px}
+.about-image-control>input[type=file]{display:block;margin:2px 0 8px;max-width:100%}
+.about-image-preview{margin-top:8px;width:100%;height:120px;border:1px dashed #cfd8dc;border-radius:12px;overflow:hidden;background:#f7f9fa;display:flex;align-items:center;justify-content:center;color:#8a969d;font-size:13px}
+.about-image-preview img{display:none;width:100%;height:100%;object-fit:cover}
+.about-modal-image{display:block;width:100%;max-height:380px;object-fit:contain;border-radius:16px;background:#f5f7f8;border:1px solid #e7ecee;margin:0 0 18px}
+.about-modal-content .about-full{margin-top:6px}
+@media(max-width:900px){.about-card-btn{min-height:170px}.about-card-media{height:95px}}

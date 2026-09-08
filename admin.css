@@ -43,3 +43,7 @@
 
 .view-pill{display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:999px;background:#eef7ff;color:#245b87;font-size:12px;font-weight:700}
 .article-view-stat{border-color:#d7eafb}
+
+/* V30: make edit action explicit and easy to click */
+.article-row-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.article-edit-btn{cursor:pointer;min-width:96px}
