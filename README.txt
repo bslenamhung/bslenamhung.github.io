@@ -1,19 +1,16 @@
-BS LÊ NAM HÙNG - WEBSITE V5
+BS LÊ NAM HÙNG – V12
 
-Cấu trúc:
-- index.html: website công khai
-- admin-login.html: đăng nhập quản trị
-- admin.html/admin.js/admin.css: CMS quản trị
-- supabase-config.js: Project URL + Publishable key
-- zalo-qr.jpg: QR Zalo
-- supabase-schema.sql: cấu trúc database
+V12 bổ sung trình soạn thảo bài viết có hình ảnh:
+- Ảnh đại diện: chọn trực tiếp từ máy tính hoặc dán URL.
+- Ảnh trong bài: chèn nhiều ảnh vào giữa nội dung.
+- Ảnh được tải lên Supabase Storage bucket `site-media` và lưu URL vào bài viết.
+- Có định dạng chữ, tiêu đề nhỏ, danh sách, xóa định dạng.
+- Vẫn giữ đăng nhập Admin, Supabase, Zalo, QR Zalo và bản đồ của V11.
 
-V5 bổ sung:
-- Quản lý dịch vụ: thêm/sửa mô tả/ẩn/hiện/xóa
-- Quản lý bài viết bằng cửa sổ soạn thảo, chọn chuyên môn, ảnh đại diện, lưu nháp/đăng bài
-- Quản trị vẫn kiểm tra quyền admin qua RPC is_admin() và RLS của Supabase
+CÀI ĐẶT SUPABASE STORAGE (chỉ làm 1 lần):
+1. Vào Supabase -> SQL Editor.
+2. Mở file `supabase-storage.sql` trong bộ website này.
+3. Dán toàn bộ nội dung và bấm Run.
+4. Sau đó vào `admin.html` -> Bài viết -> Thêm bài viết.
 
-Khi cập nhật GitHub Pages, upload/ghi đè toàn bộ file trong thư mục này và giữ zalo-qr.jpg ở thư mục gốc.
-
-
-Bản V6: phần Phòng khám có bản đồ và nút 'Chỉ đường đến phòng khám'. Cập nhật Địa chỉ trong trang quản trị để bản đồ tự hiển thị. Có thể điền thêm Liên kết Google Maps để nút chỉ đường dùng link của phòng khám.
+Nếu đã chạy file này ở V11 thì không cần chạy lại; các câu lệnh có thể chạy an toàn nhờ `on conflict` và `drop policy if exists`.
