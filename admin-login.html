@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Đăng nhập quản trị | BS Lê Nam Hùng</title>
+<link rel="stylesheet" href="admin.css">
+<style>
+body{min-height:100vh;display:grid;place-items:center;background:#f5f7fb;padding:20px}
+.login-card{width:min(460px,100%);background:#fff;border:1px solid #e5e9f0;border-radius:20px;padding:34px;box-shadow:0 12px 40px rgba(20,30,50,.08)}
+.login-card h1{margin:0 0 8px;font-size:28px}.muted{color:#657184;margin-bottom:24px}.field{display:block;margin:16px 0}.field span{display:block;margin-bottom:7px;font-weight:600}.field input{width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #d8dee9;border-radius:10px;font-size:16px}.login-card button{width:100%;padding:13px;border:0;border-radius:10px;cursor:pointer;background:#1c5fd4;color:#fff;font-weight:700;font-size:16px}.error{margin-top:15px;color:#b42318;background:#fff0ef;border-radius:10px;padding:11px;display:none}.back{display:block;margin-top:18px;text-align:center;color:#1c5fd4;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="login-card">
+  <h1>BS Lê Nam Hùng</h1>
+  <p class="muted">Khu vực quản trị website</p>
+  <form id="loginForm">
+    <label class="field"><span>Email quản trị</span><input id="email" type="email" autocomplete="username" required></label>
+    <label class="field"><span>Mật khẩu</span><input id="password" type="password" autocomplete="current-password" required></label>
+    <button type="submit">Đăng nhập</button>
+    <div id="error" class="error"></div>
+  </form>
+  <a class="back" href="index.html">← Quay về website</a>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script>
+(async()=>{
+  const err=document.getElementById('error');
+  const show=t=>{err.textContent=t;err.style.display='block'};
+  if(!window.supabase||!SUPABASE_URL.startsWith('http')){show('Chưa cấu hình Supabase. Hãy điền SUPABASE_URL và SUPABASE_ANON_KEY trong supabase-config.js.');return}
+  const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+  const {data:{session}}=await client.auth.getSession();
+  if(session){location.href='admin.html';return}
+  document.getElementById('loginForm').addEventListener('submit',async e=>{
+    e.preventDefault(); err.style.display='none';
+    const {data,error}=await client.auth.signInWithPassword({email:document.getElementById('email').value.trim(),password:document.getElementById('password').value});
+    if(error){show(error.message||'Đăng nhập không thành công.');return}
+    location.href='admin.html';
+  });
+})();
+</script>
+</body></html>

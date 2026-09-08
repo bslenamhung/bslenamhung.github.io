@@ -1,0 +1,66 @@
+{
+  "site": {
+    "aboutIntro": "Bác sĩ chuyên ngành Sản Phụ khoa với định hướng chia sẻ kiến thức y khoa dễ hiểu và đồng hành cùng người bệnh.",
+    "bioText": "Anh có thể chỉnh nội dung này trong trang Quản trị nội dung.",
+    "careerText": "Anh có thể cập nhật quá trình công tác, đơn vị công tác và các mốc chuyên môn.",
+    "expertiseText": "Sản khoa, Phụ khoa, Vô sinh – Hiếm muộn, Siêu âm, Hậu sản.",
+    "researchText": "Anh có thể cập nhật các đề tài, bài báo, hội nghị và hoạt động nghiên cứu khoa học."
+  },
+  "specialties": [
+    {
+      "name": "Sản khoa",
+      "icon": "🤰",
+      "desc": "Thai kỳ, theo dõi thai và chăm sóc mẹ."
+    },
+    {
+      "name": "Phụ khoa",
+      "icon": "🩺",
+      "desc": "Khám, tư vấn và các bệnh lý phụ khoa."
+    },
+    {
+      "name": "Vô sinh – Hiếm muộn",
+      "icon": "🌱",
+      "desc": "Tư vấn sức khỏe sinh sản và hiếm muộn."
+    },
+    {
+      "name": "Siêu âm",
+      "icon": "🖥️",
+      "desc": "Siêu âm và giải thích các thông tin cần lưu ý."
+    },
+    {
+      "name": "Hậu sản",
+      "icon": "🌿",
+      "desc": "Chăm sóc mẹ sau sinh và các vấn đề hậu sản."
+    }
+  ],
+  "services": [
+    "Khám Sản khoa",
+    "Khám Phụ khoa",
+    "Vô sinh – Hiếm muộn",
+    "Siêu âm",
+    "Hậu sản"
+  ],
+  "clinic": {
+    "info": "Địa chỉ, thời gian làm việc và thông tin liên hệ sẽ được cập nhật.",
+    "booking": "Liên hệ trực tiếp để được hướng dẫn lịch khám.",
+    "phone": "",
+    "zalo": ""
+  },
+  "articles": [
+    {
+      "title": "Những điều cần lưu ý khi theo dõi thai kỳ",
+      "specialty": "Sản khoa",
+      "desc": "Nội dung mẫu để anh thay thế bằng bài viết thực tế của mình."
+    },
+    {
+      "title": "Khi nào nên đi khám phụ khoa?",
+      "specialty": "Phụ khoa",
+      "desc": "Nội dung mẫu để anh thay thế bằng bài viết thực tế của mình."
+    },
+    {
+      "title": "Một số thông tin cơ bản về siêu âm thai",
+      "specialty": "Siêu âm",
+      "desc": "Nội dung mẫu để anh thay thế bằng bài viết thực tế của mình."
+    }
+  ]
+}

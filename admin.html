@@ -1,0 +1,11 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Quản trị | BS Lê Nam Hùng</title><link rel="stylesheet" href="admin.css"></head><body>
+<header><div><strong>BS Lê Nam Hùng</strong><span>Quản trị nội dung website</span></div><div class="top-actions"><button id="saveBtn">Lưu lên hệ thống</button><button id="exportBtn" class="secondary">Xuất dữ liệu</button><a href="index.html" target="_blank">Xem website</a><button id="logoutBtn" class="secondary">Đăng xuất</button></div></header>
+<main class="wrap"><div id="status" class="note" style="display:none"></div>
+<section class="panel"><h2>Về BS Lê Nam Hùng</h2><div class="grid2"><label>Giới thiệu<textarea id="aboutIntro"></textarea></label><label>Giới thiệu bác sĩ<textarea id="bioText"></textarea></label><label>Quá trình công tác<textarea id="careerText"></textarea></label><label>Chuyên môn<textarea id="expertiseText"></textarea></label><label>Nghiên cứu khoa học<textarea id="researchText"></textarea></label></div></section>
+<section class="panel"><div class="panel-head"><h2>Chuyên môn</h2><button id="addSpec" class="secondary">＋ Thêm chuyên môn</button></div><div id="specList"></div></section>
+<section class="panel"><div class="panel-head"><h2>Dịch vụ khám</h2><button id="addService" class="secondary">＋ Thêm dịch vụ</button></div><div id="serviceList"></div></section>
+<section class="panel"><h2>Phòng khám & Liên hệ</h2><div class="grid2"><label>Thông tin khám<textarea id="clinicInfo"></textarea></label><label>Hướng dẫn đặt lịch<textarea id="bookingText"></textarea></label><label>Số điện thoại<input id="phone"></label><label>Liên kết Zalo<input id="zalo"></label></div></section>
+<section class="panel"><div class="panel-head"><h2>Bài viết</h2><button id="addArticle" class="secondary">＋ Thêm bài viết</button></div><div id="articleList"></div></section>
+<p class="note">Nội dung được lưu online trong Supabase. Chỉ tài khoản được cấp quyền quản trị mới có thể thay đổi dữ liệu.</p>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="admin.js"></script></body></html>
