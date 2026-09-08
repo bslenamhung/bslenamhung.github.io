@@ -8,19 +8,21 @@ function ensureData(){const base=cloneDefault();D={...base,...D,site:{...base.si
 function setStatus(text,ok=true){const e=$('status');e.textContent=text;e.hidden=false;e.className='status '+(ok?'ok':'err');clearTimeout(setStatus.t);setStatus.t=setTimeout(()=>e.hidden=true,4200)}
 function gotoSection(name){document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.section===name));document.querySelectorAll('.admin-section').forEach(s=>s.classList.toggle('active',s.dataset.section===name));window.scrollTo({top:0,behavior:'smooth'})}
 async function isAdmin(){const {data,error}=await client.rpc('is_admin');return {ok:!error&&data===true,error:error?.message||null}}
-async function boot(){if(!window.supabase||!window.SUPABASE_URL?.startsWith('http')){location.href='admin-login.html';return}client=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);const {data:{session}}=await client.auth.getSession();if(!session){location.href='admin-login.html';return}const guard=await isAdmin();if(!guard.ok){setStatus('Tài khoản này không có quyền quản trị.',false);await client.auth.signOut();setTimeout(()=>location.href='admin-login.html',1000);return}const {data,error}=await client.from('site_content').select('content').eq('id',1).maybeSingle();if(error){setStatus('Không đọc được dữ liệu: '+error.message,false);return}if(data?.content)D=data.content;ensureData();renderAll()}
+async function boot(){if(!window.supabase||!window.SUPABASE_URL?.startsWith('http')){location.href='admin-login.html';return}client=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);const {data:{session}}=await client.auth.getSession();if(!session){location.href='admin-login.html';return}const guard=await isAdmin();if(!guard.ok){setStatus('Tài khoản này không có quyền quản trị.',false);await client.auth.signOut();setTimeout(()=>location.href='admin-login.html',1000);return}const {data,error}=await client.from('site_content').select('content').eq('id',1).maybeSingle();if(error){setStatus('Không đọc được dữ liệu: '+error.message,false);return}if(data?.content)D=data.content;ensureData();renderAll().catch(err=>setStatus('Lỗi tải quản trị: '+(err?.message||err),false))}
 async function renderStats(){
   $('statSpecialties').textContent=D.specialties.length;
   $('statServices').textContent=D.services.length;
   $('statArticles').textContent=D.articles.length;
   $('statPublished').textContent=D.articles.filter(x=>x.published!==false).length;
   ARTICLE_VIEWS={};
+  let visitLoaded=false, articleLoaded=false;
   try{
     const {data,error}=await client.from('site_visit_stats').select('total_visits,today_visits,month_visits').eq('id',1).maybeSingle();
     if(!error&&data){
       $('statVisitsTotal').textContent=Number(data.total_visits||0).toLocaleString('vi-VN');
       $('statVisitsToday').textContent=Number(data.today_visits||0).toLocaleString('vi-VN');
       $('statVisitsMonth').textContent=Number(data.month_visits||0).toLocaleString('vi-VN');
+      visitLoaded=true;
     }
   }catch(e){}
   try{
@@ -29,9 +31,75 @@ async function renderStats(){
       (data||[]).forEach(x=>ARTICLE_VIEWS[String(x.article_id)]=Number(x.view_count||0));
       const total=(data||[]).reduce((n,x)=>n+Number(x.view_count||0),0);
       $('statArticleViews').textContent=total.toLocaleString('vi-VN');
+      articleLoaded=true;
     }
   }catch(e){}
 }
+function renderClinic(){
+  ensureData();
+  const c=D.clinic||{};
+  const set=(id,v)=>{const el=$(id); if(el) el.value=v??"";};
+  set("clinicTagline",c.tagline||"Điều trị bằng tri thức, chăm sóc từ trái tim");
+  set("clinicLogoUrl",c.logo||"clinic-logo.png");
+  set("clinicInfo",c.info||"");
+  set("bookingText",c.booking||"");
+  set("address",c.address||"");
+  set("hours",c.hours||"");
+  set("weeklyScheduleUrl",c.weeklyScheduleImage||"");
+  set("phone",c.phone||"");
+  set("zalo",c.zalo||"");
+  set("zaloQr",c.zaloQr||"zalo-qr.jpg");
+  set("mapUrl",c.mapUrl||"");
+  const lp=$("clinicLogoPreview"); if(lp){lp.src=c.logo||"clinic-logo.png";lp.style.display="block";}
+  const pics=Array.isArray(c.images)?c.images:["","","",""];
+  for(let i=1;i<=4;i++){const u=$("clinicImage"+i+"Url"),im=$("clinicImage"+i+"Preview"); if(u)u.value=pics[i-1]||""; if(im){im.src=pics[i-1]||"";im.style.display=pics[i-1]?"block":"none";}}
+  const ws=$("weeklySchedulePreview"); if(ws){ws.src=c.weeklyScheduleImage||"";ws.style.display=c.weeklyScheduleImage?"block":"none";}
+}
+function collect(){
+  ensureData();
+  D.site.bioText=$("bioText")?.value||"";
+  D.site.careerText=$("careerText")?.value||"";
+  D.site.expertiseText=$("expertiseText")?.value||"";
+  D.site.researchText=$("researchText")?.value||"";
+  const pu=$("profileImageUrl"); if(pu)D.site.profileImage=pu.value.trim();
+  const specNames=[...document.querySelectorAll('[data-spec="name"]')];
+  D.specialties=specNames.map((el,i)=>({name:el.value.trim()||"Chuyên môn mới",icon:document.querySelector(`[data-spec="icon"][data-i="${i}"]`)?.value||"＋",desc:document.querySelector(`[data-spec="desc"][data-i="${i}"]`)?.value||""}));
+  const svcNames=[...document.querySelectorAll('[data-svc="name"]')];
+  D.services=svcNames.map((el,i)=>({name:el.value.trim()||"Dịch vụ mới",desc:document.querySelector(`[data-svc="desc"][data-i="${i}"]`)?.value||"",published:document.querySelector(`[data-svc-pub="${i}"]`)?.checked!==false}));
+  D.clinic.tagline=$("clinicTagline")?.value?.trim()||"";
+  D.clinic.logo=$("clinicLogoUrl")?.value?.trim()||"clinic-logo.png";
+  D.clinic.info=$("clinicInfo")?.value||"";
+  D.clinic.booking=$("bookingText")?.value||"";
+  D.clinic.address=$("address")?.value||"";
+  D.clinic.hours=$("hours")?.value||"";
+  D.clinic.weeklyScheduleImage=$("weeklyScheduleUrl")?.value?.trim()||"";
+  D.clinic.phone=$("phone")?.value||"";
+  D.clinic.zalo=$("zalo")?.value||"";
+  D.clinic.zaloQr=$("zaloQr")?.value?.trim()||"zalo-qr.jpg";
+  D.clinic.mapUrl=$("mapUrl")?.value?.trim()||"";
+  D.clinic.images=[]; for(let i=1;i<=4;i++)D.clinic.images.push($("clinicImage"+i+"Url")?.value?.trim()||"");
+}
+async function uploadPublicImage(file,folder){
+  if(!file)throw new Error("Chưa chọn ảnh.");
+  if(!/^image\/(png|jpeg|webp)$/.test(file.type))throw new Error("Chỉ hỗ trợ JPG, PNG hoặc WebP.");
+  if(file.size>8*1024*1024)throw new Error("Ảnh tối đa 8 MB.");
+  const g=await isAdmin();if(!g.ok)throw new Error("Phiên quản trị không hợp lệ.");
+  const ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg";
+  const path=`${String(folder||"media").replace(/[^a-z0-9_-]/gi,"-")}/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+  const {error}=await client.storage.from("site-media").upload(path,file,{upsert:false,cacheControl:"3600",contentType:file.type});
+  if(error)throw error;
+  const {data}=client.storage.from("site-media").getPublicUrl(path);
+  if(!data?.publicUrl)throw new Error("Không lấy được URL ảnh.");
+  return data.publicUrl;
+}
+function renderArticleCoverPreview(url){const root=$("articleCoverPreview");if(!root)return;root.innerHTML=url?`<img src="${esc(url)}" alt="Xem trước ảnh đại diện">`:"";}
+function openArticleEditor(index=-1){
+  editingArticleIndex=index; const a=index>=0?D.articles[index]:{title:"",specialty:D.specialties[0]?.name||"Sản khoa",desc:"",image:"",content:"",published:false};
+  $("modalTitle").textContent=index>=0?"Sửa bài viết":"Thêm bài viết"; $("editTitle").value=a.title||""; $("editDesc").value=a.desc||""; $("editImage").value=a.image||""; $("editPublished").checked=a.published!==false;
+  const sel=$("editSpecialty");sel.innerHTML=D.specialties.map(x=>`<option value="${esc(x.name)}">${esc(x.name)}</option>`).join("");sel.value=a.specialty||D.specialties[0]?.name||"";
+  $("editContent").innerHTML=a.content||"";renderArticleCoverPreview(a.image||"");$("articleCoverStatus").textContent="";$("articleImageStatus").textContent="";$("editorModal").hidden=false;
+}
+function closeArticleEditor(){ $("editorModal").hidden=true; editingArticleIndex=-1; }
 async function renderAll(){renderAbout();renderSpecs();renderServices();renderClinic();await renderStats();renderArticlesList()}
 function renderAbout(){$('bioText').value=D.site.bioText||'';$('careerText').value=D.site.careerText||'';$('expertiseText').value=D.site.expertiseText||'';$('researchText').value=D.site.researchText||'';const img=$('profileImagePreview'), fallback=$('profileImageFallback'), url=$('profileImageUrl'); const src=D.site.profileImage||''; if(url)url.value=src; if(img){img.src=src;img.classList.toggle('show',!!src); img.onerror=()=>{img.classList.remove('show'); if(fallback)fallback.style.display='grid';};} if(fallback){fallback.style.display=src?'none':'grid';}
 }

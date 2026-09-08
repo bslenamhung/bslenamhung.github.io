@@ -2,6 +2,26 @@ const DEFAULT_DATA={site:{profileImage:'',aboutIntro:'Bác sĩ chuyên ngành S�
 let DATA=structuredClone(DEFAULT_DATA);
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 function articleId(a){if(a&&a.id)return String(a.id);const t=String(a?.title||'').trim();let h=2166136261;for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)}return 'legacy-'+(h>>>0).toString(36)}
+
+async function recordSiteVisit(){
+  try{
+    if(!window.supabase||!window.SUPABASE_URL)return;
+    const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY||SUPABASE_ANON_KEY);
+    const today=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Ho_Chi_Minh',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+    const KEY='bslenamhung_visit_counted_v2';
+    let last=''; try{last=localStorage.getItem(KEY)||''}catch(e){}
+    let row=null;
+    if(last!==today){
+      const r=await client.rpc('record_site_visit');
+      if(!r.error) row=Array.isArray(r.data)?r.data[0]:r.data;
+      if(row){try{localStorage.setItem(KEY,today)}catch(e){}}
+    } else {
+      const r=await client.from('site_visit_stats').select('total_visits').eq('id',1).maybeSingle();
+      if(!r.error) row=r.data;
+    }
+    const el=document.getElementById('visitTotal'); if(el&&row) el.textContent=Number(row.total_visits||0).toLocaleString('vi-VN');
+  }catch(e){/* non-blocking */}
+}
 async function recordArticleView(a){try{if(!window.supabase||!window.SUPABASE_URL)return;const c=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY||SUPABASE_ANON_KEY);await c.rpc('record_article_view',{p_article_id:articleId(a),p_title:String(a?.title||'')});loadArticleViewTotal()}catch(e){}}
 async function loadArticleViewTotal(){try{if(!window.supabase||!window.SUPABASE_URL)return;const c=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY||SUPABASE_ANON_KEY);const r=await c.from('article_view_stats').select('view_count');if(!r.error){const total=(r.data||[]).reduce((n,x)=>n+Number(x.view_count||0),0);const el=document.getElementById('articleViewsTotal');if(el)el.textContent=total.toLocaleString('vi-VN')}}catch(e){}}
 async function loadData(){
@@ -15,7 +35,7 @@ async function render(){
  const svc=document.getElementById('serviceGrid');const services=(DATA.services||[]).map(x=>typeof x==='string'?{name:x,desc:''}:x).filter(x=>x.published!==false);svc.innerHTML=services.map(x=>`<div class="service-item"><i>✓</i><div><strong>${esc(x.name||'')}</strong>${x.desc?`<small>${esc(x.desc)}</small>`:''}</div></div>`).join('');
  const addressMapLink=document.getElementById('addressMapLink');if(addressMapLink){addressMapLink.href='#clinicMapCard'}const phone=document.getElementById('phoneBtn'),z=document.getElementById('zaloBtn');if(DATA.clinic.phone){phone.href='tel:'+DATA.clinic.phone;phone.textContent='Gọi '+DATA.clinic.phone}else{phone.href='#contact'}if(DATA.clinic.zalo){z.href=DATA.clinic.zalo;z.target='_blank'}else{z.href='#contact'}const qr=document.getElementById('zaloQr'),qrLink=document.getElementById('zaloQrLink');if(DATA.clinic.zaloQr)qr.src=DATA.clinic.zaloQr;if(DATA.clinic.zalo){qrLink.href=DATA.clinic.zalo;qrLink.target='_blank'}if(qr){qr.style.cursor='pointer';qr.onclick=()=>{if(DATA.clinic.zalo)window.open(DATA.clinic.zalo,'_blank')}}const mapFrame=document.getElementById('clinicMap'),mapEmpty=document.getElementById('mapEmpty'),mapDirections=document.getElementById('mapDirectionsBtn'),mapAddressText=document.getElementById('mapAddressText');const clinicAddress=String(DATA.clinic.address||'').trim();const customMap=String(DATA.clinic.mapUrl||'').trim();const directionUrl=customMap|| (clinicAddress?'https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(clinicAddress):'');if(mapAddressText)mapAddressText.textContent=clinicAddress||'Xem vị trí và hướng dẫn đường đi đến phòng khám.';if(mapDirections){if(directionUrl){mapDirections.href=directionUrl;mapDirections.classList.remove('disabled')}else{mapDirections.href='#';mapDirections.classList.add('disabled')}}if(mapFrame){if(customMap){mapFrame.src='https://www.google.com/maps?q=16.8041129,107.1140670&output=embed';if(mapEmpty)mapEmpty.hidden=true}else if(clinicAddress){mapFrame.src='https://www.google.com/maps?q='+encodeURIComponent(clinicAddress)+'&output=embed';if(mapEmpty)mapEmpty.hidden=true}else{mapFrame.src='about:blank';if(mapEmpty)mapEmpty.hidden=false}}
  const acts=document.getElementById('contactActions');acts.innerHTML='';if(DATA.clinic.phone)acts.innerHTML+=`<a class="btn primary" href="tel:${esc(DATA.clinic.phone)}">Gọi điện</a>`;if(DATA.clinic.zalo)acts.innerHTML+=`<a class="btn secondary" href="${esc(DATA.clinic.zalo)}" target="_blank">Zalo</a>`;
- renderArticles();bindSpecialties();bindAboutCards();loadArticleViewTotal();
+ renderArticles();bindSpecialties();bindAboutCards();loadArticleViewTotal();recordSiteVisit();
 }
 function aboutTitle(key){return ({bioText:'Giới thiệu bác sĩ',careerText:'Quá trình công tác',expertiseText:'Chuyên môn',researchText:'Nghiên cứu khoa học'})[key]||'Thông tin';}
 function openAboutInfo(key){const text=String(DATA.site?.[key]||'').trim()||'Nội dung đang được cập nhật.';let m=document.getElementById('aboutModal');if(!m){m=document.createElement('div');m.id='aboutModal';m.className='article-modal';m.innerHTML='<div class="article-modal-backdrop"></div><div class="article-modal-card about-modal-card"><button class="article-modal-close" aria-label="Đóng">×</button><div class="about-modal-content"></div></div>';document.body.appendChild(m);m.querySelector('.article-modal-close').onclick=()=>m.classList.remove('show');m.querySelector('.article-modal-backdrop').onclick=()=>m.classList.remove('show');}
