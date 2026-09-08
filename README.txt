@@ -1,27 +1,16 @@
-BS LÊ NAM HÙNG – WEBSITE + SUPABASE
+BS LÊ NAM HÙNG - WEBSITE V5
 
-1. Website công khai: index.html
-2. Đăng nhập quản trị: admin-login.html
-3. Trang quản trị: admin.html
-4. Cấu hình Supabase đã được điền sẵn trong supabase-config.js.
+Cấu trúc:
+- index.html: website công khai
+- admin-login.html: đăng nhập quản trị
+- admin.html/admin.js/admin.css: CMS quản trị
+- supabase-config.js: Project URL + Publishable key
+- zalo-qr.jpg: QR Zalo
+- supabase-schema.sql: cấu trúc database
 
-Project URL:
-https://tufzlxfrtdhestbemcly.supabase.co
+V5 bổ sung:
+- Quản lý dịch vụ: thêm/sửa mô tả/ẩn/hiện/xóa
+- Quản lý bài viết bằng cửa sổ soạn thảo, chọn chuyên môn, ảnh đại diện, lưu nháp/đăng bài
+- Quản trị vẫn kiểm tra quyền admin qua RPC is_admin() và RLS của Supabase
 
-Publishable key đã được cấu hình trong file frontend. Không đặt Secret key vào website.
-
-Database:
-Đã tạo bảng site_content và admin_users theo supabase-schema.sql.
-
-Tài khoản admin:
-Tài khoản Supabase đã được cấp quyền qua bảng admin_users.
-
-Triển khai GitHub Pages:
-- Upload toàn bộ file trong thư mục này lên repository GitHub Pages.
-- Giữ nguyên tên supabase-config.js.
-- Mở index.html để kiểm tra website.
-- Mở admin-login.html để đăng nhập quản trị.
-
-Lưu ý:
-- Publishable key có thể nằm trong mã frontend. Secret key không được công khai.
-- Nội dung website được lưu trên Supabase, nên có thể quản trị online.
+Khi cập nhật GitHub Pages, upload/ghi đè toàn bộ file trong thư mục này và giữ zalo-qr.jpg ở thư mục gốc.
