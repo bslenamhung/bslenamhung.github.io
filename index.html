@@ -18,7 +18,7 @@
     try{
       const client=window.supabase.createClient(SUPABASE_URL, window.SUPABASE_PUBLISHABLE_KEY || window.SUPABASE_ANON_KEY);
       let shouldCount=false;
-      const today=new Date().toISOString().slice(0,10);
+      const today=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Ho_Chi_Minh',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
       try{
         const last=localStorage.getItem(KEY);
         shouldCount=last!==today;

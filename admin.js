@@ -1,5 +1,5 @@
 const DEFAULT={site:{profileImage:'',bioText:'Nội dung giới thiệu BS Lê Nam Hùng sẽ được cập nhật.',careerText:'Thông tin quá trình công tác sẽ được cập nhật.',expertiseText:'Sản khoa, Phụ khoa, Vô sinh – Hiếm muộn, Siêu âm, Hậu sản.',researchText:'Thông tin nghiên cứu khoa học sẽ được cập nhật.'},specialties:[{name:'Sản khoa',icon:'🤰',desc:'Thai kỳ, theo dõi thai và chăm sóc mẹ.'},{name:'Phụ khoa',icon:'🩺',desc:'Khám, tư vấn và các bệnh lý phụ khoa.'},{name:'Vô sinh – Hiếm muộn',icon:'🌱',desc:'Tư vấn sức khỏe sinh sản và hiếm muộn.'},{name:'Siêu âm',icon:'🖥️',desc:'Siêu âm và giải thích các thông tin cần lưu ý.'},{name:'Hậu sản',icon:'🌿',desc:'Chăm sóc mẹ sau sinh và các vấn đề hậu sản.'}],services:['Khám Sản khoa','Khám Phụ khoa','Vô sinh – Hiếm muộn','Siêu âm','Hậu sản'],clinic:{intro:'',info:'',booking:'',phone:'',zalo:'http://zaloapp.com/qr/p/quocjkn8vcrk',zaloQr:'zalo-qr.jpg',address:'',hours:'',weeklyScheduleImage:'',images:['','','',''],logo:'clinic-logo.png',tagline:'Điều trị bằng tri thức, chăm sóc từ trái tim',mapUrl:'https://www.google.com/maps?q=16.8041129,107.1140670&entry=gps&shh=CAE&lucs=,94297699,94231188,94280568,47071704,94218641,94282134,94286869,100820247,100822499&g_ep=CAISEjI2LjMzLjEuOTYxODkxNDMyMBgAINeCAypTLDk0Mjk3Njk5LDk0MjMxMTg4LDk0MjgwNTY4LDQ3MDcxNzA0LDk0MjE4NjQxLDk0MjgyMTM0LDk0Mjg2ODY5LDEwMDgyMDI0NywxMDA4MjI0OTlCAlZO&skid=98e6f880-314f-4606-8230-22855b908a10&g_st=iz'},articles:[]};
-let client=null,D=structuredClone(DEFAULT),editingArticleIndex=-1;
+let client=null,D=structuredClone(DEFAULT),editingArticleIndex=-1,ARTICLE_VIEWS={};
 const $=id=>document.getElementById(id);
 const cloneDefault=()=>JSON.parse(JSON.stringify(DEFAULT));
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
@@ -9,6 +9,29 @@ function setStatus(text,ok=true){const e=$('status');e.textContent=text;e.hidden
 function gotoSection(name){document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.section===name));document.querySelectorAll('.admin-section').forEach(s=>s.classList.toggle('active',s.dataset.section===name));window.scrollTo({top:0,behavior:'smooth'})}
 async function isAdmin(){const {data,error}=await client.rpc('is_admin');return {ok:!error&&data===true,error:error?.message||null}}
 async function boot(){if(!window.supabase||!window.SUPABASE_URL?.startsWith('http')){location.href='admin-login.html';return}client=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);const {data:{session}}=await client.auth.getSession();if(!session){location.href='admin-login.html';return}const guard=await isAdmin();if(!guard.ok){setStatus('Tài khoản này không có quyền quản trị.',false);await client.auth.signOut();setTimeout(()=>location.href='admin-login.html',1000);return}const {data,error}=await client.from('site_content').select('content').eq('id',1).maybeSingle();if(error){setStatus('Không đọc được dữ liệu: '+error.message,false);return}if(data?.content)D=data.content;ensureData();renderAll()}
+async function renderStats(){
+  $('statSpecialties').textContent=D.specialties.length;
+  $('statServices').textContent=D.services.length;
+  $('statArticles').textContent=D.articles.length;
+  $('statPublished').textContent=D.articles.filter(x=>x.published!==false).length;
+  ARTICLE_VIEWS={};
+  try{
+    const {data,error}=await client.from('site_visit_stats').select('total_visits,today_visits,month_visits').eq('id',1).maybeSingle();
+    if(!error&&data){
+      $('statVisitsTotal').textContent=Number(data.total_visits||0).toLocaleString('vi-VN');
+      $('statVisitsToday').textContent=Number(data.today_visits||0).toLocaleString('vi-VN');
+      $('statVisitsMonth').textContent=Number(data.month_visits||0).toLocaleString('vi-VN');
+    }
+  }catch(e){}
+  try{
+    const {data,error}=await client.from('article_view_stats').select('article_id,title,view_count');
+    if(!error){
+      (data||[]).forEach(x=>ARTICLE_VIEWS[String(x.article_id)]=Number(x.view_count||0));
+      const total=(data||[]).reduce((n,x)=>n+Number(x.view_count||0),0);
+      $('statArticleViews').textContent=total.toLocaleString('vi-VN');
+    }
+  }catch(e){}
+}
 async function renderAll(){renderAbout();renderSpecs();renderServices();renderClinic();await renderStats();renderArticlesList()}
 function renderAbout(){$('bioText').value=D.site.bioText||'';$('careerText').value=D.site.careerText||'';$('expertiseText').value=D.site.expertiseText||'';$('researchText').value=D.site.researchText||'';const img=$('profileImagePreview'), fallback=$('profileImageFallback'), url=$('profileImageUrl'); const src=D.site.profileImage||''; if(url)url.value=src; if(img){img.src=src;img.classList.toggle('show',!!src); img.onerror=()=>{img.classList.remove('show'); if(fallback)fallback.style.display='grid';};} if(fallback){fallback.style.display=src?'none':'grid';}
 }
