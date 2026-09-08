@@ -36,3 +36,6 @@
 .clinic-photo-admin-item input[type=file]{max-width:100%}
 .clinic-photo-preview-wrap img{display:none;width:100%;height:180px;object-fit:cover;border-radius:12px;border:1px solid #e3e8ee;background:#f7f9fa}
 @media(max-width:760px){.clinic-photo-admin-grid{grid-template-columns:1fr}.image-actions-row{flex-direction:column;align-items:flex-start}.image-actions-row input[type=file],.image-actions-row .action-btn{width:100%;max-width:none}}
+
+.clinic-save-note{display:flex;gap:14px;align-items:center;justify-content:space-between;padding:18px;margin-top:20px;border:1px solid #dbe3ec;border-radius:16px;background:#f8fafc}.clinic-save-note span{flex:1;color:#64748b;font-size:.92rem}.clinic-save-note button{white-space:nowrap}
+@media(max-width:760px){.clinic-save-note{flex-direction:column;align-items:stretch}.clinic-save-note button{width:100%}}
