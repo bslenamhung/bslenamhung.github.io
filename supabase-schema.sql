@@ -83,7 +83,7 @@ values (1, $JSON$
     {"name":"Hậu sản","icon":"🌿","desc":"Chăm sóc mẹ sau sinh và các vấn đề hậu sản."}
   ],
   "services": ["Khám Sản khoa","Khám Phụ khoa","Vô sinh – Hiếm muộn","Siêu âm","Hậu sản"],
-  "clinic": {"info":"Địa chỉ, thời gian làm việc và thông tin liên hệ sẽ được cập nhật.","booking":"Liên hệ trực tiếp để được hướng dẫn lịch khám.","phone":"","zalo":""},
+  "clinic": {"info":"Địa chỉ, thời gian làm việc và thông tin liên hệ sẽ được cập nhật.","booking":"Liên hệ trực tiếp để được hướng dẫn lịch khám.","phone":"","zalo":"http://zaloapp.com/qr/p/quocjkn8vcrk","zaloQr":"zalo-qr.jpg"},
   "articles": [
     {"title":"Những điều cần lưu ý khi theo dõi thai kỳ","specialty":"Sản khoa","desc":"Nội dung mẫu để anh thay thế bằng bài viết thực tế của mình."},
     {"title":"Khi nào nên đi khám phụ khoa?","specialty":"Phụ khoa","desc":"Nội dung mẫu để anh thay thế bằng bài viết thực tế của mình."},
