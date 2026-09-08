@@ -14,3 +14,9 @@ CÀI ĐẶT SUPABASE STORAGE (chỉ làm 1 lần):
 4. Sau đó vào `admin.html` -> Bài viết -> Thêm bài viết.
 
 Nếu đã chạy file này ở V11 thì không cần chạy lại; các câu lệnh có thể chạy an toàn nhờ `on conflict` và `drop policy if exists`.
+
+
+THỐNG KÊ LƯỢT XEM BÀI VIẾT
+1) Sau khi đã chạy supabase-visits.sql trước đây, mở file supabase-visits.sql của bản V27 và chạy toàn bộ 1 lần trong Supabase SQL Editor.
+2) Website công khai sẽ cộng 1 lượt xem mỗi khi người đọc mở một bài viết.
+3) Tổng lượt xem bài viết trong Dashboard bằng tổng lượt xem của từng bài; chỉ số này khác với Tổng lượt truy cập website.
