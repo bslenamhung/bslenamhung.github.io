@@ -14,3 +14,6 @@ V5 bổ sung:
 - Quản trị vẫn kiểm tra quyền admin qua RPC is_admin() và RLS của Supabase
 
 Khi cập nhật GitHub Pages, upload/ghi đè toàn bộ file trong thư mục này và giữ zalo-qr.jpg ở thư mục gốc.
+
+
+Bản V6: phần Phòng khám có bản đồ và nút 'Chỉ đường đến phòng khám'. Cập nhật Địa chỉ trong trang quản trị để bản đồ tự hiển thị. Có thể điền thêm Liên kết Google Maps để nút chỉ đường dùng link của phòng khám.
