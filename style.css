@@ -65,3 +65,7 @@
 @media(max-width:900px){.about-card-btn{min-height:170px}.about-card-media{height:95px}}
 
 .facebook-btn{margin-top:.75rem}
+
+.facebook-btn,.facebook-link{display:inline-flex;align-items:center;gap:8px}
+.facebook-icon{width:20px;height:20px;display:block;flex:0 0 20px}
+.facebook-btn .facebook-icon,.facebook-link .facebook-icon{margin-right:1px}
