@@ -1,0 +1,41 @@
+name: Tu dong cap nhat sitemap
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 * * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  update-sitemap:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Tai ma nguon
+        uses: actions/checkout@v4
+
+      - name: Cai Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Tao sitemap tu Supabase
+        env:
+          SUPABASE_URL: https://tufzlxfrtdhestbemcly.supabase.co
+          SUPABASE_KEY: sb_publishable_gsKYsz40vs6iyWqkb6zyqg_OwoM8k87
+        run: python scripts/update_sitemap.py
+
+      - name: Commit sitemap neu co thay doi
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+          if git diff --quiet -- sitemap.xml; then
+            echo 'Khong co thay doi sitemap.'
+          else
+            git add sitemap.xml
+            git commit -m 'chore: tu dong cap nhat sitemap'
+            git push
+          fi
