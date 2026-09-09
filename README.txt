@@ -27,3 +27,5 @@ TỰ ĐỘNG CẬP NHẬT SITEMAP
 - Bài nháp (published=false) sẽ không được đưa vào sitemap.
 - Workflow cũng có nút Run workflow để anh có thể chạy cập nhật thủ công ngay khi cần.
 - Không cần sửa sitemap.xml bằng tay nữa.
+
+V39: thêm trường SEO cho từng bài viết: tiêu đề SEO, mô tả SEO, từ khóa/chủ đề, ảnh SEO; thêm BlogPosting structured data và Open Graph trên trang bài viết.

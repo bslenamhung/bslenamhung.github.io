@@ -47,3 +47,6 @@
 /* V30: make edit action explicit and easy to click */
 .article-row-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .article-edit-btn{cursor:pointer;min-width:96px}
+
+/* V39: SEO fields for articles */
+.seo-panel{margin:18px 0 20px;padding:16px;border:1px solid #e1e8ef;border-radius:16px;background:#f8fafc}.seo-panel-head{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-bottom:14px}.seo-panel-head strong{display:block;color:#23384a;font-size:16px}.seo-panel-head small{display:block;color:#6b7780;font-size:12px;margin-top:4px}.seo-panel .field{margin:0}.seo-panel .helper{font-size:11px}.article-cover-preview img{max-width:100%;width:180px;height:120px;object-fit:cover;border-radius:10px;border:1px solid #e3e8ec}@media(max-width:720px){.seo-panel-head{flex-direction:column;align-items:flex-start}.seo-panel-head .ghost{width:100%}}

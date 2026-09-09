@@ -6,11 +6,25 @@ async function loadSite(){
   return fallback;
 }
 async function recordArticleViewPage(a){try{const c=window.supabase?.createClient?.(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY);if(!c)return;await c.rpc('record_article_view',{p_article_id:articleIdPage(a),p_title:String(a?.title||'')})}catch(e){}}
+function upsertMeta(name,content,attr='name'){let m=document.head.querySelector(`meta[${attr}="${name}"]`);if(!m){m=document.createElement('meta');m.setAttribute(attr,name);document.head.appendChild(m)}m.setAttribute('content',content||'')}
+function upsertLink(rel,href){let l=document.head.querySelector(`link[rel="${rel}"]`);if(!l){l=document.createElement('link');l.rel=rel;document.head.appendChild(l)}l.href=href}
 function setMeta(a){
- const title=(a.title||'Bài viết')+' | Th.BSNT Lê Nam Hùng'; document.title=title;
- const desc=String(a.desc||a.content||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,155);
- let m=document.querySelector('meta[name="description"]'); if(m)m.setAttribute('content',desc||'Bài viết kiến thức Sản Phụ khoa của Th.BSNT Lê Nam Hùng.');
- let c=document.querySelector('link[rel="canonical"]'); if(c)c.setAttribute('href',location.href);
+ const title=(a.seoTitle||a.title||'Bài viết') .trim(); document.title=title;
+ const fallbackDesc=String(a.desc||a.content||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,160);
+ const desc=String(a.seoDescription||fallbackDesc||'Kiến thức Sản Phụ khoa của Th.BSNT Lê Nam Hùng.').trim().slice(0,160);
+ const canonical=location.href;
+ upsertMeta('description',desc); upsertMeta('robots','index,follow');
+ upsertMeta('og:title',title,'property'); upsertMeta('og:description',desc,'property'); upsertMeta('og:type','article','property'); upsertMeta('og:url',canonical,'property');
+ const image=String(a.seoImage||a.image||'').trim(); if(image)upsertMeta('og:image',image,'property');
+ if(a.keywords)upsertMeta('keywords',String(a.keywords).trim());
+ upsertLink('canonical',canonical);
+ const old=document.getElementById('articleStructuredData'); if(old)old.remove();
+ const schema={"@context":"https://schema.org","@type":"BlogPosting","headline":String(a.title||'').trim(),"description":desc,"author":{"@type":"Person","name":"Th.BSNT Lê Nam Hùng","url":"https://bslenamhung.github.io/#about"},"mainEntityOfPage":{"@type":"WebPage","@id":canonical},"url":canonical};
+ if(image)schema.image=[image];
+ if(a.specialty)schema.articleSection=String(a.specialty);
+ if(a.keywords)schema.keywords=String(a.keywords);
+ if(a.publishedAt)schema.datePublished=a.publishedAt; if(a.updatedAt)schema.dateModified=a.updatedAt;
+ const sc=document.createElement('script');sc.type='application/ld+json';sc.id='articleStructuredData';sc.textContent=JSON.stringify(schema);document.head.appendChild(sc);
 }
 (async()=>{
  document.getElementById('year').textContent=new Date().getFullYear();

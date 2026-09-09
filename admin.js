@@ -4,7 +4,7 @@ const $=id=>document.getElementById(id);
 const cloneDefault=()=>JSON.parse(JSON.stringify(DEFAULT));
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 function articleId(a){if(a&&a.id)return String(a.id);const t=String(a?.title||'').trim();let h=2166136261;for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)}return 'legacy-'+(h>>>0).toString(36)}
-function ensureData(){const base=cloneDefault();D={...base,...D,site:{...base.site,...(D.site||{})},clinic:{...base.clinic,...(D.clinic||{})},specialties:Array.isArray(D.specialties)?D.specialties:[],services:Array.isArray(D.services)?D.services:[],articles:Array.isArray(D.articles)?D.articles:[]};D.clinic.images=Array.isArray(D.clinic.images)?D.clinic.images:['','','',''];D.clinic.weeklyScheduleImage=D.clinic.weeklyScheduleImage||'';D.site.bioImage=D.site.bioImage||'';D.site.careerImage=D.site.careerImage||'';D.site.expertiseImage=D.site.expertiseImage||'';D.site.researchImage=D.site.researchImage||'';D.services=D.services.map(x=>typeof x==='string'?{name:x,desc:'',published:true}:({...x,name:x.name||'Dịch vụ mới',desc:x.desc||'',published:x.published!==false}));D.articles=D.articles.map(x=>({...x,id:x.id||articleId(x)}));}
+function ensureData(){const base=cloneDefault();D={...base,...D,site:{...base.site,...(D.site||{})},clinic:{...base.clinic,...(D.clinic||{})},specialties:Array.isArray(D.specialties)?D.specialties:[],services:Array.isArray(D.services)?D.services:[],articles:Array.isArray(D.articles)?D.articles:[]};D.clinic.images=Array.isArray(D.clinic.images)?D.clinic.images:['','','',''];D.clinic.weeklyScheduleImage=D.clinic.weeklyScheduleImage||'';D.site.bioImage=D.site.bioImage||'';D.site.careerImage=D.site.careerImage||'';D.site.expertiseImage=D.site.expertiseImage||'';D.site.researchImage=D.site.researchImage||'';D.services=D.services.map(x=>typeof x==='string'?{name:x,desc:'',published:true}:({...x,name:x.name||'Dịch vụ mới',desc:x.desc||'',published:x.published!==false}));D.articles=D.articles.map(x=>({...x,id:x.id||articleId(x),seoTitle:x.seoTitle||'',seoDescription:x.seoDescription||'',keywords:x.keywords||'',seoImage:x.seoImage||''}));}
 function setStatus(text,ok=true){const e=$('status');e.textContent=text;e.hidden=false;e.className='status '+(ok?'ok':'err');clearTimeout(setStatus.t);setStatus.t=setTimeout(()=>e.hidden=true,4200)}
 function gotoSection(name){document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.section===name));document.querySelectorAll('.admin-section').forEach(s=>s.classList.toggle('active',s.dataset.section===name));window.scrollTo({top:0,behavior:'smooth'})}
 async function isAdmin(){const {data,error}=await client.rpc('is_admin');return {ok:!error&&data===true,error:error?.message||null}}
@@ -93,10 +93,16 @@ async function uploadPublicImage(file,folder){
 }
 function renderArticleCoverPreview(url){const root=$("articleCoverPreview");if(!root)return;root.innerHTML=url?`<img src="${esc(url)}" alt="Xem trước ảnh đại diện">`:"";}
 function openArticleEditor(index=-1){
-  editingArticleIndex=index; const a=index>=0?D.articles[index]:{title:"",specialty:D.specialties[0]?.name||"Sản khoa",desc:"",image:"",content:"",published:false};
-  $("modalTitle").textContent=index>=0?"Sửa bài viết":"Thêm bài viết"; $("editTitle").value=a.title||""; $("editDesc").value=a.desc||""; $("editImage").value=a.image||""; $("editPublished").checked=a.published!==false;
+  editingArticleIndex=index;
+  const a=index>=0?D.articles[index]:{title:"",specialty:D.specialties[0]?.name||"Sản khoa",desc:"",image:"",content:"",published:false,seoTitle:"",seoDescription:"",keywords:"",seoImage:""};
+  $("modalTitle").textContent=index>=0?"Sửa bài viết":"Thêm bài viết";
+  $("editTitle").value=a.title||""; $("editDesc").value=a.desc||""; $("editImage").value=a.image||"";
+  $("editSeoTitle").value=a.seoTitle||""; $("editSeoDescription").value=a.seoDescription||""; $("editKeywords").value=a.keywords||"";
+  $("editSeoImage").value=a.seoImage||a.image||"";
+  $("editPublished").checked=a.published!==false;
   const sel=$("editSpecialty");sel.innerHTML=D.specialties.map(x=>`<option value="${esc(x.name)}">${esc(x.name)}</option>`).join("");sel.value=a.specialty||D.specialties[0]?.name||"";
-  $("editContent").innerHTML=a.content||"";renderArticleCoverPreview(a.image||"");$("articleCoverStatus").textContent="";$("articleImageStatus").textContent="";$("editorModal").hidden=false;
+  $("editContent").innerHTML=a.content||""; renderArticleCoverPreview(a.image||""); renderSeoImagePreview(a.seoImage||a.image||"");
+  $("articleCoverStatus").textContent=""; $("articleSeoImageStatus").textContent=""; $("articleImageStatus").textContent=""; $("editorModal").hidden=false;
 }
 function closeArticleEditor(){ $("editorModal").hidden=true; editingArticleIndex=-1; }
 async function renderAll(){renderAbout();renderSpecs();renderServices();renderClinic();await renderStats();renderArticlesList()}
@@ -128,27 +134,40 @@ async function handleInlineImageFile(){
   }catch(err){status.textContent='Không chèn được ảnh: '+(err.message||err);}
   input.value='';
 }
-function saveArticleFromModal(){collect();const current=editingArticleIndex>=0?D.articles[editingArticleIndex]:null;const obj={id:current?.id||('art-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8)),title:$('editTitle').value.trim()||'Bài viết mới',specialty:$('editSpecialty').value||D.specialties[0]?.name||'Sản khoa',desc:$('editDesc').value.trim(),image:$('editImage').value.trim(),content:$('editContent').innerHTML.trim(),published:$('editPublished').checked};if(editingArticleIndex<0)D.articles.unshift(obj);else D.articles[editingArticleIndex]=obj;closeArticleEditor();renderAll();gotoSection('articles');setStatus('Đã cập nhật bài viết trong bộ nhớ. Hãy bấm “Lưu thay đổi” để ghi lên hệ thống.')}
-$('addSpec').onclick=()=>{collect();D.specialties.push({name:'Chuyên môn mới',icon:'＋',desc:'Mô tả chuyên môn mới'});renderAll();gotoSection('specialties')};
-$('addService').onclick=()=>{collect();D.services.push({name:'Dịch vụ mới',desc:'',published:true});renderAll();gotoSection('services')};
-$('addArticle').onclick=()=>openArticleEditor(-1);$('uploadProfileImage').onclick=uploadProfileImage;$('profileImageUrl').addEventListener('input',()=>{const src=$('profileImageUrl').value.trim(),img=$('profileImagePreview'),fallback=$('profileImageFallback');if(img){img.src=src;img.classList.toggle('show',!!src);img.onerror=()=>img.classList.remove('show')}if(fallback)fallback.style.display=src?'none':'grid'});
-async function uploadProfileImage(){
-  const input=$('profileImageFile'); const status=$('profileImageStatus');
-  if(!input?.files?.[0]){ if(status) status.textContent='Vui lòng chọn một ảnh trước.'; return; }
-  const file=input.files[0];
-  if(!/^image\/(png|jpeg|webp)$/.test(file.type)){ if(status) status.textContent='Chỉ hỗ trợ JPG, PNG hoặc WebP.'; return; }
-  if(file.size>5*1024*1024){ if(status) status.textContent='Ảnh tối đa 5 MB.'; return; }
-  const guard=await isAdmin(); if(!guard.ok){ if(status) status.textContent='Phiên quản trị không hợp lệ.'; return; }
-  const ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');
-  const path=`profile/doctor-${Date.now()}.${ext}`;
-  if(status) status.textContent='Đang tải ảnh lên...';
-  const {error}=await client.storage.from('site-media').upload(path,file,{upsert:false,cacheControl:'3600',contentType:file.type});
-  if(error){ if(status) status.textContent='Tải ảnh thất bại: '+error.message; return; }
-  const {data}=client.storage.from('site-media').getPublicUrl(path);
-  D.site.profileImage=data.publicUrl;
-  const url=$('profileImageUrl'); if(url) url.value=data.publicUrl;
-  const img=$('profileImagePreview'), fallback=$('profileImageFallback'); if(img){img.src=data.publicUrl;img.classList.add('show');} if(fallback) fallback.style.display='none';
-  if(status) status.textContent='Đã tải ảnh lên. Hãy bấm “Lưu thay đổi” để ghi địa chỉ ảnh vào hệ thống.';
+function seoDefaultsFromCurrent(){
+  const title=$("editTitle")?.value.trim()||"Bài viết";
+  const desc=$("editDesc")?.value.trim()||"";
+  const specialty=$("editSpecialty")?.value.trim()||"Sản khoa";
+  return {
+    seoTitle:(title+" | Th.BSNT Lê Nam Hùng").slice(0,65),
+    seoDescription:(desc||`Kiến thức ${specialty} từ Th.BSNT Lê Nam Hùng.`).replace(/\s+/g," ").slice(0,160),
+    keywords:[title,specialty,"Th.BSNT Lê Nam Hùng","Sản Phụ khoa Quảng Trị"].filter(Boolean).join(", "),
+    seoImage:$("editImage")?.value.trim()||""
+  };
+}
+function fillSeoSuggestions(){
+  const d=seoDefaultsFromCurrent();
+  if($("editSeoTitle"))$("editSeoTitle").value=d.seoTitle;
+  if($("editSeoDescription"))$("editSeoDescription").value=d.seoDescription;
+  if($("editKeywords"))$("editKeywords").value=d.keywords;
+  if($("editSeoImage")&&!$("editSeoImage").value.trim()){$("editSeoImage").value=d.seoImage;renderSeoImagePreview(d.seoImage);}
+  if($("articleSeoStatus"))$("articleSeoStatus").textContent="✅ Đã tạo gợi ý SEO. Anh có thể chỉnh lại trước khi lưu.";
+}
+function renderSeoImagePreview(url){const root=$("articleSeoImagePreview");if(!root)return;root.innerHTML=url?`<img src="${esc(url)}" alt="Xem trước ảnh SEO">`:"";}
+async function uploadArticleSeoImage(){
+  const file=$("editSeoImageFile")?.files?.[0],status=$("articleSeoImageStatus");
+  if(!file){if(status)status.textContent="Vui lòng chọn ảnh SEO.";return;}
+  if(status)status.textContent="Đang tải ảnh SEO lên...";
+  try{const url=await uploadPublicImage(file,'seo');$("editSeoImage").value=url;renderSeoImagePreview(url);status.textContent="✅ Đã tải ảnh SEO. Hãy lưu bài viết.";}catch(err){status.textContent='Tải ảnh thất bại: '+(err.message||err);}
+}
+function saveArticleFromModal(){
+  collect();
+  const current=editingArticleIndex>=0?D.articles[editingArticleIndex]:null;
+  const title=$("editTitle").value.trim()||"Bài viết mới";
+  const cover=$("editImage").value.trim();
+  const obj={id:current?.id||('art-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8)),title,specialty:$("editSpecialty").value||D.specialties[0]?.name||"Sản khoa",desc:$("editDesc").value.trim(),image:cover,content:$("editContent").innerHTML.trim(),published:$("editPublished").checked,seoTitle:$("editSeoTitle").value.trim()||seoDefaultsFromCurrent().seoTitle,seoDescription:$("editSeoDescription").value.trim()||seoDefaultsFromCurrent().seoDescription,keywords:$("editKeywords").value.trim()||seoDefaultsFromCurrent().keywords,seoImage:$("editSeoImage").value.trim()||cover,updatedAt:new Date().toISOString(),createdAt:current?.createdAt||new Date().toISOString()};
+  if(editingArticleIndex<0)D.articles.unshift(obj);else D.articles[editingArticleIndex]=obj;
+  closeArticleEditor();renderAll();gotoSection('articles');setStatus('Đã cập nhật bài viết trong bộ nhớ. Hãy bấm “Lưu thay đổi” để ghi lên hệ thống.')
 }
 
 async function uploadClinicLogo(){const file=$('clinicLogoFile')?.files?.[0],status=$('clinicLogoStatus');if(!file){if(status)status.textContent='Vui lòng chọn logo.';return}if(status)status.textContent='Đang tải logo lên...';try{const url=await uploadPublicImage(file,'clinic-logo');$('clinicLogoUrl').value=url;$('clinicLogoPreview').src=url;$('clinicLogoPreview').style.display='block';status.textContent='Đã tải logo. Đang lưu lên hệ thống...';await saveClinicOnly();status.textContent='✅ Đã tải và lưu logo phòng khám.'}catch(err){status.textContent='Tải logo thất bại: '+(err.message||err)}}
@@ -168,6 +187,6 @@ $('closeModal').onclick=closeArticleEditor;$('cancelModal').onclick=closeArticle
 $('insertArticleImage').onclick=insertArticleInlineImage;
 $('articleInlineImageFile').addEventListener('change',handleInlineImageFile);
 $('uploadArticleCover').onclick=uploadArticleCover;
-$('editImage').addEventListener('input',()=>{renderArticleCoverPreview($('editImage').value.trim());$('articleCoverStatus').textContent=''});
+$('editImage').addEventListener('input',()=>{renderArticleCoverPreview($('editImage').value.trim());$('articleCoverStatus').textContent=''});$('editSeoImage').addEventListener('input',()=>{renderSeoImagePreview($('editSeoImage').value.trim());$('articleSeoImageStatus').textContent=''});$('uploadArticleSeoImage').onclick=uploadArticleSeoImage;$('suggestSeoBtn').onclick=fillSeoSuggestions;
 $('clearFormatting').onclick=()=>{document.execCommand('removeFormat',false,null);$('editContent').focus()};
 boot();
