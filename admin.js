@@ -8,33 +8,30 @@ function ensureData(){const base=cloneDefault();D={...base,...D,site:{...base.si
 function setStatus(text,ok=true){const e=$('status');e.textContent=text;e.hidden=false;e.className='status '+(ok?'ok':'err');clearTimeout(setStatus.t);setStatus.t=setTimeout(()=>e.hidden=true,4200)}
 function gotoSection(name){document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.section===name));document.querySelectorAll('.admin-section').forEach(s=>s.classList.toggle('active',s.dataset.section===name));window.scrollTo({top:0,behavior:'smooth'})}
 async function isAdmin(){const {data,error}=await client.rpc('is_admin');return {ok:!error&&data===true,error:error?.message||null}}
-async function boot(){if(!window.supabase||!window.SUPABASE_URL?.startsWith('http')){location.href='admin-login.html';return}client=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);const {data:{session}}=await client.auth.getSession();if(!session){location.href='admin-login.html';return}const guard=await isAdmin();if(!guard.ok){setStatus('Tài khoản này không có quyền quản trị.',false);await client.auth.signOut();setTimeout(()=>location.href='admin-login.html',1000);return}const {data,error}=await client.from('site_content').select('content').eq('id',1).maybeSingle();if(error){setStatus('Không đọc được dữ liệu: '+error.message,false);return}if(data?.content)D=data.content;ensureData();renderAll().catch(err=>setStatus('Lỗi tải quản trị: '+(err?.message||err),false))}
+async function boot(){if(!window.supabase||!window.SUPABASE_URL?.startsWith('http')){location.href='admin-login.html';return}client=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);const {data:{session}}=await client.auth.getSession();if(!session){location.href='admin-login.html';return}const guard=await isAdmin();if(!guard.ok){setStatus('Tài khoản này không có quyền quản trị.',false);await client.auth.signOut();setTimeout(()=>location.href='admin-login.html',1000);return}const {data,error}=await client.from('site_content').select('content').eq('id',1).maybeSingle();if(error){setStatus('Không đọc được dữ liệu: '+error.message,false);return}if(data?.content)D=data.content;ensureData();renderAll().catch(err=>setStatus('Lỗi tải quản trị: '+(err?.message||err),false))}
 async function renderStats(){
-  $('statSpecialties').textContent=D.specialties.length;
-  $('statServices').textContent=D.services.length;
-  $('statArticles').textContent=D.articles.length;
-  $('statPublished').textContent=D.articles.filter(x=>x.published!==false).length;
+  ensureData();
+  $('statSpecialties').textContent=Array.isArray(D.specialties)?D.specialties.length:0;
+  $('statServices').textContent=Array.isArray(D.services)?D.services.length:0;
+  $('statArticles').textContent=Array.isArray(D.articles)?D.articles.length:0;
+  $('statPublished').textContent=(D.articles||[]).filter(x=>x.published!==false).length;
   ARTICLE_VIEWS={};
-  let visitLoaded=false, articleLoaded=false;
   try{
     const {data,error}=await client.from('site_visit_stats').select('total_visits,today_visits,month_visits').eq('id',1).maybeSingle();
-    if(!error&&data){
-      $('statVisitsTotal').textContent=Number(data.total_visits||0).toLocaleString('vi-VN');
-      $('statVisitsToday').textContent=Number(data.today_visits||0).toLocaleString('vi-VN');
-      $('statVisitsMonth').textContent=Number(data.month_visits||0).toLocaleString('vi-VN');
-      visitLoaded=true;
-    }
-  }catch(e){}
+    if(error) throw error;
+    $('statVisitsTotal').textContent=Number(data?.total_visits||0).toLocaleString('vi-VN');
+    $('statVisitsToday').textContent=Number(data?.today_visits||0).toLocaleString('vi-VN');
+    $('statVisitsMonth').textContent=Number(data?.month_visits||0).toLocaleString('vi-VN');
+  }catch(e){ console.warn('Không đọc được thống kê lượt truy cập:',e); }
   try{
     const {data,error}=await client.from('article_view_stats').select('article_id,title,view_count');
-    if(!error){
-      (data||[]).forEach(x=>ARTICLE_VIEWS[String(x.article_id)]=Number(x.view_count||0));
-      const total=(data||[]).reduce((n,x)=>n+Number(x.view_count||0),0);
-      $('statArticleViews').textContent=total.toLocaleString('vi-VN');
-      articleLoaded=true;
-    }
-  }catch(e){}
+    if(error) throw error;
+    (data||[]).forEach(x=>ARTICLE_VIEWS[String(x.article_id)]=Number(x.view_count||0));
+    const total=(data||[]).reduce((n,x)=>n+Number(x.view_count||0),0);
+    $('statArticleViews').textContent=total.toLocaleString('vi-VN');
+  }catch(e){ console.warn('Không đọc được thống kê bài viết:',e); }
 }
+
 function renderClinic(){
   ensureData();
   const c=D.clinic||{};

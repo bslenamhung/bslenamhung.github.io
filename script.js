@@ -6,7 +6,7 @@ function articleId(a){if(a&&a.id)return String(a.id);const t=String(a?.title||''
 async function recordSiteVisit(){
   try{
     if(!window.supabase||!window.SUPABASE_URL)return;
-    const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY||SUPABASE_ANON_KEY);
+    const client=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY);
     const today=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Ho_Chi_Minh',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
     const KEY='bslenamhung_visit_counted_v2';
     let last=''; try{last=localStorage.getItem(KEY)||''}catch(e){}
@@ -22,8 +22,8 @@ async function recordSiteVisit(){
     const el=document.getElementById('visitTotal'); if(el&&row) el.textContent=Number(row.total_visits||0).toLocaleString('vi-VN');
   }catch(e){/* non-blocking */}
 }
-async function recordArticleView(a){try{if(!window.supabase||!window.SUPABASE_URL)return;const c=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY||SUPABASE_ANON_KEY);await c.rpc('record_article_view',{p_article_id:articleId(a),p_title:String(a?.title||'')});loadArticleViewTotal()}catch(e){}}
-async function loadArticleViewTotal(){try{if(!window.supabase||!window.SUPABASE_URL)return;const c=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY||SUPABASE_ANON_KEY);const r=await c.from('article_view_stats').select('view_count');if(!r.error){const total=(r.data||[]).reduce((n,x)=>n+Number(x.view_count||0),0);const el=document.getElementById('articleViewsTotal');if(el)el.textContent=total.toLocaleString('vi-VN')}}catch(e){}}
+async function recordArticleView(a){try{if(!window.supabase||!window.SUPABASE_URL)return;const c=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY);await c.rpc('record_article_view',{p_article_id:articleId(a),p_title:String(a?.title||'')});loadArticleViewTotal()}catch(e){}}
+async function loadArticleViewTotal(){try{if(!window.supabase||!window.SUPABASE_URL)return;const c=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY);const r=await c.from('article_view_stats').select('view_count');if(!r.error){const total=(r.data||[]).reduce((n,x)=>n+Number(x.view_count||0),0);const el=document.getElementById('articleViewsTotal');if(el)el.textContent=total.toLocaleString('vi-VN')}}catch(e){}}
 async function loadData(){
  try{if(window.supabase&&SUPABASE_URL.startsWith('http')){const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);const {data,error}=await client.from('site_content').select('content').eq('id',1).maybeSingle();if(!error&&data?.content)return data.content}}catch(e){}
  return DATA;
