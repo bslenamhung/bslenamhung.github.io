@@ -69,6 +69,7 @@ def build_sitemap(content):
 
     urls = [
         (BASE_URL + '/', 'weekly', '1.0'),
+        (BASE_URL + '/phong-kham-san-phu-khoa.html', 'monthly', '0.9'),
     ]
     seen = set()
     for article in articles:
