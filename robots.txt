@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://bslenamhung.github.io/sitemap.xml
