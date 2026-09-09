@@ -145,13 +145,33 @@ function seoDefaultsFromCurrent(){
     seoImage:$("editImage")?.value.trim()||""
   };
 }
+const SEO_PRESETS={
+  "Những điều cần lưu ý khi theo dõi thai kỳ":{seoTitle:"Những điều cần lưu ý khi theo dõi thai kỳ | Th.BSNT Lê Nam Hùng",seoDescription:"Những điều mẹ bầu cần lưu ý khi theo dõi thai kỳ, từ lịch khám, siêu âm đến các dấu hiệu bất thường cần được bác sĩ đánh giá.",keywords:"theo dõi thai kỳ, khám thai, thai kỳ, sản khoa, Quảng Trị",related:["Ngày dự sinh và tuổi thai","Các giai đoạn phát triển của thai","Đếm cử động thai"]},
+  "Khi nào nên đi khám phụ khoa?":{seoTitle:"Khi nào nên đi khám phụ khoa? | Th.BSNT Lê Nam Hùng",seoDescription:"Những dấu hiệu và tình huống thường gặp khi phụ nữ nên đi khám phụ khoa để được thăm khám, tư vấn và theo dõi phù hợp.",keywords:"khám phụ khoa, khi nào nên khám phụ khoa, phụ khoa, chăm sóc sức khỏe phụ nữ, Quảng Trị",related:["Tình dục và thai kỳ","Ốm nghén và thai kỳ","Một số lưu ý sau khi mổ lấy thai giúp sản phụ phục hồi nhanh và tránh biến chứng"]},
+  "Một số thông tin cơ bản về siêu âm thai":{seoTitle:"Siêu âm thai: một số thông tin cơ bản | Th.BSNT Lê Nam Hùng",seoDescription:"Một số thông tin cơ bản về siêu âm thai giúp mẹ bầu hiểu mục đích của từng lần siêu âm và những thông tin thường được bác sĩ đánh giá.",keywords:"siêu âm thai, siêu âm sản khoa, theo dõi thai, khám thai, Quảng Trị",related:["Các mốc khám thai quan trọng","Ngày dự sinh và tuổi thai","Các giai đoạn phát triển của thai"]},
+  "Tư thế ngủ thích hợp cho bà bầu":{seoTitle:"Tư thế ngủ thích hợp cho bà bầu | Th.BSNT Lê Nam Hùng",seoDescription:"Gợi ý tư thế ngủ và một số lưu ý giúp bà bầu cảm thấy thoải mái hơn trong thai kỳ và có giấc ngủ tốt hơn.",keywords:"tư thế ngủ khi mang thai, bà bầu ngủ, thai kỳ, chăm sóc mẹ bầu, Quảng Trị",related:["Tăng cân trong thai kỳ","Ốm nghén và thai kỳ","Đếm cử động thai"]},
+  "Tình dục và thai kỳ":{seoTitle:"Tình dục và thai kỳ: những điều cần biết | Th.BSNT Lê Nam Hùng",seoDescription:"Những điều cần biết về quan hệ tình dục trong thai kỳ, khi nào cần lưu ý và những trường hợp nên được bác sĩ tư vấn.",keywords:"tình dục và thai kỳ, quan hệ khi mang thai, thai kỳ, sản khoa, Quảng Trị",related:["Tư thế ngủ thích hợp cho bà bầu","Các mốc khám thai quan trọng","Khi nào nên đi khám phụ khoa?"]},
+  "Đếm cử động thai":{seoTitle:"Đếm cử động thai: mẹ bầu cần biết gì? | Th.BSNT Lê Nam Hùng",seoDescription:"Hướng dẫn mẹ bầu hiểu ý nghĩa cử động thai và theo dõi vận động của em bé để nhận biết khi nào cần liên hệ cơ sở y tế.",keywords:"đếm cử động thai, thai máy, theo dõi thai, thai kỳ, Quảng Trị",related:["Các mốc khám thai quan trọng","Ngày dự sinh và tuổi thai","Tăng cân trong thai kỳ"]},
+  "Tăng cân trong thai kỳ":{seoTitle:"Tăng cân trong thai kỳ: mẹ bầu cần lưu ý | Th.BSNT Lê Nam Hùng",seoDescription:"Tăng cân trong thai kỳ liên quan đến sức khỏe mẹ và thai nhi. Tìm hiểu những nguyên tắc theo dõi cân nặng và khi nào cần trao đổi với bác sĩ.",keywords:"tăng cân trong thai kỳ, tăng cân khi mang thai, dinh dưỡng thai kỳ, sản khoa, Quảng Trị",related:["Tư thế ngủ thích hợp cho bà bầu","Ốm nghén và thai kỳ","Đếm cử động thai"]},
+  "Ốm nghén và thai kỳ":{seoTitle:"Ốm nghén và thai kỳ: những điều cần biết | Th.BSNT Lê Nam Hùng",seoDescription:"Hiểu về ốm nghén trong thai kỳ, những biểu hiện thường gặp và các dấu hiệu cần được thăm khám để bảo đảm an toàn cho mẹ và bé.",keywords:"ốm nghén, nghén khi mang thai, thai kỳ, sản khoa, Quảng Trị",related:["Tăng cân trong thai kỳ","Tư thế ngủ thích hợp cho bà bầu","Các mốc khám thai quan trọng"]},
+  "Ngày dự sinh và tuổi thai":{seoTitle:"Ngày dự sinh và tuổi thai: cách hiểu đơn giản | Th.BSNT Lê Nam Hùng",seoDescription:"Tìm hiểu cách xác định tuổi thai, ngày dự sinh và những mốc thời gian quan trọng để theo dõi thai kỳ phù hợp.",keywords:"ngày dự sinh, tuổi thai, tính tuổi thai, khám thai, Quảng Trị",related:["Các mốc khám thai quan trọng","Các giai đoạn phát triển của thai","Đếm cử động thai"]},
+  "Các giai đoạn phát triển của thai":{seoTitle:"Các giai đoạn phát triển của thai | Th.BSNT Lê Nam Hùng",seoDescription:"Khái quát các giai đoạn phát triển của thai trong thai kỳ và những thay đổi quan trọng mẹ bầu nên biết khi theo dõi em bé.",keywords:"phát triển thai nhi, các giai đoạn thai kỳ, thai nhi, sản khoa, Quảng Trị",related:["Các mốc khám thai quan trọng","Ngày dự sinh và tuổi thai","Một số thông tin cơ bản về siêu âm thai"]},
+  "Một số lưu ý sau khi mổ lấy thai giúp sản phụ phục hồi nhanh và tránh biến chứng":{seoTitle:"Lưu ý sau mổ lấy thai để phục hồi tốt | Th.BSNT Lê Nam Hùng",seoDescription:"Một số lưu ý sau mổ lấy thai giúp sản phụ chăm sóc vết mổ, vận động và theo dõi các dấu hiệu bất thường trong giai đoạn hồi phục.",keywords:"chăm sóc sau mổ lấy thai, phục hồi sau sinh mổ, vết mổ lấy thai, hậu sản, Quảng Trị",related:["Khi nào nên đi khám phụ khoa?","Tình dục và thai kỳ","Các mốc khám thai quan trọng"]}
+};
+function getSeoPreset(){
+  const title=$("editTitle")?.value.trim()||"";
+  return SEO_PRESETS[title]||null;
+}
 function fillSeoSuggestions(){
-  const d=seoDefaultsFromCurrent();
+  const preset=getSeoPreset();
+  const d=preset?{seoTitle:preset.seoTitle,seoDescription:preset.seoDescription,keywords:preset.keywords,seoImage:$("editImage")?.value.trim()||""}:seoDefaultsFromCurrent();
   if($("editSeoTitle"))$("editSeoTitle").value=d.seoTitle;
   if($("editSeoDescription"))$("editSeoDescription").value=d.seoDescription;
   if($("editKeywords"))$("editKeywords").value=d.keywords;
   if($("editSeoImage")&&!$("editSeoImage").value.trim()){$("editSeoImage").value=d.seoImage;renderSeoImagePreview(d.seoImage);}
-  if($("articleSeoStatus"))$("articleSeoStatus").textContent="✅ Đã tạo gợi ý SEO. Anh có thể chỉnh lại trước khi lưu.";
+  const rel=preset?.related||[];
+  if($("seoRelatedSuggestions"))$("seoRelatedSuggestions").innerHTML=rel.length?('<strong>🔗 Gợi ý liên kết nội bộ:</strong> '+rel.map(x=>`<span class="seo-related-chip">${esc(x)}</span>`).join(' ')):'<span>Chưa có gợi ý cho bài này.</span>';
+  if($("articleSeoStatus"))$("articleSeoStatus").textContent=preset?"✅ Đã áp dụng bộ SEO mẫu cho bài viết này.":"✅ Đã tạo gợi ý SEO tổng quát. Anh có thể chỉnh lại trước khi lưu.";
 }
 function renderSeoImagePreview(url){const root=$("articleSeoImagePreview");if(!root)return;root.innerHTML=url?`<img src="${esc(url)}" alt="Xem trước ảnh SEO">`:"";}
 async function uploadArticleSeoImage(){
