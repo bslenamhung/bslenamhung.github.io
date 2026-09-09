@@ -20,3 +20,10 @@ THỐNG KÊ LƯỢT XEM BÀI VIẾT
 1) Sau khi đã chạy supabase-visits.sql trước đây, mở file supabase-visits.sql của bản V27 và chạy toàn bộ 1 lần trong Supabase SQL Editor.
 2) Website công khai sẽ cộng 1 lượt xem mỗi khi người đọc mở một bài viết.
 3) Tổng lượt xem bài viết trong Dashboard bằng tổng lượt xem của từng bài; chỉ số này khác với Tổng lượt truy cập website.
+
+TỰ ĐỘNG CẬP NHẬT SITEMAP
+- Sau khi anh tạo và xuất bản bài viết trong Quản trị, GitHub Actions sẽ tự kiểm tra Supabase mỗi giờ.
+- Các bài đã xuất bản sẽ tự động được thêm vào sitemap.xml.
+- Bài nháp (published=false) sẽ không được đưa vào sitemap.
+- Workflow cũng có nút Run workflow để anh có thể chạy cập nhật thủ công ngay khi cần.
+- Không cần sửa sitemap.xml bằng tay nữa.
