@@ -40,7 +40,7 @@ def fetch_content():
     if not SUPABASE_URL or not SUPABASE_KEY:
         raise RuntimeError('Thiếu SUPABASE_URL hoặc SUPABASE_KEY.')
     query = urllib.parse.urlencode({'id': 'eq.1', 'select': 'content'})
-    url = f'{SUPABASE_URL}/rest/v1/site_content?{query}'
+    url = f'{SUPABASE_URL}/rest/v1/site_content_public?{query}'
     req = urllib.request.Request(
         url,
         headers={

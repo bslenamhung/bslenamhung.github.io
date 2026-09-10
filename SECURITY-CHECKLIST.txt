@@ -1,0 +1,11 @@
+CHECKLIST SAU KHI TRIỂN KHAI V45
+[ ] Người ngoài mở site vẫn xem được nội dung công khai.
+[ ] Bài nháp không xuất hiện trên website công khai.
+[ ] admin.html chỉ vào được bằng tài khoản có trong admin_users.
+[ ] Tài khoản thường không thể sửa site_content.
+[ ] Tài khoản thường không thể upload/xóa ảnh site-media.
+[ ] Quản trị vẫn thêm/sửa/xóa bài bình thường.
+[ ] Lượt xem bài vẫn tăng bình thường.
+[ ] sitemap.xml vẫn cập nhật và không chứa bài nháp.
+[ ] Bật MFA TOTP cho tài khoản quản trị.
+[ ] GitHub repo không chứa service_role/secret key.

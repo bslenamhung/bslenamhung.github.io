@@ -1,0 +1,11 @@
+BS LÊ NAM HÙNG - TRIỂN KHAI BẢO MẬT V45.2
+
+1) Không chạy tên file vào SQL Editor. Mở file SECURITY-HARDENING-V45.2.sql, copy TOÀN BỘ NỘI DUNG và dán vào SQL Editor.
+2) Chỉ chạy sau khi tài khoản Admin đã có trong public.admin_users.
+3) Bấm Run. Phải không có ERROR.
+4) Kết quả cuối phải có các dòng kiểm tra admin_users, site_content_public và published_articles_in_public.
+5) Không chạy ALTER TABLE / GRANT / REVOKE trên storage.objects. V45.2 đã bỏ hoàn toàn các lệnh đó và chỉ dùng Storage RLS Policies.
+6) Sau khi SQL thành công mới upload bộ website V45.2 lên GitHub.
+7) Sau khi cập nhật GitHub, kiểm tra: trang chủ, bài viết, ngày xuất bản, lượt xem, Admin sửa bài, upload ảnh.
+
+Lưu ý: không đưa secret/service_role key vào HTML/JS/GitHub.

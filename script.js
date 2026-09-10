@@ -25,7 +25,7 @@ async function recordSiteVisit(){
 async function recordArticleView(a){try{if(!window.supabase||!window.SUPABASE_URL)return;const c=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY);await c.rpc('record_article_view',{p_article_id:articleId(a),p_title:String(a?.title||'')});loadArticleViewTotal()}catch(e){}}
 async function loadArticleViewTotal(){try{if(!window.supabase||!window.SUPABASE_URL)return;const c=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY);const r=await c.from('article_view_stats').select('view_count');if(!r.error){const total=(r.data||[]).reduce((n,x)=>n+Number(x.view_count||0),0);const el=document.getElementById('articleViewsTotal');if(el)el.textContent=total.toLocaleString('vi-VN')}}catch(e){}}
 async function loadData(){
- try{if(window.supabase&&SUPABASE_URL.startsWith('http')){const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);const {data,error}=await client.from('site_content').select('content').eq('id',1).maybeSingle();if(!error&&data?.content)return data.content}}catch(e){}
+ try{if(window.supabase&&SUPABASE_URL.startsWith('http')){const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);const {data,error}=await client.from('site_content_public').select('content').eq('id',1).maybeSingle();if(!error&&data?.content)return data.content}}catch(e){}
  return DATA;
 }
 async function render(){
