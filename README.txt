@@ -29,3 +29,6 @@ TỰ ĐỘNG CẬP NHẬT SITEMAP
 - Không cần sửa sitemap.xml bằng tay nữa.
 
 V39: thêm trường SEO cho từng bài viết: tiêu đề SEO, mô tả SEO, từ khóa/chủ đề, ảnh SEO; thêm BlogPosting structured data và Open Graph trên trang bài viết.
+
+
+V43: nâng cấp hệ thống Bài viết liên quan. Hệ thống xếp hạng theo chuyên môn, từ khóa/chủ đề, tiêu đề và mô tả; hoạt động tự động cho cả các bài viết mới về sau.
