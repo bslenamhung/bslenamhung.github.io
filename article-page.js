@@ -74,6 +74,13 @@ function renderRelatedPage(current,list){
  return `<section class="related-articles" aria-labelledby="relatedTitle"><div class="related-head"><div><p class="article-tag">GỢI Ý ĐỌC THÊM</p><h2 id="relatedTitle">Bài viết liên quan</h2></div><a class="text-link" href="index.html#articles">Xem tất cả bài viết →</a></div><div class="related-grid">${cards}</div></section>`;
 }
 
+function formatPublishedDate(a){
+ const raw=a?.publishedAt || a?.createdAt || a?.created_at || a?.date || '';
+ if(!raw) return '';
+ const d=new Date(raw);
+ if(Number.isNaN(d.getTime())) return '';
+ return new Intl.DateTimeFormat('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'}).format(d);
+}
 function setMeta(a){
  const title=(a.seoTitle||a.title||'Bài viết') .trim(); document.title=title;
  const fallbackDesc=String(a.desc||a.content||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,160);
