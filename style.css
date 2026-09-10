@@ -75,3 +75,5 @@
 
 .related-articles{margin-top:46px;padding-top:28px;border-top:1px solid #e7ebef}.related-head{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:18px}.related-head h2{margin:4px 0 0}.related-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.related-card{display:block;padding:18px;border:1px solid #e5e9ed;border-radius:16px;background:#fff;text-decoration:none;transition:transform .18s ease,box-shadow .18s ease}.related-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(25,55,80,.08)}.related-card h3{margin:8px 0 8px;color:#17324a;font-size:1.08rem}.related-card p{margin:0 0 12px;color:#617487;line-height:1.55}.related-card span{font-weight:700;color:#a7784d}.related-tag{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:#a7784d;font-weight:700}
 @media(max-width:700px){.related-head{display:block}.related-head .text-link{display:inline-block;margin-top:8px}.related-grid{grid-template-columns:1fr}}
+
+.article-published-date{margin-top:24px;padding-top:14px;border-top:1px solid #e6eaf0;color:#64748b;font-size:14px}.article-published-date strong{color:#334155;font-weight:700}

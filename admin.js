@@ -185,7 +185,11 @@ function saveArticleFromModal(){
   const current=editingArticleIndex>=0?D.articles[editingArticleIndex]:null;
   const title=$("editTitle").value.trim()||"Bài viết mới";
   const cover=$("editImage").value.trim();
-  const obj={id:current?.id||('art-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8)),title,specialty:$("editSpecialty").value||D.specialties[0]?.name||"Sản khoa",desc:$("editDesc").value.trim(),image:cover,content:$("editContent").innerHTML.trim(),published:$("editPublished").checked,seoTitle:$("editSeoTitle").value.trim()||seoDefaultsFromCurrent().seoTitle,seoDescription:$("editSeoDescription").value.trim()||seoDefaultsFromCurrent().seoDescription,keywords:$("editKeywords").value.trim()||seoDefaultsFromCurrent().keywords,seoImage:$("editSeoImage").value.trim()||cover,updatedAt:new Date().toISOString(),createdAt:current?.createdAt||new Date().toISOString()};
+  const published=$("editPublished").checked;
+  const now=new Date().toISOString();
+  const createdAt=current?.createdAt||now;
+  const publishedAt=published ? (current?.publishedAt||now) : (current?.publishedAt||'');
+  const obj={id:current?.id||('art-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8)),title,specialty:$("editSpecialty").value||D.specialties[0]?.name||"Sản khoa",desc:$("editDesc").value.trim(),image:cover,content:$("editContent").innerHTML.trim(),published,seoTitle:$("editSeoTitle").value.trim()||seoDefaultsFromCurrent().seoTitle,seoDescription:$("editSeoDescription").value.trim()||seoDefaultsFromCurrent().seoDescription,keywords:$("editKeywords").value.trim()||seoDefaultsFromCurrent().keywords,seoImage:$("editSeoImage").value.trim()||cover,updatedAt:now,createdAt,publishedAt};
   if(editingArticleIndex<0)D.articles.unshift(obj);else D.articles[editingArticleIndex]=obj;
   closeArticleEditor();renderAll();gotoSection('articles');setStatus('Đã cập nhật bài viết trong bộ nhớ. Hãy bấm “Lưu thay đổi” để ghi lên hệ thống.')
 }
