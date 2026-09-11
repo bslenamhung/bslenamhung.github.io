@@ -106,6 +106,10 @@ function openArticleEditor(index=-1){
 }
 function closeArticleEditor(){ $("editorModal").hidden=true; editingArticleIndex=-1; }
 async function renderAll(){renderAbout();renderSpecs();renderServices();renderClinic();await renderStats();renderArticlesList()}
+function addSpecialty(){collect();D.specialties.push({name:'Chuyên môn mới',icon:'＋',desc:''});renderSpecs();setStatus('Đã thêm chuyên môn. Bấm “Lưu thay đổi” để ghi lên hệ thống.');}
+function addService(){collect();D.services.push({name:'Dịch vụ mới',desc:'',published:true});renderServices();setStatus('Đã thêm dịch vụ. Bấm “Lưu thay đổi” để ghi lên hệ thống.');}
+function addArticle(){ensureData();openArticleEditor(-1);}
+
 function renderAbout(){$('bioText').value=D.site.bioText||'';$('careerText').value=D.site.careerText||'';$('expertiseText').value=D.site.expertiseText||'';$('researchText').value=D.site.researchText||'';const img=$('profileImagePreview'), fallback=$('profileImageFallback'), url=$('profileImageUrl'); const src=D.site.profileImage||''; if(url)url.value=src; if(img){img.src=src;img.classList.toggle('show',!!src); img.onerror=()=>{img.classList.remove('show'); if(fallback)fallback.style.display='grid';};} if(fallback){fallback.style.display=src?'none':'grid';}['bioImage','careerImage','expertiseImage','researchImage'].forEach(key=>{const urlEl=$(key),pre=$(key+'Preview'),ph=pre?.parentElement?.querySelector('span');const src2=D.site[key]||'';if(urlEl)urlEl.value=src2;if(pre){pre.src=src2||'';pre.style.display=src2?'block':'none';pre.onerror=()=>{pre.style.display='none';if(ph)ph.style.display='inline';};}if(ph)ph.style.display=src2?'none':'inline';});
 }
 async function uploadAboutImage(key){const file=$(key+'File')?.files?.[0],status=$(key+'Status');if(!file){if(status)status.textContent='Vui lòng chọn ảnh.';return}if(status)status.textContent='Đang tải ảnh lên...';try{const url=await uploadPublicImage(file,'about-'+key.replace('Image',''));D.site[key]=url;const u=$(key),pre=$(key+'Preview'),ph=pre?.parentElement?.querySelector('span');if(u)u.value=url;if(pre){pre.src=url;pre.style.display='block';}if(ph)ph.style.display='none';if(status)status.textContent='Đã tải ảnh. Hãy bấm “Lưu thay đổi”.'}catch(err){if(status)status.textContent='Tải ảnh thất bại: '+(err.message||err)}}
@@ -213,4 +217,7 @@ $('articleInlineImageFile').addEventListener('change',handleInlineImageFile);
 $('uploadArticleCover').onclick=uploadArticleCover;
 $('editImage').addEventListener('input',()=>{renderArticleCoverPreview($('editImage').value.trim());$('articleCoverStatus').textContent=''});$('editSeoImage').addEventListener('input',()=>{renderSeoImagePreview($('editSeoImage').value.trim());$('articleSeoImageStatus').textContent=''});$('uploadArticleSeoImage').onclick=uploadArticleSeoImage;$('suggestSeoBtn').onclick=fillSeoSuggestions;
 $('clearFormatting').onclick=()=>{document.execCommand('removeFormat',false,null);$('editContent').focus()};
+if($('addSpec'))$('addSpec').onclick=addSpecialty;
+if($('addService'))$('addService').onclick=addService;
+if($('addArticle'))$('addArticle').onclick=addArticle;
 boot();
