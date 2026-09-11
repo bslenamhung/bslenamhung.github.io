@@ -5,7 +5,7 @@ async function loadSite(){
   try{const c=window.supabase?.createClient?.(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY);if(c){const r=await c.from('site_content_public').select('content').eq('id',1).maybeSingle();if(!r.error&&r.data?.content)return r.data.content}}catch(e){}
   return fallback;
 }
-async function recordArticleViewPage(a){try{const c=window.supabase?.createClient?.(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY);if(!c)return;await c.rpc('record_article_view',{p_article_id:articleIdPage(a),p_title:String(a?.title||'')})}catch(e){}}
+async function recordArticleViewPage(a){try{const c=window.supabase?.createClient?.(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY);if(!c)return;const r=await c.rpc('record_article_view',{p_article_id:articleIdPage(a),p_title:String(a?.title||'')});if(r?.error)console.warn('Không ghi được lượt xem bài viết:',r.error.message||r.error)}catch(e){console.warn('Không ghi được lượt xem bài viết:',e?.message||e)}}
 function upsertMeta(name,content,attr='name'){let m=document.head.querySelector(`meta[${attr}="${name}"]`);if(!m){m=document.createElement('meta');m.setAttribute(attr,name);document.head.appendChild(m)}m.setAttribute('content',content||'')}
 function upsertLink(rel,href){let l=document.head.querySelector(`link[rel="${rel}"]`);if(!l){l=document.createElement('link');l.rel=rel;document.head.appendChild(l)}l.href=href}
 

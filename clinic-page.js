@@ -1,8 +1,8 @@
 const $c=id=>document.getElementById(id);
 const escC=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-const fallbackClinic={intro:'',info:'',booking:'Liên hệ trực tiếp qua điện thoại, Zalo hoặc Facebook để được hướng dẫn đặt lịch khám.',phone:'0946444812',zalo:'http://zaloapp.com/qr/p/quocjkn8vcrk',facebook:'https://www.facebook.com/DrLeNamHung/',zaloQr:'zalo-qr.jpg',address:'169A Lê Lợi, Nam Đông Hà, Quảng Trị',hours:'',weeklyScheduleImage:'',images:['','','',''],logo:'clinic-logo.png',tagline:'Điều trị bằng tri thức, chăm sóc từ trái tim'};
+const fallbackClinic={intro:'',info:'',booking:'Liên hệ trực tiếp qua điện thoại, Zalo hoặc Facebook để được hướng dẫn đặt lịch khám.',phone:'0946444812',zalo:'https://zalo.me/84946444812',facebook:'https://www.facebook.com/DrLeNamHung/',zaloQr:'zalo-qr.jpg',address:'169A Lê Lợi, Nam Đông Hà, Quảng Trị',hours:'',weeklyScheduleImage:'',images:['','','',''],logo:'clinic-logo.png',tagline:'Điều trị bằng tri thức, chăm sóc từ trái tim'};
 function setMeta(title,desc){document.title=title;const m=document.querySelector('meta[name="description"]');if(m)m.content=desc;const ogt=document.querySelector('meta[property="og:title"]');if(ogt)ogt.content=title;const ogd=document.querySelector('meta[property="og:description"]');if(ogd)ogd.content=desc;}
-function applyClinic(c){const x={...fallbackClinic,...(c||{})};
+function applyClinic(c){const x={...fallbackClinic,...(c||{})}; if(x.zalo==='http://zaloapp.com/qr/p/quocjkn8vcrk') x.zalo='https://zalo.me/84946444812';
   if($c('clinicTagline'))$c('clinicTagline').textContent=x.tagline||fallbackClinic.tagline;
   [$c('clinicAddress'),$c('clinicAddressFact')].filter(Boolean).forEach(el=>el.textContent=x.address||fallbackClinic.address);
   [$c('clinicHours'),$c('clinicHoursFact')].filter(Boolean).forEach(el=>el.textContent=x.hours||'Vui lòng xem lịch khám hàng tuần hoặc liên hệ để xác nhận thời gian khám.');

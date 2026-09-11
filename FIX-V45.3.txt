@@ -1,0 +1,16 @@
+BẢN SỬA V45.3 – ZALO + ĐẾM LƯỢT XEM BÀI VIẾT
+
+1. Zalo
+- Link chính thức: https://zalo.me/84946444812
+- Đã thay link cũ ở trang chủ, trang Phòng khám và giá trị mặc định trong Admin.
+- Nếu dữ liệu Supabase còn link Zalo cũ, website tự động chuyển sang link mới.
+- QR Zalo đã được tạo lại theo link mới.
+
+2. Lượt xem bài viết
+- Trang bai-viet.html đọc dữ liệu từ site_content_public (đúng với cấu hình bảo mật V45.2).
+- Khi mở bài viết, website gọi RPC record_article_view để tăng view_count.
+- Lỗi RPC không còn bị im lặng hoàn toàn; sẽ ghi cảnh báo vào Console để dễ kiểm tra.
+- Giữ nguyên cơ chế bảo mật của bảng article_view_stats.
+
+3. Cache
+- bai-viet.html dùng article-page.js?v=45.3 để tránh trình duyệt giữ JS cũ.
