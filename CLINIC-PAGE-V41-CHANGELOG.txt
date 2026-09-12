@@ -1,0 +1,24 @@
+PHIÊN BẢN TRANG PHÒNG KHÁM V41
+
+Đã hoàn thiện phong-kham-san-phu-khoa.html và clinic-page.js.
+
+Các thay đổi chính:
+- Tối ưu tiêu đề/meta/OG/Twitter cho tìm kiếm địa phương Đông Hà - Quảng Trị.
+- Làm rõ tên phòng khám, bác sĩ, địa chỉ và số điện thoại ngay phần đầu trang.
+- Thêm nút Gọi, Zalo, Facebook và Google Maps.
+- Thêm phần giới thiệu phòng khám, thông tin bác sĩ và liên kết nội bộ.
+- Thêm khu vực dịch vụ với dữ liệu từ hệ thống quản trị; có danh sách dự phòng nếu dữ liệu chưa tải.
+- Xử lý các nội dung placeholder cũ để trang không bị trống khi Supabase không có dữ liệu.
+- Thêm FAQ thân thiện với bệnh nhân.
+- Cải thiện Schema.org MedicalClinic và liên kết thực thể.
+- Giữ nguyên cơ chế Supabase hiện có và khả năng cập nhật ảnh/lịch từ trang Quản trị.
+- Bản đồ và các nút liên hệ vẫn hoạt động khi dữ liệu quản trị không tải.
+
+Đã chạy kiểm tra:
+- Node.js syntax check: PASS
+- HTML/JSON-LD structure check: PASS
+- Kiểm tra các file/liên kết nội bộ chính: PASS
+- Kiểm tra placeholder: PASS
+- Local HTTP smoke test: PASS
+
+Lưu ý: Giờ khám thực tế chưa được điền vì file hiện tại không chứa lịch cụ thể. Trang sẽ yêu cầu bệnh nhân liên hệ để xác nhận, tránh công bố giờ chưa được xác minh.

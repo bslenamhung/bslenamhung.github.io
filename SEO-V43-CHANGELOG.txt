@@ -1,0 +1,1 @@
+V43: cleaned sitemap query-string legacy URLs; strengthened homepage/local SEO; added FAQ structured data to clinic page; preserved admin/Supabase structure.

@@ -1,0 +1,6 @@
+V44 Google-ready checklist
+1. Upload the contents of site/ to the GitHub Pages repository root.
+2. Confirm https://bslenamhung.github.io/ loads the new homepage.
+3. In Google Search Console, add property https://bslenamhung.github.io/ and submit sitemap.xml.
+4. Request indexing for the homepage and the 6 key local SEO pages.
+5. Do not request indexing repeatedly; wait for Google to recrawl.
