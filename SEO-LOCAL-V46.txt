@@ -1,0 +1,8 @@
+SEO LOCAL V46
+- Added 5 local landing pages targeting distinct search intents without keyword stuffing.
+- Added a local SEO section to the homepage with internal links.
+- Added seo-local.css.
+- Added the 5 pages to the sitemap generator and current sitemap.xml.
+- Preserved the V45.4 admin/article/Zalo/security files.
+- Main target areas: Quảng Trị and Đông Hà.
+- Important: rankings are not guaranteed; Google local visibility depends on relevance, distance and prominence, plus overall site quality and business profile signals.
