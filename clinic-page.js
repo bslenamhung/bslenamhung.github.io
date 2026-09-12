@@ -33,9 +33,21 @@ function applyClinic(c){
   const schema=$c('clinicStructuredData');if(schema){const data={"@context":"https://schema.org","@type":"MedicalClinic","@id":"https://bslenamhung.github.io/phong-kham-san-phu-khoa.html#clinic","name":"Phòng khám chuyên khoa Phụ sản BS Hùng","alternateName":"Phòng khám Sản Phụ khoa BS Hùng","url":"https://bslenamhung.github.io/phong-kham-san-phu-khoa.html","telephone":phone,"image":x.logo||'https://bslenamhung.github.io/clinic-logo.png',"address":{"@type":"PostalAddress","streetAddress":String(address).split(',')[0].trim(),"addressLocality":"Nam Đông Hà","addressRegion":"Quảng Trị","addressCountry":"VN"},"geo":{"@type":"GeoCoordinates","latitude":16.8041129,"longitude":107.1140670},"sameAs":[x.facebook||fallbackClinic.facebook,'https://zalo.me/84946444812'],"medicalSpecialty":["Obstetrics","Gynecology"]};schema.textContent=JSON.stringify(data);}
 }
 async function loadClinic(){
-  let data={site:{},clinic:{},specialties:[],services:[],articles:[]};window.__SITE_DATA__=data;
-  try{const c=window.supabase?.createClient?.(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY);if(c){const r=await c.from('site_content_public').select('content').eq('id',1).maybeSingle();if(!r.error&&r.data?.content)data=r.data.content;}}catch(e){}
-  window.__SITE_DATA__=data;applyClinic({...fallbackClinic,...(data.clinic||{})});
+  let data={site:{},clinic:{},specialties:[],services:FALLBACK_SERVICES,articles:[]};
+  try{const c=window.supabase?.createClient?.(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY);if(c){const r=await c.from('site_content_public').select('content').eq('id',1).maybeSingle();if(!r.error&&r.data?.content&&typeof r.data.content==='object')data=r.data.content;}}catch(e){}
+  const clinic={...fallbackClinic,...(data.clinic||{})};
+  const genericAddress=['Địa chỉ phòng khám sẽ được cập nhật.'];
+  const genericInfo=['Thông tin giới thiệu phòng khám sẽ được cập nhật.'];
+  const genericHours=['Thông tin thời gian khám sẽ được cập nhật.','Thời gian khám sẽ được cập nhật.'];
+  if(!clinic.address||genericAddress.includes(String(clinic.address).trim()))clinic.address=fallbackClinic.address;
+  if(!clinic.info||genericInfo.includes(String(clinic.info).trim()))clinic.info=fallbackClinic.info;
+  if(!clinic.hours||genericHours.includes(String(clinic.hours).trim()))clinic.hours=fallbackClinic.hours;
+  if(!clinic.booking)clinic.booking=fallbackClinic.booking;
+  if(!clinic.phone)clinic.phone=fallbackClinic.phone;
+  if(!clinic.zalo||clinic.zalo==='http://zaloapp.com/qr/p/quocjkn8vcrk')clinic.zalo=fallbackClinic.zalo;
+  data={...data,clinic,services:Array.isArray(data.services)&&data.services.length?data.services:FALLBACK_SERVICES};
+  window.__SITE_DATA__=data;
+  applyClinic(clinic);
 }
 document.getElementById('navToggle')?.addEventListener('click',()=>document.getElementById('mainNav')?.classList.toggle('open'));
 loadClinic();
