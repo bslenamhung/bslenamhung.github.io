@@ -4,7 +4,7 @@ const FALLBACK_SERVICES=['Khám Sản khoa','Khám Phụ khoa','Vô sinh – Hi�
 const fallbackClinic={intro:'',info:'Phòng khám chuyên khoa Phụ sản BS Hùng do ThS.BS Lê Nam Hùng phụ trách, tập trung vào khám và tư vấn Sản khoa, Phụ khoa và sức khỏe sinh sản tại Đông Hà, Quảng Trị.',booking:'Liên hệ trực tiếp qua điện thoại hoặc Zalo để được hướng dẫn lịch khám và xác nhận thời gian phù hợp.',phone:'0946444812',zalo:'https://zalo.me/84946444812',zaloQr:'zalo-qr.jpg',facebook:'https://www.facebook.com/DrLeNamHung/',address:'169A Lê Lợi, Nam Đông Hà, Quảng Trị',hours:'',weeklyScheduleImage:'',images:['','','',''],logo:'clinic-logo.png',tagline:'Điều trị bằng tri thức, chăm sóc từ trái tim',mapUrl:'https://www.google.com/maps?q=16.8041129,107.1140670'};
 const genericInfo=['Thông tin giới thiệu phòng khám sẽ được cập nhật.','Địa chỉ, thời gian làm việc và thông tin liên hệ sẽ được cập nhật.','Địa chỉ, thời gian làm việc và thông tin liên hệ sẽ được cập nhật'];
 const genericHours=['Thông tin thời gian khám sẽ được cập nhật.','Thời gian khám sẽ được cập nhật.'];
-function useful(v,generic){const s=String(v??'').trim();return !!s&&!generic.includes(s);}
+function useful(v,generic){const s=String(v??'').trim();if(!s)return false;const n=s.replace(/\s+/g,' ').toLowerCase();return !(generic||[]).some(g=>n===String(g).trim().replace(/\s+/g,' ').toLowerCase());}
 function setMeta(title,desc){document.title=title;const m=document.querySelector('meta[name="description"]');if(m)m.content=desc;const ogt=document.querySelector('meta[property="og:title"]');if(ogt)ogt.content=title;const ogd=document.querySelector('meta[property="og:description"]');if(ogd)ogd.content=desc;}
 function applyClinic(c){
   const x={...fallbackClinic,...(c||{})};
@@ -12,7 +12,7 @@ function applyClinic(c){
   const address=useful(x.address,[]) ? x.address : fallbackClinic.address;
   const info=useful(x.info,genericInfo) ? x.info : fallbackClinic.info;
   const booking=useful(x.booking,[]) ? x.booking : fallbackClinic.booking;
-  const hours=useful(x.hours,genericHours) ? x.hours : 'Vui lòng liên hệ phòng khám để xác nhận thời gian khám trước khi đến.';
+  const hours=useful(x.hours,genericHours) ? x.hours : fallbackClinic.hours;
   if($c('clinicTagline'))$c('clinicTagline').textContent=x.tagline||fallbackClinic.tagline;
   [$c('clinicAddress'),$c('clinicAddressFact')].filter(Boolean).forEach(el=>el.textContent=address);
   [$c('clinicHours'),$c('clinicHoursFact')].filter(Boolean).forEach(el=>el.textContent=hours);
