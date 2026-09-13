@@ -1,0 +1,8 @@
+V48 – Sửa hiển thị bài viết trên điện thoại
+
+- Không thay đổi dữ liệu bài viết hoặc hệ thống quản trị.
+- Chuẩn hóa nội dung HTML bài viết để không bị bó hẹp bởi width/max-width inline khi xem trên màn hình nhỏ.
+- Ảnh trong bài viết tự co theo chiều rộng màn hình, giữ tỷ lệ.
+- Chữ nội dung trên điện thoại dùng cỡ dễ đọc 16px và line-height 1.8.
+- Bảng/ảnh/iframe không tràn ngang.
+- Cache-bust style.css và article-page.js lên v48.

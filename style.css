@@ -77,3 +77,42 @@
 @media(max-width:700px){.related-head{display:block}.related-head .text-link{display:inline-block;margin-top:8px}.related-grid{grid-template-columns:1fr}}
 
 .article-published-date{margin-top:24px;padding-top:14px;border-top:1px solid #e6eaf0;color:#64748b;font-size:14px}.article-published-date strong{color:#334155;font-weight:700}
+
+/* V48 – Responsive article reading on phones: normalize pasted/fixed-width article HTML without changing article data. */
+.article-page{width:100%;max-width:900px;margin:0 auto}.article-page-cover{display:block;width:100%;max-width:100%;height:auto;border-radius:14px;object-fit:contain}.article-page-desc{font-size:1.05rem;line-height:1.75;color:#5f6d78}.article-full{width:100%;max-width:100%;font-size:16px;line-height:1.8;overflow-wrap:anywhere}.article-full img{display:block;max-width:100% !important;width:auto !important;height:auto !important}.article-full p,.article-full div,.article-full section,.article-full article,.article-full figure,.article-full blockquote,.article-full ul,.article-full ol,.article-full table{max-width:100% !important}.article-full table{width:100% !important;border-collapse:collapse}.article-full iframe{max-width:100% !important}.article-full a{overflow-wrap:anywhere}
+@media(max-width:700px){
+  .article-page{width:100%;}
+  .article-page h1{font-size:clamp(1.75rem,7vw,2.35rem);line-height:1.2;margin:8px 0 16px}
+  .article-page-cover{width:100%;border-radius:10px;margin:0 0 16px}
+  .article-page-desc{font-size:16px;line-height:1.7;margin:0 0 18px}
+  .article-full{font-size:16px;line-height:1.8;margin-top:18px}
+  .article-full p,.article-full li,.article-full td,.article-full th{font-size:16px !important;line-height:1.8 !important;max-width:100% !important}
+  .article-full h2{font-size:1.35rem !important;line-height:1.35 !important;max-width:100% !important}
+  .article-full h3{font-size:1.15rem !important;line-height:1.4 !important;max-width:100% !important}
+  .article-full h4{font-size:1.05rem !important;line-height:1.45 !important;max-width:100% !important}
+  .article-full ul,.article-full ol{padding-left:1.35rem !important}
+  .article-full [style*="width"],[style*="max-width"]{max-width:100% !important}
+  .article-full [style*="width"]{width:auto !important}
+  .article-full img{width:auto !important;max-width:100% !important;height:auto !important}
+  .article-full table{display:block;width:100% !important;overflow-x:auto}
+}
+
+/* V49 – Mobile reading refinement: comfortable title/body scale and neutralize pasted inline sizing. */
+@media(max-width:700px){
+  .article-page{padding-left:0;padding-right:0;}
+  .article-page h1{font-size:30px !important;line-height:1.22 !important;letter-spacing:-.01em !important;margin:8px 0 18px !important;}
+  .article-page .article-tag{font-size:12px !important;line-height:1.4 !important;}
+  .article-page-desc{font-size:17px !important;line-height:1.72 !important;}
+  .article-full,.article-full *{box-sizing:border-box;}
+  .article-full{font-size:17px !important;line-height:1.75 !important;color:#243447;}
+  .article-full p,.article-full li,.article-full td,.article-full th{font-size:17px !important;line-height:1.75 !important;}
+  .article-full span,.article-full font{font-size:inherit !important;line-height:inherit !important;}
+  .article-full [style*="font-size"]{font-size:inherit !important;}
+  .article-full h2{font-size:24px !important;line-height:1.35 !important;margin:26px 0 12px !important;}
+  .article-full h3{font-size:21px !important;line-height:1.4 !important;margin:22px 0 10px !important;}
+  .article-full h4{font-size:19px !important;line-height:1.45 !important;}
+  .article-full img{display:block;width:auto !important;max-width:100% !important;height:auto !important;margin-left:auto;margin-right:auto;}
+  .article-full table{font-size:15px !important;}
+  .article-full table td,.article-full table th{font-size:15px !important;line-height:1.55 !important;}
+  .article-full blockquote{margin-left:0 !important;margin-right:0 !important;}
+}
