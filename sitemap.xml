@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://bslenamhung.github.io/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://bslenamhung.github.io/phong-kham-san-phu-khoa.html</loc><changefreq>monthly</changefreq><priority>0.95</priority></url>
+  <url><loc>https://bslenamhung.github.io/phong-kham-san-phu-khoa.html</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://bslenamhung.github.io/bac-si-san-phu-khoa-quang-tri.html</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
   <url><loc>https://bslenamhung.github.io/phong-kham-san-phu-khoa-quang-tri.html</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://bslenamhung.github.io/bac-si-san-phu-khoa-quang-tri.html</loc><changefreq>monthly</changefreq><priority>0.85</priority></url>
-  <url><loc>https://bslenamhung.github.io/kham-phu-khoa-dong-ha.html</loc><changefreq>monthly</changefreq><priority>0.85</priority></url>
-  <url><loc>https://bslenamhung.github.io/kham-thai-dong-ha.html</loc><changefreq>monthly</changefreq><priority>0.85</priority></url>
-  <url><loc>https://bslenamhung.github.io/sieu-am-thai-dong-ha.html</loc><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://bslenamhung.github.io/kham-phu-khoa-dong-ha.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://bslenamhung.github.io/kham-thai-dong-ha.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://bslenamhung.github.io/sieu-am-thai-dong-ha.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://bslenamhung.github.io/bai-viet.html?id=art-mtx6irjo-plum35</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://bslenamhung.github.io/bai-viet.html?id=art-mtx6evzz-fnjymp</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://bslenamhung.github.io/bai-viet.html?id=art-mtsyfokd-l1zc5m</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://bslenamhung.github.io/bai-viet.html?id=art-mtsu0l4l-qbs9no</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://bslenamhung.github.io/bai-viet.html?id=art-mtstp2ax-4v3i08</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://bslenamhung.github.io/bai-viet.html?id=art-mtstmvto-7lmlit</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://bslenamhung.github.io/bai-viet.html?id=art-mtstk8pj-q9sgzq</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://bslenamhung.github.io/bai-viet.html?id=art-mtstgo23-ccym3n</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://bslenamhung.github.io/bai-viet.html?id=legacy-11s4ttj</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://bslenamhung.github.io/bai-viet.html?id=legacy-1l94ous</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://bslenamhung.github.io/bai-viet.html?id=legacy-n710f1</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
 </urlset>
