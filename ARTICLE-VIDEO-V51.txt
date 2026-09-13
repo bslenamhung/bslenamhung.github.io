@@ -1,0 +1,8 @@
+V51 - THÊM VIDEO YOUTUBE CHO BÀI VIẾT
+
+- Quản trị > Bài viết có ô dán link YouTube.
+- Hỗ trợ youtube.com/watch?v=, youtu.be, shorts, embed và live.
+- Video hiển thị responsive trên điện thoại/máy tính.
+- Bài cũ không có video: không thay đổi.
+- Dữ liệu video lưu trong trường videoUrl của từng bài viết.
+- Không thay đổi nội dung bài viết, lượt xem, SEO hiện có hoặc sitemap.

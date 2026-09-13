@@ -81,6 +81,19 @@ function formatPublishedDate(a){
  if(Number.isNaN(d.getTime())) return '';
  return new Intl.DateTimeFormat('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'}).format(d);
 }
+function youtubeVideoIdPage(url){
+ const raw=String(url||'').trim(); if(!raw)return '';
+ try{const u=new URL(raw);const host=u.hostname.replace(/^www\./,'').toLowerCase();
+  if(host==='youtu.be')return (u.pathname.split('/').filter(Boolean)[0]||'').slice(0,20);
+  if(host==='youtube.com'||host==='m.youtube.com'||host==='youtube-nocookie.com'){
+   if(u.pathname==='/watch')return (u.searchParams.get('v')||'').slice(0,20);
+   const p=u.pathname.split('/').filter(Boolean);if(['shorts','embed','live'].includes(p[0]))return (p[1]||'').slice(0,20);
+  }}catch(e){} return '';
+}
+function renderArticleVideoPage(a){
+ const id=youtubeVideoIdPage(a?.videoUrl||a?.video||''); if(!id)return '';
+ return `<div class="article-video-wrap"><iframe src="https://www.youtube-nocookie.com/embed/${escPage(id)}" title="${escPage(a?.title||'Video bài viết')}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>`;
+}
 function setMeta(a){
  const title=(a.seoTitle||a.title||'Bài viết') .trim(); document.title=title;
  const fallbackDesc=String(a.desc||a.content||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,160);
@@ -96,6 +109,8 @@ function setMeta(a){
  if(image)schema.image=[image];
  if(a.specialty)schema.articleSection=String(a.specialty);
  if(a.keywords)schema.keywords=String(a.keywords);
+ const videoId=youtubeVideoIdPage(a?.videoUrl||a?.video||'');
+ if(videoId){schema.video={"@type":"VideoObject","name":String(a.title||'Video bài viết'),"embedUrl":`https://www.youtube-nocookie.com/embed/${videoId}`};if(image)schema.video.thumbnailUrl=image;if(a.publishedAt)schema.video.uploadDate=a.publishedAt;}
  if(a.publishedAt)schema.datePublished=a.publishedAt; if(a.updatedAt)schema.dateModified=a.updatedAt;
  const sc=document.createElement('script');sc.type='application/ld+json';sc.id='articleStructuredData';sc.textContent=JSON.stringify(schema);document.head.appendChild(sc);
 }
@@ -105,6 +120,6 @@ function setMeta(a){
  const data=await loadSite(); const list=Array.isArray(data.articles)?data.articles:[];
  const a=list.find(x=>articleIdPage(x)===id||String(x.id||'')===id);
  if(!a){root.innerHTML='<div class="empty"><h2>Không tìm thấy bài viết</h2><p>Bài viết có thể đã được thay đổi hoặc đường dẫn không còn hợp lệ.</p><p><a class="btn primary" href="index.html#articles">← Quay lại bài viết</a></p></div>';return}
- const publishedDate=formatPublishedDate(a); setMeta(a); root.innerHTML=`<article><div class="article-tag">${escPage(a.specialty||'')}</div><h1>${escPage(a.title||'')}</h1>${a.image?`<img class="article-page-cover" src="${escPage(a.image)}" alt="${escPage(a.title||'')}" loading="eager">`:''}<p class="article-page-desc">${escPage(a.desc||'')}</p><div class="article-full">${a.content||''}</div>${publishedDate?`<div class="article-published-date">📅 Ngày xuất bản: <strong>${publishedDate}</strong></div>`:''}<p style="margin-top:32px"><a class="btn secondary" href="index.html#articles">← Xem các bài viết khác</a></p>${renderRelatedPage(a,list)}</article>`;
+ const publishedDate=formatPublishedDate(a); setMeta(a); root.innerHTML=`<article><div class="article-tag">${escPage(a.specialty||'')}</div><h1>${escPage(a.title||'')}</h1>${a.image?`<img class="article-page-cover" src="${escPage(a.image)}" alt="${escPage(a.title||'')}" loading="eager">`:''}${renderArticleVideoPage(a)}<p class="article-page-desc">${escPage(a.desc||'')}</p><div class="article-full">${a.content||''}</div>${publishedDate?`<div class="article-published-date">📅 Ngày xuất bản: <strong>${publishedDate}</strong></div>`:''}<p style="margin-top:32px"><a class="btn secondary" href="index.html#articles">← Xem các bài viết khác</a></p>${renderRelatedPage(a,list)}</article>`;
  recordArticleViewPage(a);
 })();

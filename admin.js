@@ -91,12 +91,35 @@ async function uploadPublicImage(file,folder){
   if(!data?.publicUrl)throw new Error("Không lấy được URL ảnh.");
   return data.publicUrl;
 }
+function youtubeVideoId(url){
+  const raw=String(url||'').trim();
+  if(!raw)return '';
+  try{
+    const u=new URL(raw); const host=u.hostname.replace(/^www\./,'').toLowerCase();
+    if(host==='youtu.be') return (u.pathname.split('/').filter(Boolean)[0]||'').slice(0,20);
+    if(host==='youtube.com' || host==='m.youtube.com' || host==='youtube-nocookie.com'){
+      if(u.pathname==='/watch') return (u.searchParams.get('v')||'').slice(0,20);
+      const parts=u.pathname.split('/').filter(Boolean);
+      if(parts[0]==='shorts' || parts[0]==='embed' || parts[0]==='live') return (parts[1]||'').slice(0,20);
+    }
+  }catch(e){}
+  return '';
+}
+function renderArticleVideoPreview(url){
+  const root=$("articleVideoPreview"),status=$("articleVideoStatus"); if(!root)return;
+  const id=youtubeVideoId(url);
+  if(!url){root.innerHTML='';if(status)status.textContent='';return;}
+  if(!id){root.innerHTML='';if(status)status.textContent='⚠️ Link YouTube chưa hợp lệ. Hãy dùng link dạng youtube.com/watch?v=... hoặc youtu.be/...';return;}
+  root.innerHTML=`<div class="article-video-admin-preview"><iframe src="https://www.youtube-nocookie.com/embed/${esc(id)}" title="Xem trước video YouTube" loading="lazy" allowfullscreen></iframe></div>`;
+  if(status)status.textContent='✅ Link YouTube hợp lệ.';
+}
 function renderArticleCoverPreview(url){const root=$("articleCoverPreview");if(!root)return;root.innerHTML=url?`<img src="${esc(url)}" alt="Xem trước ảnh đại diện">`:"";}
 function openArticleEditor(index=-1){
   editingArticleIndex=index;
-  const a=index>=0?D.articles[index]:{title:"",specialty:D.specialties[0]?.name||"Sản khoa",desc:"",image:"",content:"",published:false,seoTitle:"",seoDescription:"",keywords:"",seoImage:""};
+  const a=index>=0?D.articles[index]:{title:"",specialty:D.specialties[0]?.name||"Sản khoa",desc:"",image:"",content:"",videoUrl:"",published:false,seoTitle:"",seoDescription:"",keywords:"",seoImage:""};
   $("modalTitle").textContent=index>=0?"Sửa bài viết":"Thêm bài viết";
   $("editTitle").value=a.title||""; $("editDesc").value=a.desc||""; $("editImage").value=a.image||"";
+  $("editVideoUrl").value=a.videoUrl||a.video||""; renderArticleVideoPreview(a.videoUrl||a.video||"");
   $("editSeoTitle").value=a.seoTitle||""; $("editSeoDescription").value=a.seoDescription||""; $("editKeywords").value=a.keywords||"";
   $("editSeoImage").value=a.seoImage||a.image||"";
   $("editPublished").checked=a.published!==false;
@@ -211,7 +234,7 @@ document.querySelectorAll('[data-upload-clinic-image]').forEach(b=>b.onclick=()=
   if(go){event.preventDefault();gotoSection(go.dataset.go);return;}
 });
 
-$('closeModal').onclick=closeArticleEditor;$('cancelModal').onclick=closeArticleEditor;$('editorModal').querySelector('.modal-backdrop').onclick=closeArticleEditor;$('saveArticle').onclick=saveArticleFromModal;document.querySelectorAll('.editor-toolbar button[data-cmd]').forEach(b=>b.onclick=()=>{if(b.dataset.cmd==='formatBlock'){document.execCommand('formatBlock',false,b.dataset.value||'p')}else{document.execCommand(b.dataset.cmd,false,null)}$('editContent').focus()});
+$('closeModal').onclick=closeArticleEditor;$('cancelModal').onclick=closeArticleEditor;$('editorModal').querySelector('.modal-backdrop').onclick=closeArticleEditor;$('saveArticle').onclick=saveArticleFromModal;$('editVideoUrl')?.addEventListener('input',()=>renderArticleVideoPreview($('editVideoUrl').value));document.querySelectorAll('.editor-toolbar button[data-cmd]').forEach(b=>b.onclick=()=>{if(b.dataset.cmd==='formatBlock'){document.execCommand('formatBlock',false,b.dataset.value||'p')}else{document.execCommand(b.dataset.cmd,false,null)}$('editContent').focus()});
 $('insertArticleImage').onclick=insertArticleInlineImage;
 $('articleInlineImageFile').addEventListener('change',handleInlineImageFile);
 $('uploadArticleCover').onclick=uploadArticleCover;
