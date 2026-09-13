@@ -116,3 +116,13 @@
   .article-full table td,.article-full table th{font-size:15px !important;line-height:1.55 !important;}
   .article-full blockquote{margin-left:0 !important;margin-right:0 !important;}
 }
+
+/* V50 – Mobile hamburger menu fix: make the ☰ button open the navigation on phones. */
+@media(max-width:900px){
+  .nav-wrap{position:relative;}
+  .nav-toggle{display:grid !important;place-items:center;width:44px;height:44px;padding:0;cursor:pointer;color:#2088d8;border-radius:10px;}
+  .nav-toggle:active{background:#f1f5f7;}
+  .nav-wrap nav.open{display:flex !important;position:absolute;top:calc(100% + 1px);right:0;left:0;flex-direction:column;align-items:stretch;gap:0;padding:8px;background:#fff;border:1px solid #e7ebee;border-top:0;border-radius:0 0 14px 14px;box-shadow:0 12px 28px rgba(31,41,55,.12);z-index:100;}
+  .nav-wrap nav.open a{display:block;padding:13px 16px;font-size:15px;line-height:1.35;border-radius:9px;}
+  .nav-wrap nav.open a:hover,.nav-wrap nav.open a:active{background:#f7f3ef;}
+}
