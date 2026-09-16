@@ -113,6 +113,33 @@ def youtube_id(url):
     return ''
 
 
+def normalize_article_text(value):
+    value = re.sub(r'<[^>]*>', ' ', str(value or ''))
+    value = re.sub(r'&nbsp;|&#160;', ' ', value, flags=re.I)
+    value = re.sub(r'&amp;', '&', value, flags=re.I)
+    return re.sub(r'\s+', ' ', value).strip().lower()
+
+
+def strip_duplicate_leading_title(content, title, seo_title=''):
+    """Remove an editor-inserted copy of the article title at the start of body content.
+
+    The page template already renders the article title as its H1. Only leading blocks
+    whose text exactly equals the title are removed; normal headings later in the article
+    are untouched.
+    """
+    out = str(content or '')
+    targets = {normalize_article_text(title), normalize_article_text(seo_title)} - {''}
+    for _ in range(3):
+        m = re.match(r'^\s*<(h[1-4]|p|div)\b[^>]*>(.*?)</\1>\s*', out, flags=re.I | re.S)
+        if not m:
+            break
+        if normalize_article_text(m.group(2)) in targets:
+            out = out[m.end():]
+        else:
+            break
+    return out
+
+
 def clean_desc(article):
     raw = str(article.get('seoDescription') or article.get('desc') or article.get('content') or '')
     raw = re.sub(r'<[^>]+>', ' ', raw)
@@ -151,7 +178,7 @@ def render_article(article, published):
     canonical = canonical_for(article)
     image = str(article.get('seoImage') or article.get('image') or '').strip()
     specialty = str(article.get('specialty') or '').strip()
-    content = str(article.get('content') or '')
+    content = strip_duplicate_leading_title(article.get('content') or '', article.get('title') or '', article.get('seoTitle') or '')
     short_desc = str(article.get('desc') or '').strip()
     published_text, raw_date = date_text(article)
     video = youtube_id(article.get('videoUrl') or article.get('video') or '')
@@ -237,7 +264,7 @@ def render_article(article, published):
 <meta name="twitter:description" content="{esc(desc)}">
 {f'<meta name="twitter:image" content="{esc(image)}">' if image else ''}
 <script type="application/ld+json">{jsonld}</script>
-<link rel="stylesheet" href="../style.css?v=58">
+<link rel="stylesheet" href="../style.css?v=59">
 </head><body>
 <header class="site-header"><div class="container nav-wrap">
 <a class="brand" href="../index.html"><strong>BS<br>Lê Nam Hùng</strong><span>Sản Phụ khoa</span></a>
