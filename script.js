@@ -23,6 +23,22 @@ async function recordSiteVisit(){
   }catch(e){/* non-blocking */}
 }
 async function recordArticleView(a){try{if(!window.supabase||!window.SUPABASE_URL)return;const c=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY);await c.rpc('record_article_view',{p_article_id:articleId(a),p_title:String(a?.title||'')});loadArticleViewTotal()}catch(e){}}
+async function recordContactClick(type){
+  try{
+    if(!window.supabase||!window.SUPABASE_URL)return;
+    if(!['phone','zalo'].includes(type))return;
+    const c=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY);
+    await c.rpc('record_contact_click',{p_contact_type:type});
+  }catch(e){/* non-blocking */}
+}
+function bindContactTracking(){
+  document.addEventListener('click',event=>{
+    const a=event.target.closest('a[href]'); if(!a)return;
+    const href=String(a.getAttribute('href')||'').trim();
+    if(/^tel:/i.test(href)) recordContactClick('phone');
+    else if(/^https?:\/\/(?:www\.)?zalo\.me\//i.test(href)) recordContactClick('zalo');
+  },{passive:true});
+}
 async function loadArticleViewTotal(){try{if(!window.supabase||!window.SUPABASE_URL)return;const c=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY);const r=await c.from('article_view_stats').select('view_count');if(!r.error){const total=(r.data||[]).reduce((n,x)=>n+Number(x.view_count||0),0);const el=document.getElementById('articleViewsTotal');if(el)el.textContent=total.toLocaleString('vi-VN')}}catch(e){}}
 async function loadData(){
  try{if(window.supabase&&SUPABASE_URL.startsWith('http')){const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);const {data,error}=await client.from('site_content_public').select('content').eq('id',1).maybeSingle();if(!error&&data?.content)return data.content}}catch(e){}
@@ -59,4 +75,4 @@ function bindAboutCards(){document.querySelectorAll('[data-about-key]').forEach(
 function renderArticles(filter=''){const q=document.getElementById('searchInput')?.value.trim().toLowerCase()||'';const rows=(DATA.articles||[]).filter(a=>a.published!==false&&(!filter||a.specialty===filter)&&(!q||(a.title+a.desc+a.specialty+a.content).toLowerCase().includes(q)));document.getElementById('articleGrid').innerHTML=rows.map((a)=>{const u='bai-viet.html?id='+encodeURIComponent(articleId(a));return `<article class="article-card"><div class="body">${a.image?`<img src="${esc(a.image)}" alt="${esc(a.title)}" loading="lazy">`:''}<div class="article-tag">${esc(a.specialty)}</div><h3>${esc(a.title)}</h3><p>${esc(a.desc)}</p><a href="${esc(u)}">Đọc bài viết →</a></div></article>`}).join('');document.getElementById('emptyState').hidden=rows.length>0;}
 function openArticle(a){let m=document.getElementById('articleModal');if(!m){m=document.createElement('div');m.id='articleModal';m.className='article-modal';m.innerHTML='<div class="article-modal-backdrop"></div><div class="article-modal-card"><button class="article-modal-close" aria-label="Đóng">×</button><div class="article-modal-content"></div></div>';document.body.appendChild(m);m.querySelector('.article-modal-close').onclick=()=>m.classList.remove('show');m.querySelector('.article-modal-backdrop').onclick=()=>m.classList.remove('show');}m.querySelector('.article-modal-content').innerHTML=`<div class="article-tag">${esc(a.specialty||'')}</div><h2>${esc(a.title||'')}</h2>${a.image?`<img src="${esc(a.image)}" alt="${esc(a.title||'')}">`:''}<p>${esc(a.desc||'')}</p><div class="article-full">${a.content||''}</div>`;m.classList.add('show');recordArticleView(a)}
 function bindSpecialties(){document.querySelectorAll('.specialty-card').forEach(el=>el.addEventListener('click',()=>{const f=el.dataset.specialty;setTimeout(()=>renderArticles(f),50)}));}
-document.getElementById('searchInput')?.addEventListener('input',()=>renderArticles());document.getElementById('navToggle')?.addEventListener('click',()=>{const n=document.getElementById('mainNav'),b=document.getElementById('navToggle');const open=n?.classList.toggle('open');if(b)b.setAttribute('aria-expanded',String(!!open));});document.querySelectorAll('#mainNav a').forEach(a=>a.addEventListener('click',()=>{document.getElementById('mainNav')?.classList.remove('open');document.getElementById('navToggle')?.setAttribute('aria-expanded','false')}));render();
+bindContactTracking();document.getElementById('searchInput')?.addEventListener('input',()=>renderArticles());document.getElementById('navToggle')?.addEventListener('click',()=>{const n=document.getElementById('mainNav'),b=document.getElementById('navToggle');const open=n?.classList.toggle('open');if(b)b.setAttribute('aria-expanded',String(!!open));});document.querySelectorAll('#mainNav a').forEach(a=>a.addEventListener('click',()=>{document.getElementById('mainNav')?.classList.remove('open');document.getElementById('navToggle')?.setAttribute('aria-expanded','false')}));render();

@@ -56,3 +56,6 @@
 
 /* V51 - YouTube article editor */
 .article-video-preview,.article-video-admin-preview{margin-top:10px;width:min(100%,560px);aspect-ratio:16/9;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden}.article-video-admin-preview iframe{width:100%;height:100%;border:0;display:block}
+
+/* V52 - contact click statistics */
+.contact-stat{border-color:#e7ded4}.contact-total-stat{border-color:#d8e7ef}.contact-stat-note{margin:0 0 20px;color:#64748b;font-size:13px;line-height:1.6}.contact-stat-note strong{color:#334155}

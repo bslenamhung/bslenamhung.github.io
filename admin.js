@@ -30,6 +30,31 @@ async function renderStats(){
     const total=(data||[]).reduce((n,x)=>n+Number(x.view_count||0),0);
     $('statArticleViews').textContent=total.toLocaleString('vi-VN');
   }catch(e){ console.warn('Không đọc được thống kê bài viết:',e); }
+  try{
+    const {data,error}=await client.from('contact_click_stats').select('contact_type,day,click_count').gte('day', new Date(Date.now()-29*86400000).toISOString().slice(0,10));
+    if(error) throw error;
+    const rows=data||[];
+    const todayKey=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Ho_Chi_Minh',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+    const nowVN=new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Ho_Chi_Minh'}));
+    const monthStart=new Date(nowVN.getFullYear(),nowVN.getMonth(),1);
+    const sevenStart=new Date(nowVN.getFullYear(),nowVN.getMonth(),nowVN.getDate()-6);
+    const monthKey=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Ho_Chi_Minh',year:'numeric',month:'2-digit'}).format(new Date());
+    let phone30=0,zalo30=0,phone7=0,zalo7=0,phoneToday=0,zaloToday=0;
+    rows.forEach(r=>{
+      const n=Number(r.click_count||0), type=String(r.contact_type||''), day=String(r.day||'');
+      if(type==='phone'){phone30+=n;if(day>=todayKey)phoneToday+=n;if(day>=sevenStart.toISOString().slice(0,10))phone7+=n;}
+      if(type==='zalo'){zalo30+=n;if(day>=todayKey)zaloToday+=n;if(day>=sevenStart.toISOString().slice(0,10))zalo7+=n;}
+    });
+    $('statPhoneClicks').textContent=phone30.toLocaleString('vi-VN');
+    $('statZaloClicks').textContent=zalo30.toLocaleString('vi-VN');
+    $('statContactTotal').textContent=(phone30+zalo30).toLocaleString('vi-VN');
+    $('statPhoneClicksMeta').textContent=`Hôm nay ${phoneToday.toLocaleString('vi-VN')} · 7 ngày ${phone7.toLocaleString('vi-VN')}`;
+    $('statZaloClicksMeta').textContent=`Hôm nay ${zaloToday.toLocaleString('vi-VN')} · 7 ngày ${zalo7.toLocaleString('vi-VN')}`;
+    $('statContactTotalMeta').textContent=`Hôm nay ${(phoneToday+zaloToday).toLocaleString('vi-VN')} · 7 ngày ${(phone7+zalo7).toLocaleString('vi-VN')}`;
+  }catch(e){
+    console.warn('Không đọc được thống kê liên hệ:',e);
+    ['statPhoneClicks','statZaloClicks','statContactTotal'].forEach(id=>{const el=$(id);if(el)el.textContent='0'});
+  }
 }
 
 function renderClinic(){

@@ -1,0 +1,1 @@
+V52: Dashboard thống kê lượt bấm Gọi điện và Zalo. Chạy CONTACT-TRACKING-V52.sql trong Supabase SQL Editor một lần. Đây là lượt bấm, không phải số bệnh nhân thực tế.
