@@ -66,19 +66,29 @@ def main() -> None:
             article_urls.add(expected)
 
     sitemap_article_urls = {u for u in sitemap_urls if "/bai-viet/" in u}
+    sitemap_stable_urls = {u for u in sitemap_article_urls if "/bai-viet/legacy-" not in u}
     legacy = [u for u in sitemap_urls if "/bai-viet/legacy-" in u]
     old_dynamic = [u for u in sitemap_urls if "bai-viet.html?id=" in u]
     if legacy:
         fail("Sitemap không được chứa URL legacy: " + ", ".join(legacy))
     if old_dynamic:
         fail("Sitemap còn URL bài viết động cũ: " + ", ".join(old_dynamic))
-    if sitemap_article_urls != article_urls:
+    if sitemap_article_urls != sitemap_stable_urls:
+        fail("Sitemap có URL bài viết không phải URL stable.")
+    if sitemap_stable_urls != article_urls:
         missing = sorted(article_urls - sitemap_article_urls)
         extra = sorted(sitemap_article_urls - article_urls)
         if missing:
             fail("Bài viết chưa có trong sitemap: " + ", ".join(missing))
         if extra:
             fail("Sitemap chứa bài viết chưa có file tĩnh: " + ", ".join(extra))
+
+    # Every stable sitemap article URL must map to an existing local HTML file.
+    for url in sorted(sitemap_stable_urls):
+        name = url.rsplit('/bai-viet/', 1)[1]
+        local = ARTICLE_DIR / name
+        if not local.is_file():
+            fail(f"Sitemap trỏ tới file không tồn tại: {url}")
 
     # Public sitemap must not contain dynamic admin/search URLs.
     for url in sitemap_urls:
