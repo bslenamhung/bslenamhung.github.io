@@ -4,7 +4,6 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&
 function articleId(a){if(a&&a.id)return String(a.id);const t=String(a?.title||'').trim();let h=2166136261;for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)}return 'legacy-'+(h>>>0).toString(36)}
 
 
-async function recordArticleView(a){try{if(!window.supabase||!window.SUPABASE_URL)return;const c=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY);await c.rpc('record_article_view',{p_article_id:articleId(a),p_title:String(a?.title||'')});loadArticleViewTotal()}catch(e){}}
 async function recordContactClick(type){
   try{
     if(!window.supabase||!window.SUPABASE_URL)return;

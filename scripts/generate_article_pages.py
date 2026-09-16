@@ -264,7 +264,7 @@ def render_article(article, published):
 <meta name="twitter:description" content="{esc(desc)}">
 {f'<meta name="twitter:image" content="{esc(image)}">' if image else ''}
 <script type="application/ld+json">{jsonld}</script>
-<link rel="stylesheet" href="../style.css?v=62">
+<link rel="stylesheet" href="../style.css?v=64">
 </head><body>
 <header class="site-header"><div class="container nav-wrap">
 <a class="brand" href="../index.html"><strong>BS<br>Lê Nam Hùng</strong><span>Sản Phụ khoa</span></a>
@@ -282,15 +282,15 @@ def render_article(article, published):
 </article></div></section></main>
 <footer class="site-footer"><div class="container"><div>© <span id="year"></span> ThS.BS Lê Nam Hùng – Sản Phụ khoa</div><div><a href="../index.html">Về trang chủ</a></div></div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="../supabase-config.js?v=62"></script>
+<script src="../supabase-config.js?v=64"></script>
 <script>
 document.getElementById('year').textContent=new Date().getFullYear();
 const nav=document.getElementById('mainNav'),btn=document.getElementById('navToggle');
 btn?.addEventListener('click',()=>{{const open=nav?.classList.toggle('open');btn?.setAttribute('aria-expanded',String(!!open));}});
 document.querySelectorAll('#mainNav a').forEach(a=>a.addEventListener('click',()=>{{nav?.classList.remove('open');btn?.setAttribute('aria-expanded','false')}}));
 </script>
-<script src="../site-visit.js?v=62"></script>
-<script src="../static-article-live.js?v=62"></script>
+<script src="../site-visit.js?v=64"></script>
+<script src="../static-article-live.js?v=64"></script>
 </body></html>'''
 
 

@@ -65,7 +65,7 @@
       const a=list.find(x=>x&&x.published!==false&&(idOf(x)===id||String(x.id||'')===id));
       if(!a)return;
       render(root,a,list);meta(a);
-      try{await c.rpc('record_article_view',{p_article_id:idOf(a),p_title:String(a.title||'')})}catch(e){}
+      try{if(!window.__BSHUNG_ARTICLE_VIEW_RECORDED__){const vr=await c.rpc('record_article_view',{p_article_id:idOf(a),p_title:String(a.title||'')});if(vr?.error)throw vr.error;window.__BSHUNG_ARTICLE_VIEW_RECORDED__=true}}catch(e){console.warn('Không ghi được lượt xem bài viết:',e?.message||e)}
     }catch(e){/* giữ nội dung tĩnh */}
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
