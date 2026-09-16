@@ -300,3 +300,29 @@ body{font-size:16px}
   .article-full,.article-full p,.article-full li,.article-full blockquote,.article-full div,.article-full td,.article-full th{font-size:16px!important;line-height:1.68!important}
   .article-full img{max-height:300px!important}
 }
+
+/* V60 ARTICLE FINAL OVERRIDES: mobile-first, không phóng chữ quá lớn */
+.article-page{max-width:820px;margin:0 auto}
+.article-page h1{font-size:clamp(30px,4vw,42px);line-height:1.22;margin:8px 0 18px}
+.article-full{font-size:17px;line-height:1.78;color:#25343d;overflow-wrap:anywhere}
+.article-full p{margin:0 0 14px}
+.article-full h2{font-size:24px;line-height:1.35;margin:28px 0 12px}
+.article-full h3{font-size:20px;line-height:1.4;margin:22px 0 10px}
+.article-full img{display:block;max-width:100%!important;width:auto!important;height:auto!important;margin:16px auto}
+.article-full table{display:block;width:100%!important;overflow-x:auto;border-collapse:collapse}
+@media(max-width:700px){
+  .article-page{max-width:none;width:100%;padding:0 16px}
+  .article-page h1{font-size:27px!important;line-height:1.25!important;margin:5px 0 15px!important}
+  .article-page-desc{font-size:16px!important;line-height:1.7!important}
+  .article-full{font-size:16px!important;line-height:1.76!important}
+  .article-full h2{font-size:22px!important;line-height:1.38!important;margin:25px 0 11px!important}
+  .article-full h3{font-size:18px!important;line-height:1.4!important;margin:20px 0 9px!important}
+  .article-full p{margin-bottom:13px}
+  .article-page-cover{max-width:100%!important;width:auto!important;height:auto!important;max-height:none!important}
+  .article-full img{max-width:100%!important;width:auto!important;height:auto!important}
+  .article-full iframe{max-width:100%!important}
+}
+@media(max-width:420px){
+  .article-page{padding-left:14px;padding-right:14px}
+  .article-page h1{font-size:25px!important}
+}

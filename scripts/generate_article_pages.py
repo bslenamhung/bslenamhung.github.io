@@ -264,14 +264,14 @@ def render_article(article, published):
 <meta name="twitter:description" content="{esc(desc)}">
 {f'<meta name="twitter:image" content="{esc(image)}">' if image else ''}
 <script type="application/ld+json">{jsonld}</script>
-<link rel="stylesheet" href="../style.css?v=59">
+<link rel="stylesheet" href="../style.css?v=60">
 </head><body>
 <header class="site-header"><div class="container nav-wrap">
 <a class="brand" href="../index.html"><strong>BS<br>Lê Nam Hùng</strong><span>Sản Phụ khoa</span></a>
 <button class="nav-toggle" id="navToggle" type="button" aria-label="Mở menu" aria-expanded="false">☰</button>
 <nav id="mainNav"><a href="../index.html">Trang chủ</a><a href="../index.html#about">Về BS Lê Nam Hùng</a><a href="../index.html#specialties">Chuyên môn</a><a href="../index.html#clinic">Phòng khám</a><a href="../index.html#contact">Liên hệ</a></nav>
 </div></header>
-<main><section class="section"><div class="container"><article class="article-page">
+<main><section class="section"><div class="container"><article class="article-page" id="articleLiveRoot" data-article-id="{esc(aid)}">
 <div class="article-tag">{esc(specialty)}</div>
 <h1>{esc(str(article.get('title') or title))}</h1>
 {image_html}{video_html}{desc_html}
@@ -281,12 +281,15 @@ def render_article(article, published):
 {rel_html}
 </article></div></section></main>
 <footer class="site-footer"><div class="container"><div>© <span id="year"></span> ThS.BS Lê Nam Hùng – Sản Phụ khoa</div><div><a href="../index.html">Về trang chủ</a></div></div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../supabase-config.js?v=60"></script>
 <script>
 document.getElementById('year').textContent=new Date().getFullYear();
 const nav=document.getElementById('mainNav'),btn=document.getElementById('navToggle');
 btn?.addEventListener('click',()=>{{const open=nav?.classList.toggle('open');btn?.setAttribute('aria-expanded',String(!!open));}});
 document.querySelectorAll('#mainNav a').forEach(a=>a.addEventListener('click',()=>{{nav?.classList.remove('open');btn?.setAttribute('aria-expanded','false')}}));
 </script>
+<script src="../static-article-live.js?v=60"></script>
 </body></html>'''
 
 
