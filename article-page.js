@@ -11,7 +11,7 @@ function upsertLink(rel,href){let l=document.head.querySelector(`link[rel="${rel
 
 function articleUrlPage(a){
  const id=articleIdPage(a);
- return `bai-viet.html?id=${encodeURIComponent(id)}`;
+ return `bai-viet/${encodeURIComponent(id)}.html`;
 }
 function normWords(s){
  return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').split(/[^a-z0-9]+/).filter(w=>w.length>=3);
@@ -98,7 +98,7 @@ function setMeta(a){
  const title=(a.seoTitle||a.title||'Bài viết') .trim(); document.title=title;
  const fallbackDesc=String(a.desc||a.content||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,160);
  const desc=String(a.seoDescription||fallbackDesc||'Kiến thức Sản Phụ khoa của Th.BSNT Lê Nam Hùng.').trim().slice(0,160);
- const canonical=location.href;
+ const canonical=new URL(articleUrlPage(a),location.href).href;
  upsertMeta('description',desc); upsertMeta('robots','index,follow');
  upsertMeta('og:title',title,'property'); upsertMeta('og:description',desc,'property'); upsertMeta('og:type','article','property'); upsertMeta('og:url',canonical,'property');
  const image=String(a.seoImage||a.image||'').trim(); if(image)upsertMeta('og:image',image,'property');

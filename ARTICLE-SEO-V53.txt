@@ -1,0 +1,10 @@
+V53 – SEO BÀI VIẾT
+
+1. Tạo trang HTML tĩnh cho mọi bài viết đã xuất bản từ Supabase tại /bai-viet/<id>.html.
+2. Các trang tĩnh có title, meta description, robots index/follow, canonical, Open Graph, Twitter và BlogPosting JSON-LD ngay trong HTML ban đầu.
+3. GitHub Actions chạy mỗi giờ để tự động tạo/cập nhật/xóa trang tĩnh theo trạng thái published trong Supabase.
+4. sitemap.xml tự động trỏ tới URL tĩnh/canonical của từng bài viết.
+5. Trang chủ dùng URL tĩnh mới khi tạo liên kết tới bài viết; URL cũ bai-viet.html?id=... vẫn giữ để tương thích.
+6. Trang bai-viet.html cũ khi render bài sẽ đặt canonical về URL tĩnh tương ứng.
+7. Không thay đổi dữ liệu bài viết trong Supabase, không thay đổi hệ thống quản trị bài viết.
+8. V53 không thể đảm bảo Google index ngay; Google vẫn tự quyết định crawl/index. Mục tiêu là cung cấp HTML tĩnh dễ crawl hơn và tín hiệu sitemap/canonical nhất quán.

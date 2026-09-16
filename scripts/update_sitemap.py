@@ -84,7 +84,8 @@ def build_sitemap(content):
         if article_id in seen:
             continue
         seen.add(article_id)
-        loc = f'{BASE_URL}/bai-viet.html?id={urllib.parse.quote(article_id, safe="")}'
+        # URL tĩnh, crawlable và là canonical của từng bài viết.
+        loc = f'{BASE_URL}/bai-viet/{urllib.parse.quote(article_id, safe="_-.")}.html'
         urls.append((loc, 'monthly', '0.8'))
 
     lines = [
