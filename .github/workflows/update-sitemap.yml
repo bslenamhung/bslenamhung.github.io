@@ -20,7 +20,11 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
-
+      - name: Tao trang bai viet tinh tu Supabase
+        env:
+          SUPABASE_URL: https://tufzlxfrtdhestbemcly.supabase.co
+          SUPABASE_KEY: sb_publishable_gsKYsz40vs6iyWqkb6zyqg_OwoM8k87
+        run: python scripts/generate_article_pages.py
       - name: Tao sitemap tu Supabase
         env:
           SUPABASE_URL: https://tufzlxfrtdhestbemcly.supabase.co
