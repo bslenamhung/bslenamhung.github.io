@@ -1,0 +1,7 @@
+V58 – GIAO DIỆN MOBILE-FIRST
+- Cân bằng cỡ chữ bài viết: 17px desktop, 16px mobile.
+- Tiêu đề bài viết và tiêu đề mục có phân cấp rõ ràng, không quá lớn trên điện thoại.
+- Ảnh bài viết tự co theo khung, không méo/crop; giới hạn chiều cao hợp lý trên mobile.
+- Video tự co theo chiều rộng màn hình.
+- Bảng trên mobile có cuộn ngang thay vì phá bố cục.
+- Giữ nguyên hệ thống quản trị, Supabase, thống kê, liên hệ, SEO, sitemap và workflow tự động của V55.

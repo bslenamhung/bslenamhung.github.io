@@ -1,0 +1,26 @@
+V55 – BẢN HOÀN CHỈNH BÀI VIẾT TỰ ĐỘNG + SEO
+
+1. Workflow tự động:
+- Chạy thủ công hoặc tự động mỗi 15 phút.
+- Lấy bài viết đã xuất bản từ Supabase.
+- Tạo lại toàn bộ /bai-viet/<id>.html.
+- Cập nhật sitemap.xml.
+- git add -A trước khi kiểm tra thay đổi, nên nhận cả file mới, file sửa và file bị xóa.
+- Tự commit và push khi có thay đổi.
+- Có concurrency để tránh hai lần chạy chồng nhau.
+- Có bước kiểm tra số trang bài viết và số URL sitemap trong log Actions.
+
+2. Fallback 404:
+- Nếu người dùng mở /bai-viet/<id>.html ngay sau khi đăng bài, trước khi GitHub Actions kịp tạo file tĩnh, 404.html tự chuyển sang bai-viet.html?id=<id>.
+- Vì vậy bài mới không còn bị 404 chỉ vì workflow chưa chạy.
+- Khi trang tĩnh được tạo, URL /bai-viet/<id>.html sẽ phục vụ trực tiếp HTML SEO.
+
+3. SEO:
+- Trang tĩnh dùng canonical /bai-viet/<id>.html.
+- Sitemap dùng URL tĩnh.
+- Bài đã hủy xuất bản sẽ bị loại khỏi sitemap và file tĩnh được xóa ở lần workflow tiếp theo.
+
+4. Không thay đổi:
+- Quản trị bài viết, lượt xem bài viết, theo dõi gọi điện/Zalo, giao diện mobile, YouTube, các trang SEO địa phương và cấu hình Supabase hiện có.
+
+V57 – Chuẩn hóa cỡ chữ bài viết và kích thước ảnh; giữ nguyên chức năng SEO, quản trị và workflow tự động.

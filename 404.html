@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,follow">
+  <title>Đang mở bài viết | BS Lê Nam Hùng</title>
+  <style>
+    body{font-family:Arial,sans-serif;max-width:720px;margin:80px auto;padding:24px;text-align:center;color:#333}
+    a{color:#0b57d0}
+  </style>
+</head>
+<body>
+  <h1>Đang mở bài viết…</h1>
+  <p>Vui lòng chờ trong giây lát.</p>
+  <p><a href="/index.html#articles">Quay lại danh sách bài viết</a></p>
+  <script>
+  (function(){
+    var path = window.location.pathname;
+    var match = path.match(/^\/bai-viet\/([^/]+)\.html$/);
+    if(match){
+      var id = decodeURIComponent(match[1]);
+      window.location.replace('/bai-viet.html?id=' + encodeURIComponent(id));
+    }
+  })();
+  </script>
+</body>
+</html>

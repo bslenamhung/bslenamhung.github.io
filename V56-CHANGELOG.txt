@@ -1,0 +1,10 @@
+V56 – TYPOGRAPHY & IMAGE BALANCE
+
+- Giảm cỡ chữ tiêu đề lớn trên trang chủ và trang bài viết.
+- Chuẩn hóa nội dung bài viết khoảng 16–17px, line-height dễ đọc.
+- Ảnh đầu bài giữ đúng tỷ lệ, không ép crop; giới hạn chiều cao để tránh ảnh quá lớn.
+- Ảnh trong nội dung được căn giữa, max-width 100%, max-height hợp lý.
+- Ảnh bài viết trên mobile tối đa 360px ở ảnh đầu và 420px trong nội dung.
+- Điều chỉnh ảnh thẻ bài viết, gallery phòng khám và logo cân đối hơn.
+- Tăng version CSS lên v56 để tránh cache CSS cũ.
+- Giữ nguyên hệ thống quản trị, Supabase, tracking, SEO, static article và workflow V55.
