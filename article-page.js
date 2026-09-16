@@ -124,7 +124,7 @@ function setMeta(a){
  const fallbackDesc=String(a.desc||a.content||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,160);
  const desc=String(a.seoDescription||fallbackDesc||'Kiến thức Sản Phụ khoa của Th.BSNT Lê Nam Hùng.').trim().slice(0,160);
  const canonical=new URL(articleUrlPage(a),location.href).href;
- upsertMeta('description',desc); upsertMeta('robots','index,follow');
+ upsertMeta('description',desc); upsertMeta('robots','noindex,follow');
  upsertMeta('og:title',title,'property'); upsertMeta('og:description',desc,'property'); upsertMeta('og:type','article','property'); upsertMeta('og:url',canonical,'property');
  const image=String(a.seoImage||a.image||'').trim(); if(image)upsertMeta('og:image',image,'property');
  if(a.keywords)upsertMeta('keywords',String(a.keywords).trim());

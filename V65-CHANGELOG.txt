@@ -1,0 +1,24 @@
+V65 – BẢN ỔN ĐỊNH BÀI VIẾT + URL SEO
+
+Mục tiêu:
+- Bài viết đã xuất bản được tạo thành file HTML tĩnh tại /bai-viet/<id>.html.
+- URL tĩnh là canonical chính thức và được đưa vào sitemap.xml.
+- URL cũ /bai-viet.html?id=... vẫn mở được nhưng được đánh noindex,follow để tránh trùng lặp.
+- Nội dung bài viết tĩnh có sẵn trong HTML trước khi JavaScript chạy, giúp crawler đọc được nội dung.
+- Supabase vẫn được dùng để cập nhật nội dung mới nhất, thống kê lượt xem và lượt truy cập.
+- Khi bài viết được sửa, xuất bản hoặc bỏ xuất bản, GitHub Actions tự đồng bộ lại trang tĩnh và sitemap.
+
+Đã sửa:
+1. Bỏ lời gọi recordArticleView() không tồn tại trong script.js.
+2. openArticle() chuyển thẳng đến URL bài viết tĩnh.
+3. bai-viet.html và article-page.js dùng noindex,follow cho URL động cũ.
+4. Bổ sung bước kiểm tra tự động trước khi GitHub Actions commit.
+5. Kiểm tra canonical, H1, meta description, BlogPosting và đối chiếu sitemap với thư mục bai-viet/.
+6. Chống URL bài viết cũ dạng bai-viet.html?id=... xuất hiện trong sitemap.
+7. Tăng cache version lên v65.
+8. Workflow chạy mỗi 15 phút và có thể chạy thủ công bằng workflow_dispatch.
+
+QUAN TRỌNG:
+- Bản V65 KHÔNG yêu cầu chạy lại SQL Supabase nếu anh đã chạy V64-SUPABASE-FIX-V2-DA-KIEM-TRA.sql thành công.
+- Không chạy các file SQL cũ từ các phiên bản trước.
+- Sau khi upload V65 lên GitHub, vào Actions > “Tu dong cap nhat bai viet va sitemap” > Run workflow một lần để đồng bộ ngay.

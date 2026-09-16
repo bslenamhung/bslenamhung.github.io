@@ -1,0 +1,15 @@
+V65 – CHECKLIST TRƯỚC KHI DÙNG
+
+Đã kiểm tra local:
+- Python scripts compile OK.
+- JavaScript root files pass node --check.
+- Bộ sinh bài viết tạo đúng file /bai-viet/<id>.html từ dữ liệu mẫu.
+- ID cũ không có id được tính bằng FNV-1a UTF-16 giống JavaScript.
+- Bài chưa xuất bản không được tạo trang.
+- Canonical của bài viết trỏ đúng URL tĩnh.
+- Trang bài viết có H1, meta description, robots index,follow và BlogPosting.
+- Sitemap không chứa URL bai-viet.html?id=...
+- Sitemap và các file bài viết tĩnh phải khớp 1:1; nếu không, GitHub Actions sẽ dừng và không push.
+- Lỗi recordArticleView() không tồn tại đã được loại bỏ.
+
+Không thể kiểm tra kết nối trực tiếp đến Supabase trong môi trường đóng của quá trình đóng gói này, vì vậy GitHub Actions sẽ là bước kiểm tra kết nối thật. Nếu Supabase trả lỗi, workflow dừng trước khi commit.

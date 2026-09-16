@@ -1,4 +1,4 @@
-/* V62: cập nhật nội dung bài viết tĩnh trực tiếp từ Supabase.
+/* V65: cập nhật nội dung bài viết tĩnh trực tiếp từ Supabase.
    Trang HTML tĩnh vẫn là fallback SEO nếu mạng/Supabase không sẵn sàng. */
 (function(){
   'use strict';
