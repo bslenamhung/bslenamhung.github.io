@@ -41,6 +41,7 @@ def main() -> None:
     sitemap_set = set(sitemap_urls)
 
     article_urls = set()
+    legacy_pages = set()
     for page in pages:
         html = page.read_text(encoding="utf-8")
         expected = f"{BASE}/bai-viet/{page.name}"
@@ -59,12 +60,18 @@ def main() -> None:
             fail(f"Thiếu BlogPosting structured data: {page}")
         if "bai-viet.html?id=" in html:
             fail(f"Còn URL bài viết cũ trong HTML tĩnh: {page}")
-        article_urls.add(expected)
+        if page.stem.startswith('legacy-'):
+            legacy_pages.add(expected)
+        else:
+            article_urls.add(expected)
 
     sitemap_article_urls = {u for u in sitemap_urls if "/bai-viet/" in u}
-    legacy = [u for u in sitemap_urls if "bai-viet.html?id=" in u]
+    legacy = [u for u in sitemap_urls if "/bai-viet/legacy-" in u]
+    old_dynamic = [u for u in sitemap_urls if "bai-viet.html?id=" in u]
     if legacy:
-        fail("Sitemap còn URL bài viết cũ: " + ", ".join(legacy))
+        fail("Sitemap không được chứa URL legacy: " + ", ".join(legacy))
+    if old_dynamic:
+        fail("Sitemap còn URL bài viết động cũ: " + ", ".join(old_dynamic))
     if sitemap_article_urls != article_urls:
         missing = sorted(article_urls - sitemap_article_urls)
         extra = sorted(sitemap_article_urls - article_urls)

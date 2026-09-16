@@ -82,6 +82,11 @@ def build_sitemap(content):
         if not isinstance(article, dict) or article.get('published') is False:
             continue
         article_id = js_article_id(article)
+        # Legacy IDs are kept as compatibility pages but are intentionally
+        # excluded from the public sitemap. Only stable, explicit article IDs
+        # are promoted as canonical sitemap URLs.
+        if article_id.startswith('legacy-'):
+            continue
         if article_id in seen:
             duplicate_ids.add(article_id)
             continue
