@@ -3,7 +3,7 @@ name: Tu dong cap nhat sitemap
 on:
   workflow_dispatch:
   schedule:
-    - cron: '17 * * * *'
+    - cron: '*/15 * * * *'
 
 permissions:
   contents: write
@@ -11,6 +11,7 @@ permissions:
 jobs:
   update-sitemap:
     runs-on: ubuntu-latest
+
     steps:
       - name: Tai ma nguon
         uses: actions/checkout@v4
@@ -32,18 +33,83 @@ jobs:
           SUPABASE_KEY: sb_publishable_gsKYsz40vs6iyWqkb6zyqg_OwoM8k87
         run: python scripts/update_sitemap.py
 
-      - name: Stage trang bai viet va sitemap
+      - name: Kiem tra sitemap
+        shell: bash
         run: |
-          git add -A bai-viet sitemap.xml
+          set -e
 
-      - name: Commit va push neu co thay doi
+          echo "=== KIEM TRA SITEMAP ==="
+
+          if grep -q 'bai-viet.html?id=' sitemap.xml; then
+            echo "LOI: sitemap con URL bai-viet.html?id="
+            exit 1
+          fi
+
+          if grep -q '/bai-viet/legacy-' sitemap.xml; then
+            echo "LOI: sitemap con legacy article"
+            exit 1
+          fi
+
+          echo "Khong co URL legacy."
+
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          import sys
+
+          sitemap = Path("sitemap.xml").read_text(encoding="utf-8")
+
+          urls = re.findall(
+              r"<loc>(https://bslenamhung\.github\.io/bai-viet/(art-[^<]+\.html))</loc>",
+              sitemap
+          )
+
+          files = {
+              p.name
+              for p in Path("bai-viet").glob("art-*.html")
+          }
+
+          sitemap_files = {Path(u).name for u in urls}
+
+          print("So bai trong sitemap:", len(sitemap_files))
+          print("So file bai-viet art-*:", len(files))
+
+          missing = sorted(sitemap_files - files)
+          extra = sorted(files - sitemap_files)
+
+          if missing:
+              print("LOI: URL trong sitemap khong co file:")
+              for x in missing:
+                  print(" -", x)
+              sys.exit(1)
+
+          if extra:
+              print("LOI: file bai-viet khong co trong sitemap:")
+              for x in extra:
+                  print(" -", x)
+              sys.exit(1)
+
+          print("Kiem tra file bai viet: OK")
+          PY
+
+          python - <<'PY'
+          import xml.etree.ElementTree as ET
+          ET.parse("sitemap.xml")
+          print("XML sitemap: OK")
+          PY
+
+          echo "=== SITEMAP HOP LE ==="
+
+      - name: Luu trang bai viet va sitemap
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
+          git add -A bai-viet sitemap.xml
+
           if git diff --cached --quiet; then
             echo "Khong co thay doi."
           else
-            git commit -m "chore: cap nhat trang bai viet va sitemap"
+            git commit -m "chore: cap nhat bai viet va sitemap"
             git push
           fi
