@@ -1,7 +1,8 @@
 -- ==========================================================
 -- BS LÊ NAM HÙNG - THỐNG KÊ LƯỢT TRUY CẬP
 -- Chạy 1 lần trong Supabase -> SQL Editor
--- Mỗi trình duyệt chỉ được tính tối đa 1 lượt/ngày.
+-- Mỗi lần tải một trang công khai gọi RPC sẽ được tính 1 lượt truy cập.
+-- Không còn giới hạn 1 lượt/ngày ở phía trình duyệt.
 -- ==========================================================
 
 create table if not exists public.site_visit_stats (

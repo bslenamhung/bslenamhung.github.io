@@ -1,4 +1,4 @@
-/* V60: cập nhật nội dung bài viết tĩnh trực tiếp từ Supabase.
+/* V62: cập nhật nội dung bài viết tĩnh trực tiếp từ Supabase.
    Trang HTML tĩnh vẫn là fallback SEO nếu mạng/Supabase không sẵn sàng. */
 (function(){
   'use strict';
@@ -14,7 +14,7 @@
     let out=String(content||'');
     const targets=new Set([norm(title),norm(seoTitle)].filter(Boolean));
     for(let i=0;i<4;i++){
-      const m=out.match(/^\s*<(h[1-4]|p|div)\b[^>]*>([\s\S]*?)<\/\1>\s*/i);
+      const m=out.match(/^\s*<(h[1-6]|p|div|section|article|strong|b)\b[^>]*>([\s\S]*?)<\/\1>\s*/i);
       if(!m)break;
       if(targets.has(norm(m[2])))out=out.slice(m[0].length);else break;
     }
@@ -62,7 +62,7 @@
       const r=await c.from('site_content_public').select('content').eq('id',1).maybeSingle();
       if(r.error||!r.data?.content)return;
       const list=Array.isArray(r.data.content.articles)?r.data.content.articles:[];
-      const a=list.find(x=>idOf(x)===id||String(x.id||'')===id&&x.published!==false);
+      const a=list.find(x=>x&&x.published!==false&&(idOf(x)===id||String(x.id||'')===id));
       if(!a)return;
       render(root,a,list);meta(a);
       try{await c.rpc('record_article_view',{p_article_id:idOf(a),p_title:String(a.title||'')})}catch(e){}

@@ -1,0 +1,9 @@
+V62 - HOAN THIEN THONG KE
+
+- Bo gioi han localStorage 1 luot/ngay.
+- Moi lan tai mot trang cong khai duoc ghi 1 luot truy cap.
+- Dung site-visit.js lam co che duy nhat, tranh ghi trung do script homepage cu.
+- Trang bai viet tinh va bai-viet.html deu ghi luot truy cap.
+- 6 trang SEO dia phuong cung duoc tinh.
+- Luot xem bai viet van +1 khi mo dung bai; khong dung chung voi luot truy cap.
+- Dong bo cache bust len v62.

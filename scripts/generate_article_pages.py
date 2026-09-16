@@ -130,7 +130,7 @@ def strip_duplicate_leading_title(content, title, seo_title=''):
     out = str(content or '')
     targets = {normalize_article_text(title), normalize_article_text(seo_title)} - {''}
     for _ in range(3):
-        m = re.match(r'^\s*<(h[1-4]|p|div)\b[^>]*>(.*?)</\1>\s*', out, flags=re.I | re.S)
+        m = re.match(r'^\s*<(h[1-6]|p|div|section|article|strong|b)\b[^>]*>(.*?)</\1>\s*', out, flags=re.I | re.S)
         if not m:
             break
         if normalize_article_text(m.group(2)) in targets:
@@ -264,7 +264,7 @@ def render_article(article, published):
 <meta name="twitter:description" content="{esc(desc)}">
 {f'<meta name="twitter:image" content="{esc(image)}">' if image else ''}
 <script type="application/ld+json">{jsonld}</script>
-<link rel="stylesheet" href="../style.css?v=60">
+<link rel="stylesheet" href="../style.css?v=62">
 </head><body>
 <header class="site-header"><div class="container nav-wrap">
 <a class="brand" href="../index.html"><strong>BS<br>Lê Nam Hùng</strong><span>Sản Phụ khoa</span></a>
@@ -282,14 +282,15 @@ def render_article(article, published):
 </article></div></section></main>
 <footer class="site-footer"><div class="container"><div>© <span id="year"></span> ThS.BS Lê Nam Hùng – Sản Phụ khoa</div><div><a href="../index.html">Về trang chủ</a></div></div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="../supabase-config.js?v=60"></script>
+<script src="../supabase-config.js?v=62"></script>
 <script>
 document.getElementById('year').textContent=new Date().getFullYear();
 const nav=document.getElementById('mainNav'),btn=document.getElementById('navToggle');
 btn?.addEventListener('click',()=>{{const open=nav?.classList.toggle('open');btn?.setAttribute('aria-expanded',String(!!open));}});
 document.querySelectorAll('#mainNav a').forEach(a=>a.addEventListener('click',()=>{{nav?.classList.remove('open');btn?.setAttribute('aria-expanded','false')}}));
 </script>
-<script src="../static-article-live.js?v=60"></script>
+<script src="../site-visit.js?v=62"></script>
+<script src="../static-article-live.js?v=62"></script>
 </body></html>'''
 
 
@@ -299,6 +300,11 @@ def main():
     if not isinstance(articles, list):
         raise RuntimeError('Danh sách articles không hợp lệ.')
     published = [a for a in articles if isinstance(a, dict) and a.get('published') is not False]
+
+    ids = [safe_id(article_id(a)) for a in published]
+    duplicates = sorted({x for x in ids if ids.count(x) > 1})
+    if duplicates:
+        raise RuntimeError('Phát hiện ID bài viết trùng nhau: ' + ', '.join(duplicates))
 
     if OUT_DIR.exists():
         shutil.rmtree(OUT_DIR)

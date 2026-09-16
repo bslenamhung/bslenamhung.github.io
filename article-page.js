@@ -82,7 +82,7 @@ function stripDuplicateLeadingTitlePage(content,title,seoTitle=''){
  const targets=new Set([normalizeArticleTextPage(title),normalizeArticleTextPage(seoTitle)].filter(Boolean));
  // Remove repeated title headings/blocks only when they occur at the beginning of the article body.
  for(let i=0;i<3;i++){
-   const m=out.match(/^\s*<(h[1-4]|p|div)\b[^>]*>([\s\S]*?)<\/\1>\s*/i);
+   const m=out.match(/^\s*<(h[1-6]|p|div|section|article|strong|b)\b[^>]*>([\s\S]*?)<\/\1>\s*/i);
    if(!m) break;
    const text=normalizeArticleTextPage(m[2]);
    if(targets.has(text)) out=out.slice(m[0].length); else break;
@@ -134,7 +134,7 @@ function setMeta(a){
  document.getElementById('year').textContent=new Date().getFullYear();
  const root=document.getElementById('articlePage'); const params=new URLSearchParams(location.search); const id=params.get('id')||'';
  const data=await loadSite(); const list=Array.isArray(data.articles)?data.articles:[];
- const a=list.find(x=>articleIdPage(x)===id||String(x.id||'')===id);
+ const a=list.find(x=>x&&x.published!==false&&(articleIdPage(x)===id||String(x.id||'')===id));
  if(!a){root.innerHTML='<div class="empty"><h2>Không tìm thấy bài viết</h2><p>Bài viết có thể đã được thay đổi hoặc đường dẫn không còn hợp lệ.</p><p><a class="btn primary" href="index.html#articles">← Quay lại bài viết</a></p></div>';return}
  const publishedDate=formatPublishedDate(a); const cleanContent=stripDuplicateLeadingTitlePage(a.content,a.title,a.seoTitle); setMeta(a); root.innerHTML=`<article><div class="article-tag">${escPage(a.specialty||'')}</div><h1>${escPage(a.title||'')}</h1>${a.image?`<img class="article-page-cover" src="${escPage(a.image)}" alt="${escPage(a.title||'')}" loading="eager">`:''}${renderArticleVideoPage(a)}<p class="article-page-desc">${escPage(a.desc||'')}</p><div class="article-full">${cleanContent}</div>${publishedDate?`<div class="article-published-date">📅 Ngày xuất bản: <strong>${publishedDate}</strong></div>`:''}<p style="margin-top:32px"><a class="btn secondary" href="index.html#articles">← Xem các bài viết khác</a></p>${renderRelatedPage(a,list)}</article>`;
  recordArticleViewPage(a);

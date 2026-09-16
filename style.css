@@ -301,7 +301,7 @@ body{font-size:16px}
   .article-full img{max-height:300px!important}
 }
 
-/* V60 ARTICLE FINAL OVERRIDES: mobile-first, không phóng chữ quá lớn */
+/* V61 ARTICLE FINAL OVERRIDES: mobile-first, không phóng chữ quá lớn */
 .article-page{max-width:820px;margin:0 auto}
 .article-page h1{font-size:clamp(30px,4vw,42px);line-height:1.22;margin:8px 0 18px}
 .article-full{font-size:17px;line-height:1.78;color:#25343d;overflow-wrap:anywhere}

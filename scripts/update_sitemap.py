@@ -77,16 +77,20 @@ def build_sitemap(content):
         (BASE_URL + '/sieu-am-thai-dong-ha.html', 'monthly', '0.8'),
     ]
     seen = set()
+    duplicate_ids = set()
     for article in articles:
         if not isinstance(article, dict) or article.get('published') is False:
             continue
         article_id = js_article_id(article)
         if article_id in seen:
+            duplicate_ids.add(article_id)
             continue
         seen.add(article_id)
         # URL tĩnh, crawlable và là canonical của từng bài viết.
         loc = f'{BASE_URL}/bai-viet/{urllib.parse.quote(article_id, safe="_-.")}.html'
         urls.append((loc, 'monthly', '0.8'))
+    if duplicate_ids:
+        raise RuntimeError('Phát hiện ID bài viết trùng nhau: ' + ', '.join(sorted(duplicate_ids)))
 
     lines = [
         '<?xml version="1.0" encoding="UTF-8"?>',
