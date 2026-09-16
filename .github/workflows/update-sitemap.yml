@@ -33,15 +33,16 @@ jobs:
           SUPABASE_KEY: sb_publishable_gsKYsz40vs6iyWqkb6zyqg_OwoM8k87
         run: python scripts/update_sitemap.py
 
-      - name: Commit trang bai viet va sitemap neu co thay doi
+      - name: Luu trang bai viet va sitemap
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          if git diff --quiet -- bai-viet sitemap.xml; then
+          git add -A bai-viet sitemap.xml
+
+          if git diff --cached --quiet; then
             echo "Khong co thay doi."
           else
-            git add bai-viet sitemap.xml
             git commit -m "chore: cap nhat trang bai viet va sitemap"
             git push
           fi
