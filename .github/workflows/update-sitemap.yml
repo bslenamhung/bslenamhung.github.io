@@ -44,7 +44,7 @@ jobs:
           from pathlib import Path
           import re,sys
           sitemap=Path('sitemap.xml').read_text(encoding='utf-8')
-          urls=re.findall(r'<loc>https://bslenamhung\\.github\\.io/bai-viet/([^<]+\\.html)</loc>',sitemap)
+          urls=re.findall(r'<loc>https://bslenamhung\.github\.io/bai-viet/([^<]+\.html)</loc>',sitemap)
           files={p.name for p in Path('bai-viet').glob('*.html')}
           sitemap_files={Path(u).name for u in urls}
           print('So bai trong sitemap:',len(sitemap_files))
