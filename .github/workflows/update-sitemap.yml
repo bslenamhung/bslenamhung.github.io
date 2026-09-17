@@ -23,6 +23,8 @@ jobs:
           python-version: '3.x'
       - name: Ap dung ho tro Slug V71
         run: python scripts/apply_v71_slug.py
+      - name: Xoa cac trang bai viet tĩnh cu
+        run: rm -f bai-viet/*.html
       - name: Tao trang bai viet tinh tu Supabase
         env:
           SUPABASE_URL: https://tufzlxfrtdhestbemcly.supabase.co
