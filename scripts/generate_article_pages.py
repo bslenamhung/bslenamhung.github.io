@@ -14,6 +14,15 @@ import urllib.request
 from datetime import datetime
 from pathlib import Path
 
+def normalize_slug(value, fallback_id):
+    import unicodedata
+    value = (value or "").strip().lower()
+    value = unicodedata.normalize("NFKD", value)
+    value = "".join(ch for ch in value if not unicodedata.combining(ch))
+    value = value.replace("đ", "d")
+    value = re.sub(r"[^a-z0-9]+", "-", value).strip("-")
+    return value[:120] or fallback_id
+
 SUPABASE_URL = os.environ.get('SUPABASE_URL', '').rstrip('/')
 SUPABASE_KEY = os.environ.get('SUPABASE_KEY', '')
 BASE_URL = 'https://bslenamhung.github.io'
@@ -190,7 +199,9 @@ def clean_desc(article):
 
 def canonical_for(article):
     aid = safe_id(article_id(article))
-    return f'{BASE_URL}/bai-viet/{urllib.parse.quote(aid, safe="_-.")}.html'
+    slug = normalize_slug(article.get('slug', ''), aid)
+    return BASE_URL + '/bai-viet/' + urllib.parse.quote(slug, safe='_-.') + '.html'
+
 
 
 def article_link(article):
@@ -353,7 +364,8 @@ def main():
 
     for article in published:
         aid = safe_id(article_id(article))
-        (OUT_DIR / f'{aid}.html').write_text(render_article(article, published), encoding='utf-8')
+        slug = normalize_slug(article.get('slug', ''), aid)
+        (OUT_DIR / f'{slug}.html').write_text(render_article(article, published), encoding='utf-8')
 
     print(f'Đã tạo {len(published)} trang bài viết tĩnh trong {OUT_DIR}/.')
 
