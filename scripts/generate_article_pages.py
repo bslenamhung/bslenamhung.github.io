@@ -223,6 +223,7 @@ def canonical_for(article):
 
 
 
+
 def article_link(article):
     return canonical_for(article)
 
