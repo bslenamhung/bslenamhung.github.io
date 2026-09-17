@@ -120,6 +120,48 @@ def normalize_article_text(value):
     return re.sub(r'\s+', ' ', value).strip().lower()
 
 
+
+URL_RE = re.compile(r'''(https?://[^\s<>"']+|www\.[^\s<>"']+)''')
+
+def linkify_html_urls(source):
+    text = str(source or '')
+    parts = re.split(r'(<[^>]+>)', text)
+    out = []
+    in_anchor = 0
+    skip_tag = 0
+    for part in parts:
+        if not part:
+            continue
+        if part.startswith('<'):
+            low = part.lower()
+            if re.match(r'<a\b', low): in_anchor += 1
+            elif re.match(r'</a\s*>', low): in_anchor = max(0, in_anchor - 1)
+            if re.match(r'<(script|style|code|pre)\b', low): skip_tag += 1
+            elif re.match(r'</(script|style|code|pre)\s*>', low): skip_tag = max(0, skip_tag - 1)
+            out.append(part)
+            continue
+        if in_anchor or skip_tag:
+            out.append(part)
+            continue
+        cursor = 0
+        for m in URL_RE.finditer(part):
+            raw = m.group(0)
+            display = raw
+            trailing = ''
+            tm = re.search(r'[.,!?;:)\]}]+$', display)
+            if tm:
+                trailing = tm.group(0)
+                display = display[:-len(trailing)]
+            if not display:
+                continue
+            out.append(part[cursor:m.start()])
+            href = display if not display.lower().startswith('www.') else 'https://' + display
+            out.append(f'<a class="article-inline-link" href="{esc(href)}">{esc(display)}</a>')
+            out.append(trailing)
+            cursor = m.end()
+        out.append(part[cursor:])
+    return ''.join(out)
+
 def strip_duplicate_leading_title(content, title, seo_title=''):
     """Remove an editor-inserted copy of the article title at the start of body content.
 
@@ -178,7 +220,7 @@ def render_article(article, published):
     canonical = canonical_for(article)
     image = str(article.get('seoImage') or article.get('image') or '').strip()
     specialty = str(article.get('specialty') or '').strip()
-    content = strip_duplicate_leading_title(article.get('content') or '', article.get('title') or '', article.get('seoTitle') or '')
+    content = linkify_html_urls(strip_duplicate_leading_title(article.get('content') or '', article.get('title') or '', article.get('seoTitle') or ''))
     short_desc = str(article.get('desc') or '').strip()
     published_text, raw_date = date_text(article)
     video = youtube_id(article.get('videoUrl') or article.get('video') or '')
@@ -290,7 +332,7 @@ btn?.addEventListener('click',()=>{{const open=nav?.classList.toggle('open');btn
 document.querySelectorAll('#mainNav a').forEach(a=>a.addEventListener('click',()=>{{nav?.classList.remove('open');btn?.setAttribute('aria-expanded','false')}}));
 </script>
 <script src="../site-visit.js?v=66"></script>
-<script src="../static-article-live.js?v=66"></script>
+<script src="../static-article-live.js?v=67"></script>
 </body></html>'''
 
 

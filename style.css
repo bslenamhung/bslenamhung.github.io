@@ -326,3 +326,5 @@ body{font-size:16px}
   .article-page{padding-left:14px;padding-right:14px}
   .article-page h1{font-size:25px!important}
 }
+
+.article-full a.article-inline-link{color:#0b67b2;text-decoration:underline;text-underline-offset:2px;cursor:pointer}.article-full a.article-inline-link:hover{opacity:.82}
