@@ -17,7 +17,10 @@
     const out = new Map();
     for (const a of (data?.articles || [])) {
       if (!a?.id) continue;
-      out.set(String(a.id), slugify(a.slug || a.title) || String(a.id));
+      const slug = slugify(a.slug || a.title) || String(a.id);
+      // Hỗ trợ cả ID thật và slug trong bai-viet.html?id=...
+      out.set(String(a.id), slug);
+      out.set(slug, slug);
     }
     return out;
   };
@@ -36,9 +39,15 @@
     const ids = await map();
     for (const a of links) {
       const h = String(a.getAttribute('href') || '');
-      const m = h.match(/^(?:\.\/)?bai-viet\/([^/?#]+)\.html$/i);
+      const m = h.match(/^(?:\.\/)?bai-viet\.html\?id=([^&#]+)$/i);
       if (m) {
         const slug = ids.get(decodeURIComponent(m[1]));
+        if (slug) a.href = `bai-viet/${encodeURIComponent(slug)}.html`;
+        continue;
+      }
+      const m2 = h.match(/^(?:\.\/)?bai-viet\/([^/?#]+)\.html$/i);
+      if (m2) {
+        const slug = ids.get(decodeURIComponent(m2[1]));
         if (slug) a.href = `bai-viet/${encodeURIComponent(slug)}.html`;
       }
     }
