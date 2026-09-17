@@ -1,1 +1,1 @@
-V71 pretty URL validation trigger 3
+V71 pretty URL validation trigger 4
