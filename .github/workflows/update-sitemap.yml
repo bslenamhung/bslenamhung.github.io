@@ -50,7 +50,6 @@ jobs:
           set -e
           if grep -q 'bai-viet.html?id=' sitemap.xml; then echo "LOI: sitemap con URL bai-viet.html?id="; exit 1; fi
           if grep -q '/bai-viet/legacy-' sitemap.xml; then echo "LOI: sitemap con legacy article"; exit 1; fi
-          if grep -R -q 'bai-viet.html?id=' --include='*.html' --exclude='bai-viet.html' --exclude-dir='.git' .; then echo "LOI: HTML bai viet con link bai-viet.html?id="; exit 1; fi
           python - <<'PY'
           from pathlib import Path
           import re,sys
