@@ -28,6 +28,11 @@ jobs:
           SUPABASE_URL: https://tufzlxfrtdhestbemcly.supabase.co
           SUPABASE_KEY: sb_publishable_gsKYsz40vs6iyWqkb6zyqg_OwoM8k87
         run: python scripts/generate_article_pages.py
+      - name: Dat ten URL bai viet theo tieu de
+        env:
+          SUPABASE_URL: https://tufzlxfrtdhestbemcly.supabase.co
+          SUPABASE_KEY: sb_publishable_gsKYsz40vs6iyWqkb6zyqg_OwoM8k87
+        run: python scripts/pretty_article_urls.py
       - name: Sua bo cuc trang bai viet
         run: python scripts/fix_article_layout.py
       - name: Sua link bai viet sang URL dep
@@ -41,7 +46,6 @@ jobs:
         shell: bash
         run: |
           set -e
-          echo "=== KIEM TRA SITEMAP ==="
           if grep -q 'bai-viet.html?id=' sitemap.xml; then echo "LOI: sitemap con URL bai-viet.html?id="; exit 1; fi
           if grep -q '/bai-viet/legacy-' sitemap.xml; then echo "LOI: sitemap con legacy article"; exit 1; fi
           if grep -R -q 'bai-viet.html?id=' --include='*.html' .; then echo "LOI: HTML con link bai-viet.html?id="; exit 1; fi
@@ -55,10 +59,8 @@ jobs:
           print('So bai trong sitemap:',len(sitemap_files))
           print('So file bai-viet:',len(files))
           missing=sorted(sitemap_files-files); extra=sorted(files-sitemap_files)
-          if missing:
-              print('LOI missing:',*missing,sep='\n - '); sys.exit(1)
-          if extra:
-              print('LOI extra:',*extra,sep='\n - '); sys.exit(1)
+          if missing or extra:
+              print('LOI missing:',missing); print('LOI extra:',extra); sys.exit(1)
           for p in Path('bai-viet').glob('*.html'):
               t=p.read_text(encoding='utf-8')
               if t.count('<h1>') > 1:
@@ -76,5 +78,5 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A admin.html admin.js scripts/generate_article_pages.py scripts/update_sitemap.py scripts/apply_v71_slug.py scripts/fix_article_layout.py scripts/fix_article_links.py article-layout-fix.css bai-viet sitemap.xml V71-CHANGELOG.txt
+          git add -A admin.html admin.js scripts/generate_article_pages.py scripts/update_sitemap.py scripts/apply_v71_slug.py scripts/fix_article_layout.py scripts/fix_article_links.py scripts/pretty_article_urls.py article-layout-fix.css bai-viet sitemap.xml V71-CHANGELOG.txt
           if git diff --cached --quiet; then echo "Khong co thay doi."; else git commit -m "fix: dung URL dep cho bai viet"; git push; fi
