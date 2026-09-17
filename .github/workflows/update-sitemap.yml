@@ -28,12 +28,14 @@ jobs:
           SUPABASE_URL: https://tufzlxfrtdhestbemcly.supabase.co
           SUPABASE_KEY: sb_publishable_gsKYsz40vs6iyWqkb6zyqg_OwoM8k87
         run: python scripts/generate_article_pages.py
+      - name: Sua bo cuc trang bai viet
+        run: python scripts/fix_article_layout.py
       - name: Tao sitemap tu Supabase
         env:
           SUPABASE_URL: https://tufzlxfrtdhestbemcly.supabase.co
           SUPABASE_KEY: sb_publishable_gsKYsz40vs6iyWqkb6zyqg_OwoM8k87
         run: python scripts/update_sitemap.py
-      - name: Kiem tra sitemap
+      - name: Kiem tra sitemap va HTML bai viet
         shell: bash
         run: |
           set -e
@@ -44,26 +46,32 @@ jobs:
           from pathlib import Path
           import re,sys
           sitemap=Path('sitemap.xml').read_text(encoding='utf-8')
-          urls=re.findall(r'<loc>https://bslenamhung\.github\.io/bai-viet/([^<]+\.html)</loc>',sitemap)
+          urls=re.findall(r'<loc>https://bslenamhung\\.github\\.io/bai-viet/([^<]+\\.html)</loc>',sitemap)
           files={p.name for p in Path('bai-viet').glob('*.html')}
           sitemap_files={Path(u).name for u in urls}
           print('So bai trong sitemap:',len(sitemap_files))
           print('So file bai-viet:',len(files))
           missing=sorted(sitemap_files-files); extra=sorted(files-sitemap_files)
           if missing:
-              print('LOI missing:',*missing,sep='\n - '); sys.exit(1)
+              print('LOI missing:',*missing,sep='\\n - '); sys.exit(1)
           if extra:
-              print('LOI extra:',*extra,sep='\n - '); sys.exit(1)
-          print('Kiem tra file bai viet: OK')
+              print('LOI extra:',*extra,sep='\\n - '); sys.exit(1)
+          for p in Path('bai-viet').glob('*.html'):
+              t=p.read_text(encoding='utf-8')
+              if t.count('<h1>') > 1:
+                  print('LOI: qua nhieu H1 trong',p); sys.exit(1)
+              if '../article-layout-fix.css?v=1' not in t:
+                  print('LOI: thieu CSS bo cuc trong',p); sys.exit(1)
+          print('Kiem tra HTML bai viet: OK')
           PY
           python - <<'PY'
           import xml.etree.ElementTree as ET
           ET.parse('sitemap.xml')
           print('XML sitemap: OK')
           PY
-      - name: Luu V71 va sitemap
+      - name: Luu V71 va bo cuc bai viet
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A admin.html admin.js scripts/generate_article_pages.py scripts/update_sitemap.py scripts/apply_v71_slug.py bai-viet sitemap.xml V71-CHANGELOG.txt
-          if git diff --cached --quiet; then echo "Khong co thay doi."; else git commit -m "feat: V71 slug bai viet va sitemap"; git push; fi
+          git add -A admin.html admin.js scripts/generate_article_pages.py scripts/update_sitemap.py scripts/apply_v71_slug.py scripts/fix_article_layout.py article-layout-fix.css bai-viet sitemap.xml V71-CHANGELOG.txt
+          if git diff --cached --quiet; then echo "Khong co thay doi."; else git commit -m "fix: cai thien bo cuc bai viet"; git push; fi
