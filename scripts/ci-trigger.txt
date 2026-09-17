@@ -1,1 +1,0 @@
-Trigger V73 CI validation
