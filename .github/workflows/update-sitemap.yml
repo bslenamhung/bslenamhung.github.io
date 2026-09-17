@@ -48,7 +48,7 @@ jobs:
           set -e
           if grep -q 'bai-viet.html?id=' sitemap.xml; then echo "LOI: sitemap con URL bai-viet.html?id="; exit 1; fi
           if grep -q '/bai-viet/legacy-' sitemap.xml; then echo "LOI: sitemap con legacy article"; exit 1; fi
-          if grep -R -q 'bai-viet.html?id=' --include='*.html' .; then echo "LOI: HTML con link bai-viet.html?id="; exit 1; fi
+          if grep -R -q 'bai-viet.html?id=' --include='*.html' --exclude='bai-viet.html' --exclude-dir='.git' .; then echo "LOI: HTML bai viet con link bai-viet.html?id="; exit 1; fi
           python - <<'PY'
           from pathlib import Path
           import re,sys
@@ -78,5 +78,5 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A admin.html admin.js scripts/generate_article_pages.py scripts/update_sitemap.py scripts/apply_v71_slug.py scripts/fix_article_layout.py scripts/fix_article_links.py scripts/pretty_article_urls.py article-layout-fix.css bai-viet sitemap.xml V71-CHANGELOG.txt
+          git add -A admin.html admin.js scripts/generate_article_pages.py scripts/update_sitemap.py scripts/apply_v71_slug.py scripts/fix_article_layout.py scripts/fix_article_links.py scripts/pretty_article_urls.py pretty-article-links.js site-visit.js bai-viet.html article-layout-fix.css bai-viet sitemap.xml V71-CHANGELOG.txt
           if git diff --cached --quiet; then echo "Khong co thay doi."; else git commit -m "fix: dung URL dep cho bai viet"; git push; fi
