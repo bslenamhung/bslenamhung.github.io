@@ -24,13 +24,13 @@ jobs:
       - name: Tao trang bai viet tinh tu Supabase
         env:
           SUPABASE_URL: https://tufzlxfrtdhestbemcly.supabase.co
-          SUPABASE_KEY: sb_publishable_gsKYsz40vs6iyWqkb6zyqg_OwoM8k87
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: python scripts/generate_article_pages.py
 
       - name: Tao sitemap tu Supabase
         env:
           SUPABASE_URL: https://tufzlxfrtdhestbemcly.supabase.co
-          SUPABASE_KEY: sb_publishable_gsKYsz40vs6iyWqkb6zyqg_OwoM8k87
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: python scripts/update_sitemap.py
 
       - name: Kiem tra sitemap
@@ -60,7 +60,7 @@ jobs:
           sitemap = Path("sitemap.xml").read_text(encoding="utf-8")
 
           urls = re.findall(
-              r"<loc>(https://bslenamhung\.github\.io/bai-viet/(art-[^<]+\.html))</loc>",
+              r"<loc>https://bslenamhung\.github\.io/bai-viet/(art-[^<]+\.html)</loc>",
               sitemap
           )
 
