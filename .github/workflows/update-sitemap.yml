@@ -2,6 +2,9 @@ name: Tu dong cap nhat sitemap
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - 'V71-TRIGGER.txt'
   schedule:
     - cron: '*/15 * * * *'
 
@@ -11,86 +14,56 @@ permissions:
 jobs:
   update-sitemap:
     runs-on: ubuntu-latest
-
     steps:
       - name: Tai ma nguon
         uses: actions/checkout@v4
-
       - name: Cai Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
-
       - name: Ap dung ho tro Slug V71
         run: python scripts/apply_v71_slug.py
-
       - name: Tao trang bai viet tinh tu Supabase
         env:
           SUPABASE_URL: https://tufzlxfrtdhestbemcly.supabase.co
           SUPABASE_KEY: sb_publishable_gsKYsz40vs6iyWqkb6zyqg_OwoM8k87
         run: python scripts/generate_article_pages.py
-
       - name: Tao sitemap tu Supabase
         env:
           SUPABASE_URL: https://tufzlxfrtdhestbemcly.supabase.co
           SUPABASE_KEY: sb_publishable_gsKYsz40vs6iyWqkb6zyqg_OwoM8k87
         run: python scripts/update_sitemap.py
-
       - name: Kiem tra sitemap
         shell: bash
         run: |
           set -e
           echo "=== KIEM TRA SITEMAP ==="
-
-          if grep -q 'bai-viet.html?id=' sitemap.xml; then
-            echo "LOI: sitemap con URL bai-viet.html?id="
-            exit 1
-          fi
-
-          if grep -q '/bai-viet/legacy-' sitemap.xml; then
-            echo "LOI: sitemap con legacy article"
-            exit 1
-          fi
-
+          if grep -q 'bai-viet.html?id=' sitemap.xml; then echo "LOI: sitemap con URL bai-viet.html?id="; exit 1; fi
+          if grep -q '/bai-viet/legacy-' sitemap.xml; then echo "LOI: sitemap con legacy article"; exit 1; fi
           python - <<'PY'
           from pathlib import Path
-          import re
-          import sys
-          sitemap = Path("sitemap.xml").read_text(encoding="utf-8")
-          urls = re.findall(r"<loc>https://bslenamhung\\.github\\.io/bai-viet/([^<]+\\.html)</loc>", sitemap)
-          files = {p.name for p in Path("bai-viet").glob("*.html")}
-          sitemap_files = {Path(u).name for u in urls}
-          print("So bai trong sitemap:", len(sitemap_files))
-          print("So file bai-viet:", len(files))
-          missing = sorted(sitemap_files - files)
-          extra = sorted(files - sitemap_files)
+          import re,sys
+          sitemap=Path('sitemap.xml').read_text(encoding='utf-8')
+          urls=re.findall(r'<loc>https://bslenamhung\\.github\\.io/bai-viet/([^<]+\\.html)</loc>',sitemap)
+          files={p.name for p in Path('bai-viet').glob('*.html')}
+          sitemap_files={Path(u).name for u in urls}
+          print('So bai trong sitemap:',len(sitemap_files))
+          print('So file bai-viet:',len(files))
+          missing=sorted(sitemap_files-files); extra=sorted(files-sitemap_files)
           if missing:
-              print("LOI: URL trong sitemap khong co file:")
-              for x in missing: print(" -", x)
-              sys.exit(1)
+              print('LOI missing:',*missing,sep='\n - '); sys.exit(1)
           if extra:
-              print("LOI: file bai-viet khong co trong sitemap:")
-              for x in extra: print(" -", x)
-              sys.exit(1)
-          print("Kiem tra file bai viet: OK")
+              print('LOI extra:',*extra,sep='\n - '); sys.exit(1)
+          print('Kiem tra file bai viet: OK')
           PY
-
           python - <<'PY'
           import xml.etree.ElementTree as ET
-          ET.parse("sitemap.xml")
-          print("XML sitemap: OK")
+          ET.parse('sitemap.xml')
+          print('XML sitemap: OK')
           PY
-
-          echo "=== SITEMAP HOP LE ==="
-
       - name: Luu V71 va sitemap
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A admin.html admin.js scripts/generate_article_pages.py scripts/update_sitemap.py scripts/apply_v71_slug.py bai-viet sitemap.xml V71-CHANGELOG.txt
-          if git diff --cached --quiet; then
-            echo "Khong co thay doi."
-          else
-            git commit -m "feat: V71 slug bai viet va sitemap"
-            git push
-          fi
+          if git diff --cached --quiet; then echo "Khong co thay doi."; else git commit -m "feat: V71 slug bai viet va sitemap"; git push; fi
