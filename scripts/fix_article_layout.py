@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import re
 from pathlib import Path
 
 CSS_LINK = '<link rel="stylesheet" href="../article-layout-fix.css?v=1">'
@@ -9,13 +10,21 @@ def fix_file(path: Path):
     original = text
     if CSS_LINK not in text:
         text = text.replace('<link rel="stylesheet" href="../style.css?v=68">', '<link rel="stylesheet" href="../style.css?v=68">\n' + CSS_LINK, 1)
-    start = text.find('<div class="article-full">')
+
+    # Article body must not contain H1 elements: the page template already has one H1.
+    marker = '<div class="article-full">'
+    start = text.find(marker)
     if start >= 0:
-        end = text.find('</div>', start + len('<div class="article-full">'))
-        if end >= 0:
-            body = text[start:end]
-            body = body.replace('<h1>', '<div class="article-subheading">').replace('</h1>', '</div>')
-            text = text[:start] + body + text[end:]
+        tail_markers = ['<div class="article-published-date">', '<p style="margin-top:32px">']
+        ends = [text.find(m, start + len(marker)) for m in tail_markers]
+        ends = [e for e in ends if e >= 0]
+        if ends:
+            end = min(ends)
+            body = text[start + len(marker):end]
+            body = re.sub(r'<h1\b([^>]*)>', r'<div class="article-subheading"\1>', body, flags=re.I)
+            body = re.sub(r'</h1>', '</div>', body, flags=re.I)
+            text = text[:start + len(marker)] + body + text[end:]
+
     if text != original:
         path.write_text(text, encoding='utf-8')
         return True
