@@ -1,1 +1,1 @@
-V71 layout fix validation trigger 2
+V71 pretty URL validation trigger 3
