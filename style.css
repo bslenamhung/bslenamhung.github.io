@@ -327,4 +327,7 @@ body{font-size:16px}
   .article-page h1{font-size:25px!important}
 }
 
-.article-full a.article-inline-link{color:#0b67b2;text-decoration:underline;text-underline-offset:2px;cursor:pointer}.article-full a.article-inline-link:hover{opacity:.82}
+
+/* V68: links pasted into article content */
+.article-inline-link{color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px;cursor:pointer}
+.article-inline-link:hover{text-decoration-thickness:2px}

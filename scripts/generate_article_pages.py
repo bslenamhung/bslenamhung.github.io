@@ -120,48 +120,6 @@ def normalize_article_text(value):
     return re.sub(r'\s+', ' ', value).strip().lower()
 
 
-
-URL_RE = re.compile(r'''(https?://[^\s<>"']+|www\.[^\s<>"']+)''')
-
-def linkify_html_urls(source):
-    text = str(source or '')
-    parts = re.split(r'(<[^>]+>)', text)
-    out = []
-    in_anchor = 0
-    skip_tag = 0
-    for part in parts:
-        if not part:
-            continue
-        if part.startswith('<'):
-            low = part.lower()
-            if re.match(r'<a\b', low): in_anchor += 1
-            elif re.match(r'</a\s*>', low): in_anchor = max(0, in_anchor - 1)
-            if re.match(r'<(script|style|code|pre)\b', low): skip_tag += 1
-            elif re.match(r'</(script|style|code|pre)\s*>', low): skip_tag = max(0, skip_tag - 1)
-            out.append(part)
-            continue
-        if in_anchor or skip_tag:
-            out.append(part)
-            continue
-        cursor = 0
-        for m in URL_RE.finditer(part):
-            raw = m.group(0)
-            display = raw
-            trailing = ''
-            tm = re.search(r'[.,!?;:)\]}]+$', display)
-            if tm:
-                trailing = tm.group(0)
-                display = display[:-len(trailing)]
-            if not display:
-                continue
-            out.append(part[cursor:m.start()])
-            href = display if not display.lower().startswith('www.') else 'https://' + display
-            out.append(f'<a class="article-inline-link" href="{esc(href)}">{esc(display)}</a>')
-            out.append(trailing)
-            cursor = m.end()
-        out.append(part[cursor:])
-    return ''.join(out)
-
 def strip_duplicate_leading_title(content, title, seo_title=''):
     """Remove an editor-inserted copy of the article title at the start of body content.
 
@@ -181,6 +139,47 @@ def strip_duplicate_leading_title(content, title, seo_title=''):
             break
     return out
 
+
+def linkify_article_content(value):
+    """Convert bare http(s) URLs in article text to clickable links.
+    Existing HTML tags/links are preserved and URLs inside code/pre/script/style
+    blocks are intentionally left untouched.
+    """
+    text = str(value or '')
+    token_re = re.compile(r'(<(?:a|script|style|code|pre|textarea)\b[^>]*>.*?</(?:a|script|style|code|pre|textarea)>|<!--.*?-->|<[^>]+>)', re.I | re.S)
+    url_re = re.compile(r'https?://[^\s<>"\']+', re.I)
+    trailing = '.,!?;:)]}'
+    out = []
+    pos = 0
+    for m in token_re.finditer(text):
+        if m.start() > pos:
+            segment = text[pos:m.start()]
+            def repl(u):
+                raw = u.group(0)
+                clean = raw
+                suffix = ''
+                while clean and clean[-1] in trailing:
+                    suffix = clean[-1] + suffix
+                    clean = clean[:-1]
+                if not clean:
+                    return raw
+                href = html.escape(clean, quote=True)
+                label = html.escape(clean, quote=False)
+                return f'<a class="article-inline-link" href="{href}">{label}</a>{suffix}'
+            segment = url_re.sub(repl, segment)
+            out.append(segment)
+        out.append(m.group(0))
+        pos = m.end()
+    if pos < len(text):
+        segment = text[pos:]
+        def repl(u):
+            raw=u.group(0); clean=raw; suffix=''
+            while clean and clean[-1] in trailing:
+                suffix=clean[-1]+suffix; clean=clean[:-1]
+            if not clean:return raw
+            return f'<a class="article-inline-link" href="{html.escape(clean, quote=True)}">{html.escape(clean, quote=False)}</a>{suffix}'
+        out.append(url_re.sub(repl,segment))
+    return ''.join(out)
 
 def clean_desc(article):
     raw = str(article.get('seoDescription') or article.get('desc') or article.get('content') or '')
@@ -220,7 +219,7 @@ def render_article(article, published):
     canonical = canonical_for(article)
     image = str(article.get('seoImage') or article.get('image') or '').strip()
     specialty = str(article.get('specialty') or '').strip()
-    content = linkify_html_urls(strip_duplicate_leading_title(article.get('content') or '', article.get('title') or '', article.get('seoTitle') or ''))
+    content = linkify_article_content(strip_duplicate_leading_title(article.get('content') or '', article.get('title') or '', article.get('seoTitle') or ''))
     short_desc = str(article.get('desc') or '').strip()
     published_text, raw_date = date_text(article)
     video = youtube_id(article.get('videoUrl') or article.get('video') or '')
@@ -306,7 +305,7 @@ def render_article(article, published):
 <meta name="twitter:description" content="{esc(desc)}">
 {f'<meta name="twitter:image" content="{esc(image)}">' if image else ''}
 <script type="application/ld+json">{jsonld}</script>
-<link rel="stylesheet" href="../style.css?v=66">
+<link rel="stylesheet" href="../style.css?v=68">
 </head><body>
 <header class="site-header"><div class="container nav-wrap">
 <a class="brand" href="../index.html"><strong>BS<br>Lê Nam Hùng</strong><span>Sản Phụ khoa</span></a>
@@ -332,7 +331,7 @@ btn?.addEventListener('click',()=>{{const open=nav?.classList.toggle('open');btn
 document.querySelectorAll('#mainNav a').forEach(a=>a.addEventListener('click',()=>{{nav?.classList.remove('open');btn?.setAttribute('aria-expanded','false')}}));
 </script>
 <script src="../site-visit.js?v=66"></script>
-<script src="../static-article-live.js?v=67"></script>
+<script src="../static-article-live.js?v=66"></script>
 </body></html>'''
 
 

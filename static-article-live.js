@@ -1,4 +1,4 @@
-/* V65: cập nhật nội dung bài viết tĩnh trực tiếp từ Supabase.
+/* V68: cập nhật nội dung bài viết tĩnh trực tiếp từ Supabase.
    Trang HTML tĩnh vẫn là fallback SEO nếu mạng/Supabase không sẵn sàng. */
 (function(){
   'use strict';
@@ -20,6 +20,52 @@
     }
     return out;
   }
+function linkifyArticleContentStatic(html){
+  const host=document.createElement('div');
+  host.innerHTML=String(html||'');
+  const skip=new Set(['A','SCRIPT','STYLE','CODE','PRE','TEXTAREA']);
+  const walker=document.createTreeWalker(host,NodeFilter.SHOW_TEXT);
+  const nodes=[];
+  let node;
+  while(node=walker.nextNode()){
+    if(node.parentElement && !skip.has(node.parentElement.tagName)) nodes.push(node);
+  }
+  const urlRe=/\bhttps?:\/\/[^\s<>"']+/gi;
+  const trimTrailing=/[.,!?;:)\]}]+$/;
+  for(const textNode of nodes){
+    const text=textNode.nodeValue||'';
+    if(!urlRe.test(text)){urlRe.lastIndex=0;continue;}
+    urlRe.lastIndex=0;
+    const frag=document.createDocumentFragment();
+    let last=0,m;
+    while((m=urlRe.exec(text))){
+      let raw=m[0], clean=raw, trailing='';
+      while(trimTrailing.test(clean)){
+        trailing=clean.slice(-1)+trailing; clean=clean.slice(0,-1);
+      }
+      if(!clean) continue;
+      if(m.index>last) frag.appendChild(document.createTextNode(text.slice(last,m.index)));
+      const a=document.createElement('a');
+      a.href=clean;
+      a.textContent=clean;
+      a.className='article-inline-link';
+      try{
+        const u=new URL(clean,location.href);
+        if(u.origin!==location.origin){
+          a.target='_blank';
+          a.rel='noopener noreferrer';
+        }
+      }catch(e){}
+      frag.appendChild(a);
+      if(trailing) frag.appendChild(document.createTextNode(trailing));
+      last=m.index+raw.length;
+    }
+    if(last<text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+    if(frag.childNodes.length) textNode.parentNode.replaceChild(frag,textNode);
+  }
+  return host.innerHTML;
+}
+
   function youtubeId(url){
     const raw=String(url||'').trim(); if(!raw)return '';
     try{const u=new URL(raw),h=u.hostname.replace(/^www\./,'').toLowerCase();
@@ -32,29 +78,6 @@
   }
   function videoHtml(a){const id=youtubeId(a?.videoUrl||a?.video||'');return id?`<div class="article-video-wrap"><iframe src="https://www.youtube-nocookie.com/embed/${esc(id)}" title="${esc(a?.title||'Video bài viết')}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>`:''}
   function dateText(a){const raw=a?.publishedAt||a?.createdAt||a?.created_at||a?.date||'';if(!raw)return '';const d=new Date(raw);if(Number.isNaN(d.getTime()))return '';return new Intl.DateTimeFormat('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'}).format(d)}
-
-  function linkifyArticleHtmlLive(html){
-    const box=document.createElement('div');box.innerHTML=String(html||'');
-    const walker=document.createTreeWalker(box,NodeFilter.SHOW_TEXT),nodes=[];let n;
-    while(n=walker.nextNode())nodes.push(n);
-    const re=/(https?:\/\/[^\s<>"']+|www\.[^\s<>"']+)/g;
-    for(const node of nodes){
-      const parent=node.parentElement;if(!parent||/^(A|SCRIPT|STYLE|CODE|PRE)$/i.test(parent.tagName))continue;
-      const text=node.nodeValue||'';if(!re.test(text)){re.lastIndex=0;continue}re.lastIndex=0;
-      const frag=document.createDocumentFragment();let last=0,m;
-      while((m=re.exec(text))){
-        const raw=m[0];let display=raw,trailing='';const tm=display.match(/[.,!?;:)\]}]+$/);
-        if(tm){trailing=tm[0];display=display.slice(0,-trailing.length)}
-        if(m.index>last)frag.appendChild(document.createTextNode(text.slice(last,m.index)));
-        if(display){const a=document.createElement('a');a.href=/^www\./i.test(display)?'https://'+display:display;a.textContent=display;a.className='article-inline-link';frag.appendChild(a)}
-        if(trailing)frag.appendChild(document.createTextNode(trailing));last=m.index+raw.length;
-      }
-      if(last<text.length)frag.appendChild(document.createTextNode(text.slice(last)));
-      node.parentNode.replaceChild(frag,node);
-    }
-    return box.innerHTML;
-  }
-
   function articleUrl(a){return new URL('bai-viet/'+encodeURIComponent(idOf(a))+'.html',location.origin+'/').href}
   function words(s){return new Set(String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').split(/[^a-z0-9]+/).filter(w=>w.length>=3))}
   function overlap(a,b){let n=0;for(const w of a)if(b.has(w))n++;return n}
@@ -73,9 +96,9 @@
   function render(root,a,list){
     const title=String(a.title||a.seoTitle||'Bài viết Sản Phụ khoa');
     const image=String(a.seoImage||a.image||'').trim();
-    const content=stripLeading(a.content,a.title,a.seoTitle);
+    const content=linkifyArticleContentStatic(stripLeading(a.content,a.title,a.seoTitle));
     const d=String(a.desc||'').trim(); const date=dateText(a);
-    root.innerHTML=`<div class="article-tag">${esc(a.specialty||'')}</div><h1>${esc(title)}</h1>${image?`<img class="article-page-cover" src="${esc(image)}" alt="${esc(title)}" loading="eager">`:''}${videoHtml(a)}${d?`<p class="article-page-desc">${esc(d)}</p>`:''}<div class="article-full">${linkifyArticleHtmlLive(content)}</div>${date?`<div class="article-published-date">📅 Ngày xuất bản: <strong>${esc(date)}</strong></div>`:''}<p style="margin-top:32px"><a class="btn secondary" href="../index.html#articles">← Xem các bài viết khác</a></p>${relatedHtml(a,list)}`;
+    root.innerHTML=`<div class="article-tag">${esc(a.specialty||'')}</div><h1>${esc(title)}</h1>${image?`<img class="article-page-cover" src="${esc(image)}" alt="${esc(title)}" loading="eager">`:''}${videoHtml(a)}${d?`<p class="article-page-desc">${esc(d)}</p>`:''}<div class="article-full">${content}</div>${date?`<div class="article-published-date">📅 Ngày xuất bản: <strong>${esc(date)}</strong></div>`:''}<p style="margin-top:32px"><a class="btn secondary" href="../index.html#articles">← Xem các bài viết khác</a></p>${relatedHtml(a,list)}`;
   }
   async function run(){
     const root=document.getElementById('articleLiveRoot'); if(!root||!window.supabase||!window.SUPABASE_URL)return;

@@ -232,32 +232,6 @@ async function uploadArticleSeoImage(){
   if(status)status.textContent="Đang tải ảnh SEO lên...";
   try{const url=await uploadPublicImage(file,'seo');$("editSeoImage").value=url;renderSeoImagePreview(url);status.textContent="✅ Đã tải ảnh SEO. Hãy lưu bài viết.";}catch(err){status.textContent='Tải ảnh thất bại: '+(err.message||err);}
 }
-
-function linkifyArticleHtml(html){
-  const box=document.createElement('div'); box.innerHTML=String(html||'');
-  const walker=document.createTreeWalker(box,NodeFilter.SHOW_TEXT),nodes=[]; let n;
-  while(n=walker.nextNode())nodes.push(n);
-  const re=/(https?:\/\/[^\s<>"']+|www\.[^\s<>"']+)/g;
-  for(const node of nodes){
-    const parent=node.parentElement;
-    if(!parent||/^(A|SCRIPT|STYLE|CODE|PRE)$/i.test(parent.tagName))continue;
-    const text=node.nodeValue||''; if(!re.test(text)){re.lastIndex=0;continue} re.lastIndex=0;
-    const frag=document.createDocumentFragment(); let last=0,m;
-    while((m=re.exec(text))){
-      const raw=m[0]; let display=raw,trailing='';
-      const tm=display.match(/[.,!?;:)\]}]+$/);
-      if(tm){trailing=tm[0];display=display.slice(0,-trailing.length)}
-      if(m.index>last)frag.appendChild(document.createTextNode(text.slice(last,m.index)));
-      if(display){const a=document.createElement('a');a.href=/^www\./i.test(display)?'https://'+display:display;a.textContent=display;a.className='article-inline-link';frag.appendChild(a)}
-      if(trailing)frag.appendChild(document.createTextNode(trailing));
-      last=m.index+raw.length;
-    }
-    if(last<text.length)frag.appendChild(document.createTextNode(text.slice(last)));
-    node.parentNode.replaceChild(frag,node);
-  }
-  return box.innerHTML;
-}
-
 function saveArticleFromModal(){
   collect();
   const current=editingArticleIndex>=0?D.articles[editingArticleIndex]:null;
@@ -267,7 +241,7 @@ function saveArticleFromModal(){
   const now=new Date().toISOString();
   const createdAt=current?.createdAt||now;
   const publishedAt=published ? (current?.publishedAt||now) : (current?.publishedAt||'');
-  const obj={id:current?.id||('art-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8)),title,specialty:$("editSpecialty").value||D.specialties[0]?.name||"Sản khoa",desc:$("editDesc").value.trim(),image:cover,content:linkifyArticleHtml($("editContent").innerHTML.trim()),published,seoTitle:$("editSeoTitle").value.trim()||seoDefaultsFromCurrent().seoTitle,seoDescription:$("editSeoDescription").value.trim()||seoDefaultsFromCurrent().seoDescription,keywords:$("editKeywords").value.trim()||seoDefaultsFromCurrent().keywords,seoImage:$("editSeoImage").value.trim()||cover,updatedAt:now,createdAt,publishedAt};
+  const obj={id:current?.id||('art-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8)),title,specialty:$("editSpecialty").value||D.specialties[0]?.name||"Sản khoa",desc:$("editDesc").value.trim(),image:cover,content:$("editContent").innerHTML.trim(),published,seoTitle:$("editSeoTitle").value.trim()||seoDefaultsFromCurrent().seoTitle,seoDescription:$("editSeoDescription").value.trim()||seoDefaultsFromCurrent().seoDescription,keywords:$("editKeywords").value.trim()||seoDefaultsFromCurrent().keywords,seoImage:$("editSeoImage").value.trim()||cover,updatedAt:now,createdAt,publishedAt};
   if(editingArticleIndex<0)D.articles.unshift(obj);else D.articles[editingArticleIndex]=obj;
   closeArticleEditor();renderAll();gotoSection('articles');setStatus('Đã cập nhật bài viết trong bộ nhớ. Hãy bấm “Lưu thay đổi” để ghi lên hệ thống.')
 }
@@ -298,7 +272,6 @@ document.querySelectorAll('[data-upload-clinic-image]').forEach(b=>b.onclick=()=
   if(go){event.preventDefault();gotoSection(go.dataset.go);return;}
 });
 
-$('editContent')?.addEventListener('paste',()=>setTimeout(()=>{const e=$('editContent');if(e)e.innerHTML=linkifyArticleHtml(e.innerHTML)},0));
 $('closeModal').onclick=closeArticleEditor;$('cancelModal').onclick=closeArticleEditor;$('editorModal').querySelector('.modal-backdrop').onclick=closeArticleEditor;$('saveArticle').onclick=saveArticleFromModal;$('editVideoUrl')?.addEventListener('input',()=>renderArticleVideoPreview($('editVideoUrl').value));document.querySelectorAll('.editor-toolbar button[data-cmd]').forEach(b=>b.onclick=()=>{if(b.dataset.cmd==='formatBlock'){document.execCommand('formatBlock',false,b.dataset.value||'p')}else{document.execCommand(b.dataset.cmd,false,null)}$('editContent').focus()});
 $('insertArticleImage').onclick=insertArticleInlineImage;
 $('articleInlineImageFile').addEventListener('change',handleInlineImageFile);

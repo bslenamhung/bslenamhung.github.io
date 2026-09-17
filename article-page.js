@@ -18,29 +18,6 @@ async function recordArticleViewPage(a){
 function upsertMeta(name,content,attr='name'){let m=document.head.querySelector(`meta[${attr}="${name}"]`);if(!m){m=document.createElement('meta');m.setAttribute(attr,name);document.head.appendChild(m)}m.setAttribute('content',content||'')}
 function upsertLink(rel,href){let l=document.head.querySelector(`link[rel="${rel}"]`);if(!l){l=document.createElement('link');l.rel=rel;document.head.appendChild(l)}l.href=href}
 
-
-function linkifyArticleHtmlPage(html){
- const box=document.createElement('div');box.innerHTML=String(html||'');
- const walker=document.createTreeWalker(box,NodeFilter.SHOW_TEXT),nodes=[];let n;
- while(n=walker.nextNode())nodes.push(n);
- const re=/(https?:\/\/[^\s<>"']+|www\.[^\s<>"']+)/g;
- for(const node of nodes){
-  const parent=node.parentElement;if(!parent||/^(A|SCRIPT|STYLE|CODE|PRE)$/i.test(parent.tagName))continue;
-  const text=node.nodeValue||'';if(!re.test(text)){re.lastIndex=0;continue}re.lastIndex=0;
-  const frag=document.createDocumentFragment();let last=0,m;
-  while((m=re.exec(text))){
-   const raw=m[0];let display=raw,trailing='';const tm=display.match(/[.,!?;:)\]}]+$/);
-   if(tm){trailing=tm[0];display=display.slice(0,-trailing.length)}
-   if(m.index>last)frag.appendChild(document.createTextNode(text.slice(last,m.index)));
-   if(display){const a=document.createElement('a');a.href=/^www\./i.test(display)?'https://'+display:display;a.textContent=display;a.className='article-inline-link';frag.appendChild(a)}
-   if(trailing)frag.appendChild(document.createTextNode(trailing));last=m.index+raw.length;
-  }
-  if(last<text.length)frag.appendChild(document.createTextNode(text.slice(last)));
-  node.parentNode.replaceChild(frag,node);
- }
- return box.innerHTML;
-}
-
 function articleUrlPage(a){
  const id=articleIdPage(a);
  return `bai-viet/${encodeURIComponent(id)}.html`;
@@ -106,6 +83,52 @@ function renderRelatedPage(current,list){
  return `<section class="related-articles" aria-labelledby="relatedTitle"><div class="related-head"><div><p class="article-tag">GỢI Ý ĐỌC THÊM</p><h2 id="relatedTitle">Bài viết liên quan</h2></div><a class="text-link" href="index.html#articles">Xem tất cả bài viết →</a></div><div class="related-grid">${cards}</div></section>`;
 }
 
+function linkifyArticleContentPage(html){
+  const host=document.createElement('div');
+  host.innerHTML=String(html||'');
+  const skip=new Set(['A','SCRIPT','STYLE','CODE','PRE','TEXTAREA']);
+  const walker=document.createTreeWalker(host,NodeFilter.SHOW_TEXT);
+  const nodes=[];
+  let node;
+  while(node=walker.nextNode()){
+    if(node.parentElement && !skip.has(node.parentElement.tagName)) nodes.push(node);
+  }
+  const urlRe=/\bhttps?:\/\/[^\s<>"']+/gi;
+  const trimTrailing=/[.,!?;:)\]}]+$/;
+  for(const textNode of nodes){
+    const text=textNode.nodeValue||'';
+    if(!urlRe.test(text)){urlRe.lastIndex=0;continue;}
+    urlRe.lastIndex=0;
+    const frag=document.createDocumentFragment();
+    let last=0,m;
+    while((m=urlRe.exec(text))){
+      let raw=m[0], clean=raw, trailing='';
+      while(trimTrailing.test(clean)){
+        trailing=clean.slice(-1)+trailing; clean=clean.slice(0,-1);
+      }
+      if(!clean) continue;
+      if(m.index>last) frag.appendChild(document.createTextNode(text.slice(last,m.index)));
+      const a=document.createElement('a');
+      a.href=clean;
+      a.textContent=clean;
+      a.className='article-inline-link';
+      try{
+        const u=new URL(clean,location.href);
+        if(u.origin!==location.origin){
+          a.target='_blank';
+          a.rel='noopener noreferrer';
+        }
+      }catch(e){}
+      frag.appendChild(a);
+      if(trailing) frag.appendChild(document.createTextNode(trailing));
+      last=m.index+raw.length;
+    }
+    if(last<text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+    if(frag.childNodes.length) textNode.parentNode.replaceChild(frag,textNode);
+  }
+  return host.innerHTML;
+}
+
 function normalizeArticleTextPage(s){
  return String(s||'').replace(/<[^>]*>/g,' ').replace(/&nbsp;|&#160;/gi,' ').replace(/&amp;/gi,'&').replace(/\s+/g,' ').trim().toLowerCase();
 }
@@ -168,6 +191,6 @@ function setMeta(a){
  const data=await loadSite(); const list=Array.isArray(data.articles)?data.articles:[];
  const a=list.find(x=>x&&x.published!==false&&(articleIdPage(x)===id||String(x.id||'')===id));
  if(!a){root.innerHTML='<div class="empty"><h2>Không tìm thấy bài viết</h2><p>Bài viết có thể đã được thay đổi hoặc đường dẫn không còn hợp lệ.</p><p><a class="btn primary" href="index.html#articles">← Quay lại bài viết</a></p></div>';return}
- const publishedDate=formatPublishedDate(a); const cleanContent=stripDuplicateLeadingTitlePage(a.content,a.title,a.seoTitle); setMeta(a); root.innerHTML=`<article><div class="article-tag">${escPage(a.specialty||'')}</div><h1>${escPage(a.title||'')}</h1>${a.image?`<img class="article-page-cover" src="${escPage(a.image)}" alt="${escPage(a.title||'')}" loading="eager">`:''}${renderArticleVideoPage(a)}<p class="article-page-desc">${escPage(a.desc||'')}</p><div class="article-full">${cleanContent}</div>${publishedDate?`<div class="article-published-date">📅 Ngày xuất bản: <strong>${publishedDate}</strong></div>`:''}<p style="margin-top:32px"><a class="btn secondary" href="index.html#articles">← Xem các bài viết khác</a></p>${renderRelatedPage(a,list)}</article>`;
+ const publishedDate=formatPublishedDate(a); const cleanContent=linkifyArticleContentPage(stripDuplicateLeadingTitlePage(a.content,a.title,a.seoTitle)); setMeta(a); root.innerHTML=`<article><div class="article-tag">${escPage(a.specialty||'')}</div><h1>${escPage(a.title||'')}</h1>${a.image?`<img class="article-page-cover" src="${escPage(a.image)}" alt="${escPage(a.title||'')}" loading="eager">`:''}${renderArticleVideoPage(a)}<p class="article-page-desc">${escPage(a.desc||'')}</p><div class="article-full">${cleanContent}</div>${publishedDate?`<div class="article-published-date">📅 Ngày xuất bản: <strong>${publishedDate}</strong></div>`:''}<p style="margin-top:32px"><a class="btn secondary" href="index.html#articles">← Xem các bài viết khác</a></p>${renderRelatedPage(a,list)}</article>`;
  recordArticleViewPage(a);
 })();
