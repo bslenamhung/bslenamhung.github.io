@@ -64,6 +64,53 @@ def safe_id(value):
     return value
 
 
+def html_escape_text(value):
+    return html.escape(str(value or ''), quote=False)
+
+
+def html_escape_attr(value):
+    return html.escape(str(value or ''), quote=True)
+
+
+
+def linkify_article_content(html):
+    """Convert plain http(s) URLs in article text into clickable links without touching HTML tags or existing links."""
+    text = str(html or '')
+    parts = re.split(r'(<[^>]+>)', text)
+    out = []
+    skip_depth = 0
+    url_re = re.compile(r'https?://[^\s<]+', re.I)
+    for part in parts:
+        if not part:
+            continue
+        if part.startswith('<'):
+            tag = re.match(r'<\s*(/?)\s*([a-zA-Z0-9]+)', part)
+            if tag:
+                closing, name = tag.group(1), tag.group(2).lower()
+                if name in {'a','script','style','code','pre','textarea'}:
+                    if closing:
+                        skip_depth = max(0, skip_depth - 1)
+                    elif not part.rstrip().endswith('/>') and not re.match(r'<\s*(a|script|style|code|pre|textarea)\b[^>]*?/\s*>$', part, re.I):
+                        skip_depth += 1
+            out.append(part)
+            continue
+        if skip_depth:
+            out.append(part)
+            continue
+        def repl(m):
+            raw = m.group(0)
+            url = raw
+            trail = ''
+            while url and url[-1] in '.,;:!?)]}>\'\"”’':
+                trail = url[-1] + trail
+                url = url[:-1]
+            if not url:
+                return raw
+            href = html_escape_attr(url)
+            return f'<a class="article-inline-link" href="{href}" target="_blank" rel="noopener noreferrer">{html_escape_text(url)}</a>{html_escape_text(trail)}'
+        out.append(url_re.sub(repl, part))
+    return ''.join(out)
+
 def fetch_content():
     if not SUPABASE_URL or not SUPABASE_KEY:
         raise RuntimeError('Thiếu SUPABASE_URL hoặc SUPABASE_KEY.')
@@ -149,47 +196,6 @@ def strip_duplicate_leading_title(content, title, seo_title=''):
     return out
 
 
-def linkify_article_content(value):
-    """Convert bare http(s) URLs in article text to clickable links.
-    Existing HTML tags/links are preserved and URLs inside code/pre/script/style
-    blocks are intentionally left untouched.
-    """
-    text = str(value or '')
-    token_re = re.compile(r'(<(?:a|script|style|code|pre|textarea)\b[^>]*>.*?</(?:a|script|style|code|pre|textarea)>|<!--.*?-->|<[^>]+>)', re.I | re.S)
-    url_re = re.compile(r'https?://[^\s<>"\']+', re.I)
-    trailing = '.,!?;:)]}'
-    out = []
-    pos = 0
-    for m in token_re.finditer(text):
-        if m.start() > pos:
-            segment = text[pos:m.start()]
-            def repl(u):
-                raw = u.group(0)
-                clean = raw
-                suffix = ''
-                while clean and clean[-1] in trailing:
-                    suffix = clean[-1] + suffix
-                    clean = clean[:-1]
-                if not clean:
-                    return raw
-                href = html.escape(clean, quote=True)
-                label = html.escape(clean, quote=False)
-                return f'<a class="article-inline-link" href="{href}">{label}</a>{suffix}'
-            segment = url_re.sub(repl, segment)
-            out.append(segment)
-        out.append(m.group(0))
-        pos = m.end()
-    if pos < len(text):
-        segment = text[pos:]
-        def repl(u):
-            raw=u.group(0); clean=raw; suffix=''
-            while clean and clean[-1] in trailing:
-                suffix=clean[-1]+suffix; clean=clean[:-1]
-            if not clean:return raw
-            return f'<a class="article-inline-link" href="{html.escape(clean, quote=True)}">{html.escape(clean, quote=False)}</a>{suffix}'
-        out.append(url_re.sub(repl,segment))
-    return ''.join(out)
-
 def clean_desc(article):
     raw = str(article.get('seoDescription') or article.get('desc') or article.get('content') or '')
     raw = re.sub(r'<[^>]+>', ' ', raw)
@@ -201,44 +207,6 @@ def canonical_for(article):
     aid = safe_id(article_id(article))
     slug = normalize_slug(article.get('slug', ''), aid)
     return BASE_URL + '/bai-viet/' + urllib.parse.quote(slug, safe='_-.') + '.html'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 def article_link(article):
     return canonical_for(article)
@@ -352,7 +320,7 @@ def render_article(article, published):
 <meta name="twitter:description" content="{esc(desc)}">
 {f'<meta name="twitter:image" content="{esc(image)}">' if image else ''}
 <script type="application/ld+json">{jsonld}</script>
-<link rel="stylesheet" href="../style.css?v=68">
+<link rel="stylesheet" href="../style.css?v=66">
 </head><body>
 <header class="site-header"><div class="container nav-wrap">
 <a class="brand" href="../index.html"><strong>BS<br>Lê Nam Hùng</strong><span>Sản Phụ khoa</span></a>

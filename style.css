@@ -327,7 +327,8 @@ body{font-size:16px}
   .article-page h1{font-size:25px!important}
 }
 
+.article-full a.article-inline-link{color:#8c6849;text-decoration:underline;text-underline-offset:2px;cursor:pointer}.article-full a.article-inline-link:hover{opacity:.8}
 
-/* V68: links pasted into article content */
-.article-inline-link{color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px;cursor:pointer}
-.article-inline-link:hover{text-decoration-thickness:2px}
+
+/* V73 - Phân trang danh sách bài viết: 9 bài/trang */
+.article-pagination{display:flex;justify-content:center;align-items:center;gap:7px;flex-wrap:wrap;margin:28px 0 8px}.article-pagination[hidden]{display:none}.page-btn{min-width:38px;height:38px;padding:0 10px;border:1px solid #dfe5e8;border-radius:10px;background:#fff;color:#33444d;font:inherit;font-weight:700;cursor:pointer}.page-btn:hover{border-color:#b9c5cb;background:#f8fafb}.page-btn.active{background:#9a7252;color:#fff;border-color:#9a7252}.page-btn:disabled{opacity:.4;cursor:not-allowed}.page-dots{padding:0 2px;color:#7a858c}.page-info{margin-left:8px;color:#6b757d;font-size:13px;font-weight:600}@media(max-width:520px){.article-pagination{gap:5px}.page-btn{min-width:36px;height:36px}.page-info{width:100%;text-align:center;margin:5px 0 0}}

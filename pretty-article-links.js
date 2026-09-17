@@ -18,7 +18,6 @@
     for (const a of (data?.articles || [])) {
       if (!a?.id) continue;
       const slug = slugify(a.slug || a.title) || String(a.id);
-      // Hỗ trợ cả ID thật và slug trong bai-viet.html?id=...
       out.set(String(a.id), slug);
       out.set(slug, slug);
     }
@@ -33,36 +32,5 @@
       if (slug) location.replace(`bai-viet/${encodeURIComponent(slug)}.html`);
     }
   };
-  const rewrite = async () => {
-    const links = [...document.querySelectorAll('a[href]')];
-    if (!links.length) return;
-    const ids = await map();
-    for (const a of links) {
-      const h = String(a.getAttribute('href') || '');
-      const m = h.match(/^(?:\.\/)?bai-viet\.html\?id=([^&#]+)$/i);
-      if (m) {
-        const slug = ids.get(decodeURIComponent(m[1]));
-        if (slug) a.href = `bai-viet/${encodeURIComponent(slug)}.html`;
-        continue;
-      }
-      const m2 = h.match(/^(?:\.\/)?bai-viet\/([^/?#]+)\.html$/i);
-      if (m2) {
-        const slug = ids.get(decodeURIComponent(m2[1]));
-        if (slug) a.href = `bai-viet/${encodeURIComponent(slug)}.html`;
-      }
-    }
-  };
-  document.addEventListener('click', async event => {
-    const a = event.target.closest?.('a[href]');
-    if (!a) return;
-    const m = String(a.getAttribute('href') || '').match(/^(?:\.\/)?bai-viet\.html\?id=([^&#]+)$/i);
-    if (!m) return;
-    event.preventDefault();
-    const ids = await map();
-    const slug = ids.get(decodeURIComponent(m[1]));
-    location.href = slug ? `bai-viet/${encodeURIComponent(slug)}.html` : a.href;
-  });
   redirectOldPage();
-  rewrite();
-  new MutationObserver(() => rewrite()).observe(document.documentElement, {childList: true, subtree: true});
 })();

@@ -1,31 +1,30 @@
 #!/usr/bin/env python3
 import json
 import os
-import re
 import sys
 import urllib.parse
 import urllib.request
 from pathlib import Path
+
+def normalize_slug(value, fallback_id):
+    import unicodedata
+    value = (value or "").strip().lower()
+    value = unicodedata.normalize("NFKD", value)
+    value = "".join(ch for ch in value if not unicodedata.combining(ch))
+    value = value.replace("đ", "d")
+    value = re.sub(r"[^a-z0-9]+", "-", value).strip("-")
+    return value[:120] or fallback_id
 
 SUPABASE_URL = os.environ.get('SUPABASE_URL', '').rstrip('/')
 SUPABASE_KEY = os.environ.get('SUPABASE_KEY', '')
 BASE_URL = 'https://bslenamhung.github.io'
 
 
-def normalize_slug(value, fallback_id):
-    import unicodedata
-    value = (value or '').strip().lower()
-    value = unicodedata.normalize('NFKD', value)
-    value = ''.join(ch for ch in value if not unicodedata.combining(ch))
-    value = value.replace('đ', 'd')
-    value = re.sub(r'[^a-z0-9]+', '-', value).strip('-')
-    return value[:120] or fallback_id
-
-
 def js_article_id(article):
     if article.get('id'):
         return str(article['id'])
     title = str(article.get('title') or '').strip()
+    # Match the browser's JS articleId() FNV-1a over UTF-16 code units.
     utf16 = title.encode('utf-16-le', 'surrogatepass')
     h = 2166136261
     for i in range(0, len(utf16), 2):
@@ -51,7 +50,15 @@ def fetch_content():
         raise RuntimeError('Thiếu SUPABASE_URL hoặc SUPABASE_KEY.')
     query = urllib.parse.urlencode({'id': 'eq.1', 'select': 'content'})
     url = f'{SUPABASE_URL}/rest/v1/site_content_public?{query}'
-    req = urllib.request.Request(url, headers={'apikey': SUPABASE_KEY, 'Authorization': f'Bearer {SUPABASE_KEY}', 'Accept': 'application/json'}, method='GET')
+    req = urllib.request.Request(
+        url,
+        headers={
+            'apikey': SUPABASE_KEY,
+            'Authorization': f'Bearer {SUPABASE_KEY}',
+            'Accept': 'application/json',
+        },
+        method='GET',
+    )
     with urllib.request.urlopen(req, timeout=30) as resp:
         if resp.status != 200:
             raise RuntimeError(f'Supabase trả về HTTP {resp.status}.')
@@ -68,6 +75,7 @@ def build_sitemap(content):
     articles = content.get('articles') or []
     if not isinstance(articles, list):
         raise RuntimeError('Danh sách articles không hợp lệ.')
+
     urls = [
         (BASE_URL + '/', 'weekly', '1.0'),
         (BASE_URL + '/phong-kham-san-phu-khoa.html', 'monthly', '0.9'),
@@ -78,27 +86,31 @@ def build_sitemap(content):
         (BASE_URL + '/sieu-am-thai-dong-ha.html', 'monthly', '0.8'),
     ]
     seen = set()
-    used_slugs = set()
     duplicate_ids = set()
     for article in articles:
         if not isinstance(article, dict) or article.get('published') is False:
             continue
         article_id = js_article_id(article)
+        # Legacy IDs are kept as compatibility pages but are intentionally
+        # excluded from the public sitemap. Only stable, explicit article IDs
+        # are promoted as canonical sitemap URLs.
         if article_id.startswith('legacy-'):
             continue
         if article_id in seen:
             duplicate_ids.add(article_id)
             continue
         seen.add(article_id)
-        slug = normalize_slug(article.get('slug', '') or article.get('title', ''), article_id)
-        if slug in used_slugs:
-            slug = f'{slug}-{re.sub(r"[^a-z0-9]", "", article_id.lower())[-12:]}'
-        used_slugs.add(slug)
+        # URL tĩnh, crawlable và là canonical của từng bài viết.
+        slug = normalize_slug(article.get('slug', ''), article_id)
         loc = BASE_URL + '/bai-viet/' + urllib.parse.quote(slug, safe='_-.') + '.html'
         urls.append((loc, 'monthly', '0.8'))
     if duplicate_ids:
         raise RuntimeError('Phát hiện ID bài viết trùng nhau: ' + ', '.join(sorted(duplicate_ids)))
-    lines = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+
+    lines = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    ]
     for loc, freq, priority in urls:
         lines.append(f'  <url><loc>{loc}</loc><changefreq>{freq}</changefreq><priority>{priority}</priority></url>')
     lines.append('</urlset>')

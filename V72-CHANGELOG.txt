@@ -1,0 +1,11 @@
+V72 – based on V71
+
+1. Giữ nguyên toàn bộ nền tảng V71: Supabase, quản trị, SEO, thống kê, bài viết, sitemap.
+2. URL bài viết dùng slug đẹp: /bai-viet/<slug>.html.
+3. Slug lấy từ trường Slug trong Admin; nếu bỏ trống, tự tạo từ tiêu đề không dấu.
+4. Danh sách bài viết và bài liên quan dẫn trực tiếp tới URL đẹp.
+5. URL cũ /bai-viet.html?id=... được hỗ trợ chuyển hướng sang URL đẹp.
+6. Bổ sung kiểm tra workflow: sitemap khớp file HTML, XML hợp lệ, không dynamic/legacy URL, không nhiều H1.
+7. Sửa bố cục bài viết desktop tối đa 900px; mobile giữ responsive.
+8. H1 phụ trong nội dung được chuyển thành article-subheading để tránh nhiều H1.
+9. V72 là bản sao lưu độc lập; không chứa dữ liệu Supabase riêng tư.

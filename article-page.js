@@ -19,8 +19,9 @@ function upsertMeta(name,content,attr='name'){let m=document.head.querySelector(
 function upsertLink(rel,href){let l=document.head.querySelector(`link[rel="${rel}"]`);if(!l){l=document.createElement('link');l.rel=rel;document.head.appendChild(l)}l.href=href}
 
 function articleUrlPage(a){
- const id=articleIdPage(a);
- return `bai-viet/${encodeURIComponent(id)}.html`;
+ const raw=String(a?.slug||a?.title||'').trim().toLowerCase().normalize('NFKD');
+ let slug=[...raw].filter(ch=>!/[\p{M}]/u.test(ch)).join('').replace(/đ/g,'d').replace(/[^a-z0-9]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'').slice(0,120);
+ return `bai-viet/${encodeURIComponent(slug||articleIdPage(a))}.html`;
 }
 function normWords(s){
  return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').split(/[^a-z0-9]+/).filter(w=>w.length>=3);
@@ -83,52 +84,6 @@ function renderRelatedPage(current,list){
  return `<section class="related-articles" aria-labelledby="relatedTitle"><div class="related-head"><div><p class="article-tag">GỢI Ý ĐỌC THÊM</p><h2 id="relatedTitle">Bài viết liên quan</h2></div><a class="text-link" href="index.html#articles">Xem tất cả bài viết →</a></div><div class="related-grid">${cards}</div></section>`;
 }
 
-function linkifyArticleContentPage(html){
-  const host=document.createElement('div');
-  host.innerHTML=String(html||'');
-  const skip=new Set(['A','SCRIPT','STYLE','CODE','PRE','TEXTAREA']);
-  const walker=document.createTreeWalker(host,NodeFilter.SHOW_TEXT);
-  const nodes=[];
-  let node;
-  while(node=walker.nextNode()){
-    if(node.parentElement && !skip.has(node.parentElement.tagName)) nodes.push(node);
-  }
-  const urlRe=/\bhttps?:\/\/[^\s<>"']+/gi;
-  const trimTrailing=/[.,!?;:)\]}]+$/;
-  for(const textNode of nodes){
-    const text=textNode.nodeValue||'';
-    if(!urlRe.test(text)){urlRe.lastIndex=0;continue;}
-    urlRe.lastIndex=0;
-    const frag=document.createDocumentFragment();
-    let last=0,m;
-    while((m=urlRe.exec(text))){
-      let raw=m[0], clean=raw, trailing='';
-      while(trimTrailing.test(clean)){
-        trailing=clean.slice(-1)+trailing; clean=clean.slice(0,-1);
-      }
-      if(!clean) continue;
-      if(m.index>last) frag.appendChild(document.createTextNode(text.slice(last,m.index)));
-      const a=document.createElement('a');
-      a.href=clean;
-      a.textContent=clean;
-      a.className='article-inline-link';
-      try{
-        const u=new URL(clean,location.href);
-        if(u.origin!==location.origin){
-          a.target='_blank';
-          a.rel='noopener noreferrer';
-        }
-      }catch(e){}
-      frag.appendChild(a);
-      if(trailing) frag.appendChild(document.createTextNode(trailing));
-      last=m.index+raw.length;
-    }
-    if(last<text.length) frag.appendChild(document.createTextNode(text.slice(last)));
-    if(frag.childNodes.length) textNode.parentNode.replaceChild(frag,textNode);
-  }
-  return host.innerHTML;
-}
-
 function normalizeArticleTextPage(s){
  return String(s||'').replace(/<[^>]*>/g,' ').replace(/&nbsp;|&#160;/gi,' ').replace(/&amp;/gi,'&').replace(/\s+/g,' ').trim().toLowerCase();
 }
@@ -143,6 +98,39 @@ function stripDuplicateLeadingTitlePage(content,title,seoTitle=''){
    if(targets.has(text)) out=out.slice(m[0].length); else break;
  }
  return out;
+}
+
+
+function linkifyArticleContentPage(html){
+ const box=document.createElement('div');
+ box.innerHTML=String(html||'');
+ const skip=new Set(['A','SCRIPT','STYLE','CODE','PRE','TEXTAREA']);
+ const walker=document.createTreeWalker(box,NodeFilter.SHOW_TEXT);
+ const nodes=[]; let n;
+ while(n=walker.nextNode()){
+   let p=n.parentElement, blocked=false;
+   while(p){ if(skip.has(p.tagName)){blocked=true;break} p=p.parentElement; }
+   if(!blocked && /https?:\/\/[^\s<]+/i.test(n.nodeValue||'')) nodes.push(n);
+ }
+ const urlRe=/https?:\/\/[^\s<]+/gi;
+ for(const textNode of nodes){
+   const text=textNode.nodeValue||'';
+   const frag=document.createDocumentFragment(); let last=0, m;
+   while((m=urlRe.exec(text))){
+     const raw=m[0];
+     let url=raw, trail='';
+     while(/[.,;:!?\)\]\}>'"”’]$/.test(url)){ trail=url.slice(-1)+trail; url=url.slice(0,-1); }
+     if(!/^https?:\/\//i.test(url)) continue;
+     if(m.index>last) frag.appendChild(document.createTextNode(text.slice(last,m.index)));
+     const a=document.createElement('a'); a.className='article-inline-link'; a.href=url; a.textContent=url;
+     try{ if(new URL(url,location.href).origin!==location.origin){a.target='_blank';a.rel='noopener noreferrer';} }catch(e){}
+     frag.appendChild(a);
+     if(trail) frag.appendChild(document.createTextNode(trail));
+     last=m.index+raw.length;
+   }
+   if(last) { if(last<text.length) frag.appendChild(document.createTextNode(text.slice(last))); textNode.parentNode.replaceChild(frag,textNode); }
+ }
+ return box.innerHTML;
 }
 
 function formatPublishedDate(a){

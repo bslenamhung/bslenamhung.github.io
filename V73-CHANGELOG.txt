@@ -1,0 +1,23 @@
+V73 – Phân trang danh sách bài viết
+
+1. Danh sách bài viết trang chủ hiển thị tối đa 9 bài/trang.
+2. Có nút Trang trước, Trang sau và số trang.
+3. Tìm kiếm bài viết vẫn hoạt động và tự quay về trang 1.
+4. Lọc theo chuyên môn vẫn hoạt động và tự quay về trang 1.
+5. Chỉ thay đổi cách hiển thị danh sách; không thay đổi URL slug, Supabase, quản trị, SEO, sitemap hoặc trang bài viết.
+6. Khi có 200 bài, người đọc vẫn chỉ thấy 9 bài mỗi trang; toàn bộ bài vẫn tồn tại và được index qua các URL bài viết riêng.
+
+V73 FINAL FIXED – 17/09/2026
+- Sửa lỗi nghiêm trọng khiến danh sách bài viết không hiển thị: wrapper phân trang trước đây tự gọi lại chính nó (đệ quy); nay giữ tham chiếu bộ render lõi trước khi thay wrapper.
+- Giữ 9 bài/trang, tìm kiếm và lọc theo chuyên môn.
+- Khi bấm chuyên môn, ô tìm kiếm được cập nhật và danh sách bài viết được lọc.
+- Không thay đổi Supabase hoặc dữ liệu bài viết.
+
+
+V73.1 UPGRADE – 17/09/2026
+- Đồng bộ cache-busting trên index.html: script.js và site-visit.js dùng v=73-final.
+- Bỏ cơ chế V73 tự đổi href bài viết theo tiêu đề; giữ nguyên URL/slug do script-core.js và dữ liệu Supabase tạo ra.
+- Thêm cơ chế chống nạp trùng script.js nếu script bị gọi lại.
+- GitHub Actions giờ commit cả index.html, script.js và script-core.js cùng các file sinh bài viết/sitemap.
+- Đổi tên workflow commit từ V72 sang V73 và cập nhật message commit.
+- Không thay đổi cấu trúc dữ liệu Supabase hoặc slug của bài viết.

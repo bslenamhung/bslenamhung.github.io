@@ -1,0 +1,33 @@
+BSLENAMHUNG V70 – FINAL BASED ON V68/V69
+
+Base version:
+- V68 is preserved as the original functional base.
+- V69 contains the article URL linkification fix.
+- V70 packages V69 as the final backup version with the verified sitemap workflow.
+
+Verified fixes:
+1. Article content:
+   - Plain http/https URLs are converted to clickable links.
+   - Existing links and code/script/style/pre content are protected.
+2. Static article pages:
+   - Published articles use /bai-viet/art-....html URLs.
+3. Sitemap workflow:
+   - Runs every 15 minutes.
+   - Generates static article pages from Supabase.
+   - Generates sitemap from published articles.
+   - Rejects bai-viet.html?id= URLs.
+   - Rejects legacy- article URLs.
+   - Validates sitemap XML.
+   - Compares sitemap article files with bai-viet/art-*.html.
+   - Commits and pushes generated files when changed.
+4. Supabase:
+   - Uses the working Supabase connection configuration from the verified workflow.
+
+Live verification already completed:
+- Workflow #231: SUCCESS.
+- Live sitemap: 22 URLs total.
+- Live sitemap: 15 static article URLs + 7 main/local SEO URLs.
+
+Important:
+- This ZIP is a source-code backup based on V69/V68.
+- New article HTML pages and sitemap entries are generated automatically by GitHub Actions from Supabase.

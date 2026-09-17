@@ -1,0 +1,10 @@
+BSLENAMHUNG V69 - BASED ON V68
+
+- V68 is the base; existing clinic/admin/article functionality is preserved.
+- Fix: plain http/https URLs inside article content are converted to clickable links.
+- Fix: existing links/code/script/style/pre blocks are not altered by linkification.
+- Fix: sitemap workflow validator no longer raises the Python tuple/Path TypeError.
+- Fix: sitemap workflow uses the verified Supabase connection and runs every 15 minutes.
+- Sitemap validation rejects dynamic bai-viet.html?id= URLs and legacy- article URLs.
+- Validator checks that sitemap article URLs exactly match bai-viet/art-*.html files and that sitemap XML is valid.
+- Verified live workflow result after these fixes: 15 static article pages and 22 sitemap URLs, workflow #231 SUCCESS.
