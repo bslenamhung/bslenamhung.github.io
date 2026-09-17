@@ -78,6 +78,7 @@ def build_sitemap(content):
         (BASE_URL + '/sieu-am-thai-dong-ha.html', 'monthly', '0.8'),
     ]
     seen = set()
+    used_slugs = set()
     duplicate_ids = set()
     for article in articles:
         if not isinstance(article, dict) or article.get('published') is False:
@@ -89,7 +90,10 @@ def build_sitemap(content):
             duplicate_ids.add(article_id)
             continue
         seen.add(article_id)
-        slug = normalize_slug(article.get('slug', ''), article_id)
+        slug = normalize_slug(article.get('slug', '') or article.get('title', ''), article_id)
+        if slug in used_slugs:
+            slug = f'{slug}-{re.sub(r"[^a-z0-9]", "", article_id.lower())[-12:]}'
+        used_slugs.add(slug)
         loc = BASE_URL + '/bai-viet/' + urllib.parse.quote(slug, safe='_-.') + '.html'
         urls.append((loc, 'monthly', '0.8'))
     if duplicate_ids:
