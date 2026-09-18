@@ -331,3 +331,14 @@ body{font-size:16px}
 /* V68: links pasted into article content */
 .article-inline-link{color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px;cursor:pointer}
 .article-inline-link:hover{text-decoration-thickness:2px}
+
+
+/* V71 – Phân trang bài viết */
+.article-pagination{display:flex;justify-content:center;align-items:center;gap:7px;flex-wrap:wrap;margin:28px 0 4px}
+.article-pagination[hidden]{display:none}
+.article-pagination .page-btn{min-width:40px;height:40px;padding:0 11px;border:1px solid #dfe5e8;border-radius:10px;background:#fff;color:#46545e;font:inherit;font-weight:700;cursor:pointer;transition:.18s ease}
+.article-pagination .page-btn:hover:not(:disabled){border-color:#9a7252;transform:translateY(-1px)}
+.article-pagination .page-btn.active{background:#9a7252;color:#fff;border-color:#9a7252}
+.article-pagination .page-btn:disabled{opacity:.45;cursor:not-allowed}
+.article-pagination .page-ellipsis{min-width:20px;text-align:center;color:#7b8790;font-weight:700}
+@media(max-width:520px){.article-pagination{gap:5px;margin-top:24px}.article-pagination .page-btn{min-width:38px;height:38px;padding:0 8px;font-size:13px}.article-pagination .page-btn.prev,.article-pagination .page-btn.next{padding:0 10px}}
