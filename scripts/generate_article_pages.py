@@ -101,7 +101,7 @@ def linkify_article_content(html):
             raw = m.group(0)
             url = raw
             trail = ''
-            while url and url[-1] in '.,;:!?)]}>\'\"”’':
+            while url and url[-1] in '.,;:!?)]}>\'\"”’':
                 trail = url[-1] + trail
                 url = url[:-1]
             if not url:
