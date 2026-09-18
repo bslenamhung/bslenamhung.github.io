@@ -53,7 +53,58 @@ async function render(){
 function aboutTitle(key){return ({bioText:'Giới thiệu bác sĩ',careerText:'Quá trình công tác',expertiseText:'Chuyên môn',researchText:'Nghiên cứu khoa học'})[key]||'Thông tin';}
 function openAboutInfo(key){const text=String(DATA.site?.[key]||'').trim()||'Nội dung đang được cập nhật.';const imageKey={bioText:'bioImage',careerText:'careerImage',expertiseText:'expertiseImage',researchText:'researchImage'}[key];const image=String(DATA.site?.[imageKey]||'').trim();let m=document.getElementById('aboutModal');if(!m){m=document.createElement('div');m.id='aboutModal';m.className='article-modal';m.innerHTML='<div class="article-modal-backdrop"></div><div class="article-modal-card about-modal-card"><button class="article-modal-close" aria-label="Đóng">×</button><div class="about-modal-content"></div></div>';document.body.appendChild(m);m.querySelector('.article-modal-close').onclick=()=>m.classList.remove('show');m.querySelector('.article-modal-backdrop').onclick=()=>m.classList.remove('show');}m.querySelector('.about-modal-content').innerHTML=`<div class="article-tag">HỒ SƠ CHUYÊN MÔN</div><h2>${esc(aboutTitle(key))}</h2>${image?`<img class="about-modal-image" src="${esc(image)}" alt="${esc(aboutTitle(key))}">`:''}<div class="about-full">${esc(text).replace(/\n/g,'<br>')}</div>`;m.classList.add('show');}
 function bindAboutCards(){document.querySelectorAll('[data-about-key]').forEach(el=>el.addEventListener('click',()=>openAboutInfo(el.dataset.aboutKey)));}
-function renderArticles(filter=''){const q=document.getElementById('searchInput')?.value.trim().toLowerCase()||'';const rows=(DATA.articles||[]).filter(a=>a.published!==false&&(!filter||a.specialty===filter)&&(!q||(a.title+a.desc+a.specialty+a.content).toLowerCase().includes(q)));document.getElementById('articleGrid').innerHTML=rows.map((a)=>{const u='bai-viet/'+encodeURIComponent(articleId(a))+'.html';return `<article class="article-card"><div class="body">${a.image?`<img src="${esc(a.image)}" alt="${esc(a.title)}" loading="lazy">`:''}<div class="article-tag">${esc(a.specialty)}</div><h3>${esc(a.title)}</h3><p>${esc(a.desc)}</p><a href="${esc(u)}">Đọc bài viết →</a></div></article>`}).join('');document.getElementById('emptyState').hidden=rows.length>0;}
+const ARTICLES_PER_PAGE=9;
+let currentArticlePage=1;
+let currentArticleFilter='';
+
+function getFilteredArticles(filter=''){
+  const q=document.getElementById('searchInput')?.value.trim().toLowerCase()||'';
+  return (DATA.articles||[]).filter(a=>a.published!==false&&(!filter||a.specialty===filter)&&(!q||(String(a.title||'')+String(a.desc||'')+String(a.specialty||'')+String(a.content||'')).toLowerCase().includes(q)));
+}
+
+function renderPagination(totalPages){
+  let wrap=document.getElementById('articlePagination');
+  if(!wrap){
+    wrap=document.createElement('nav');
+    wrap.id='articlePagination';
+    wrap.className='article-pagination';
+    wrap.setAttribute('aria-label','Phân trang bài viết');
+    const grid=document.getElementById('articleGrid');
+    grid?.after(wrap);
+  }
+  if(totalPages<=1){wrap.innerHTML='';wrap.hidden=true;return;}
+  wrap.hidden=false;
+  const buttons=[];
+  buttons.push('<button type="button" class="page-btn prev" data-page="'+(currentArticlePage-1)+'" '+(currentArticlePage===1?'disabled':'')+' aria-label="Trang trước">‹ Trước</button>');
+  const maxVisible=5;
+  let start=Math.max(1,currentArticlePage-Math.floor(maxVisible/2));
+  let end=Math.min(totalPages,start+maxVisible-1);
+  if(end-start+1<maxVisible)start=Math.max(1,end-maxVisible+1);
+  if(start>1){buttons.push('<button type="button" class="page-btn" data-page="1">1</button>');if(start>2)buttons.push('<span class="page-ellipsis">…</span>');}
+  for(let p=start;p<=end;p++)buttons.push('<button type="button" class="page-btn '+(p===currentArticlePage?'active':'')+'" data-page="'+p+'" aria-current="'+(p===currentArticlePage?'page':'false')+'">'+p+'</button>');
+  if(end<totalPages){if(end<totalPages-1)buttons.push('<span class="page-ellipsis">…</span>');buttons.push('<button type="button" class="page-btn" data-page="'+totalPages+'">'+totalPages+'</button>');}
+  buttons.push('<button type="button" class="page-btn next" data-page="'+(currentArticlePage+1)+'" '+(currentArticlePage===totalPages?'disabled':'')+' aria-label="Trang sau">Sau ›</button>');
+  wrap.innerHTML=buttons.join('');
+  wrap.querySelectorAll('.page-btn[data-page]').forEach(btn=>btn.addEventListener('click',()=>{
+    if(btn.disabled)return;
+    const p=Number(btn.dataset.page);if(!p||p===currentArticlePage)return;
+    currentArticlePage=p;renderArticles(currentArticleFilter,true);
+  }));
+}
+
+function renderArticles(filter='',keepPage=false){
+  if(filter!==currentArticleFilter){currentArticleFilter=filter;currentArticlePage=1;}
+  const rows=getFilteredArticles(currentArticleFilter);
+  const totalPages=Math.max(1,Math.ceil(rows.length/ARTICLES_PER_PAGE));
+  if(currentArticlePage>totalPages)currentArticlePage=totalPages;
+  const start=(currentArticlePage-1)*ARTICLES_PER_PAGE;
+  const pageRows=rows.slice(start,start+ARTICLES_PER_PAGE);
+  const grid=document.getElementById('articleGrid');
+  grid.innerHTML=pageRows.map((a)=>{const u='bai-viet/'+encodeURIComponent(articleId(a))+'.html';return '<article class="article-card"><div class="body">'+(a.image?'<img src="'+esc(a.image)+'" alt="'+esc(a.title)+'" loading="lazy">':'')+'<div class="article-tag">'+esc(a.specialty)+'</div><h3>'+esc(a.title)+'</h3><p>'+esc(a.desc)+'</p><a href="'+esc(u)+'">Đọc bài viết →</a></div></article>'}).join('');
+  document.getElementById('emptyState').hidden=rows.length>0;
+  renderPagination(totalPages);
+  if(keepPage)document.getElementById('articles')?.scrollIntoView({behavior:'smooth',block:'start'});
+}
 function openArticle(a){const id=articleId(a);if(!id)return;window.location.href='bai-viet/'+encodeURIComponent(id)+'.html';}
 function bindSpecialties(){document.querySelectorAll('.specialty-card').forEach(el=>el.addEventListener('click',()=>{const f=el.dataset.specialty;setTimeout(()=>renderArticles(f),50)}));}
 bindContactTracking();document.getElementById('searchInput')?.addEventListener('input',()=>renderArticles());document.getElementById('navToggle')?.addEventListener('click',()=>{const n=document.getElementById('mainNav'),b=document.getElementById('navToggle');const open=n?.classList.toggle('open');if(b)b.setAttribute('aria-expanded',String(!!open));});document.querySelectorAll('#mainNav a').forEach(a=>a.addEventListener('click',()=>{document.getElementById('mainNav')?.classList.remove('open');document.getElementById('navToggle')?.setAttribute('aria-expanded','false')}));render();
