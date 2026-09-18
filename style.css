@@ -79,6 +79,10 @@
 .article-published-date{margin-top:24px;padding-top:14px;border-top:1px solid #e6eaf0;color:#64748b;font-size:14px}.article-published-date strong{color:#334155;font-weight:700}
 
 /* V48 – Responsive article reading on phones: normalize pasted/fixed-width article HTML without changing article data. */
+.article-breadcrumb{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 auto 14px;max-width:900px;font-size:.9rem;color:#64748b}
+.article-breadcrumb a{color:#2563eb;text-decoration:none}
+.article-breadcrumb a:hover{text-decoration:underline}
+.article-breadcrumb span[aria-hidden="true"]{color:#94a3b8}
 .article-page{width:100%;max-width:900px;margin:0 auto}.article-page-cover{display:block;width:100%;max-width:100%;height:auto;border-radius:14px;object-fit:contain}.article-page-desc{font-size:1.05rem;line-height:1.75;color:#5f6d78}.article-full{width:100%;max-width:100%;font-size:16px;line-height:1.8;overflow-wrap:anywhere}.article-full img{display:block;max-width:100% !important;width:auto !important;height:auto !important}.article-full p,.article-full div,.article-full section,.article-full article,.article-full figure,.article-full blockquote,.article-full ul,.article-full ol,.article-full table{max-width:100% !important}.article-full table{width:100% !important;border-collapse:collapse}.article-full iframe{max-width:100% !important}.article-full a{overflow-wrap:anywhere}
 @media(max-width:700px){
   .article-page{width:100%;}
