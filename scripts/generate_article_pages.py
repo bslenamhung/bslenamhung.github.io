@@ -199,7 +199,10 @@ def clean_desc(article):
 
 def canonical_for(article):
     aid = safe_id(article_id(article))
-    slug = normalize_slug(article.get('slug', ''), aid)
+    # Keep canonical URL generation identical to the filename generation below.
+    # If an article has no explicit slug, derive it from the title instead of
+    # falling back to the internal article ID.
+    slug = normalize_slug(article.get('slug') or article.get('title') or '', aid)
     return BASE_URL + '/bai-viet/' + urllib.parse.quote(slug, safe='_-.') + '.html'
 
 
@@ -211,16 +214,29 @@ def article_link(article):
     return canonical_for(article)
 
 
+def article_words(value):
+    value = re.sub(r'<[^>]*>', ' ', str(value or ''))
+    value = unicodedata.normalize('NFKD', value).lower()
+    value = ''.join(ch for ch in value if not unicodedata.combining(ch))
+    value = value.replace('đ', 'd')
+    return {w for w in re.split(r'[^a-z0-9]+', value) if len(w) >= 3}
+
+
 def related_articles(current, published):
     cur_spec = str(current.get('specialty') or '').strip().lower()
+    current_title = article_words(current.get('title') or '')
+    current_keywords = article_words(f"{current.get('keywords') or ''} {current.get('specialty') or ''}")
     others = []
     for a in published:
         if article_id(a) == article_id(current):
             continue
         score = 0
         if cur_spec and str(a.get('specialty') or '').strip().lower() == cur_spec:
-            score += 100
-        score += 1 if a.get('keywords') else 0
+            score += 45
+        other_keywords = article_words(f"{a.get('keywords') or ''} {a.get('specialty') or ''}")
+        other_title = article_words(a.get('title') or '')
+        score += min(len(current_keywords & other_keywords), 8) * 7
+        score += min(len(current_title & other_title), 5) * 5
         others.append((score, str(a.get('title') or ''), a))
     others.sort(key=lambda x: (-x[0], x[1]))
     return [x[2] for x in others[:4]]
@@ -258,6 +274,16 @@ def render_article(article, published):
         schema['datePublished'] = raw_date
     if article.get('updatedAt'):
         schema['dateModified'] = article['updatedAt']
+    breadcrumb_schema = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        'itemListElement': [
+            {'@type': 'ListItem', 'position': 1, 'name': 'Trang chủ', 'item': f'{BASE_URL}/'},
+            {'@type': 'ListItem', 'position': 2, 'name': 'Bài viết', 'item': f'{BASE_URL}/index.html#articles'},
+            {'@type': 'ListItem', 'position': 3, 'name': str(specialty or 'Sản Phụ khoa').strip(), 'item': canonical},
+        ],
+    }
+
     if video:
         schema['video'] = {
             '@type': 'VideoObject',
@@ -302,6 +328,7 @@ def render_article(article, published):
     date_html = f'<div class="article-published-date">📅 Ngày xuất bản: <strong>{esc(published_text)}</strong></div>' if published_text else ''
 
     jsonld = json.dumps(schema, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
+    breadcrumb_jsonld = json.dumps(breadcrumb_schema, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
     return f'''<!doctype html>
 <html lang="vi"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -319,14 +346,18 @@ def render_article(article, published):
 <meta name="twitter:description" content="{esc(desc)}">
 {f'<meta name="twitter:image" content="{esc(image)}">' if image else ''}
 <script type="application/ld+json">{jsonld}</script>
-<link rel="stylesheet" href="../style.css?v=68">
+<script type="application/ld+json">{breadcrumb_jsonld}</script>
+<link rel="stylesheet" href="../style.css?v=69">
 </head><body>
 <header class="site-header"><div class="container nav-wrap">
 <a class="brand" href="../index.html"><strong>BS<br>Lê Nam Hùng</strong><span>Sản Phụ khoa</span></a>
 <button class="nav-toggle" id="navToggle" type="button" aria-label="Mở menu" aria-expanded="false">☰</button>
 <nav id="mainNav"><a href="../index.html">Trang chủ</a><a href="../index.html#about">Về BS Lê Nam Hùng</a><a href="../index.html#specialties">Chuyên môn</a><a href="../index.html#clinic">Phòng khám</a><a href="../index.html#contact">Liên hệ</a></nav>
 </div></header>
-<main><section class="section"><div class="container"><article class="article-page" id="articleLiveRoot" data-article-id="{esc(aid)}">
+<main><section class="section"><div class="container"><nav class="article-breadcrumb" aria-label="Breadcrumb">
+<a href="../index.html">Trang chủ</a><span aria-hidden="true">›</span><a href="../index.html#articles">Bài viết</a><span aria-hidden="true">›</span><span>{esc(specialty or "Sản Phụ khoa")}</span>
+</nav>
+<article class="article-page" id="articleLiveRoot" data-article-id="{esc(aid)}">
 <div class="article-tag">{esc(specialty)}</div>
 <h1>{esc(str(article.get('title') or title))}</h1>
 {image_html}{video_html}{desc_html}
