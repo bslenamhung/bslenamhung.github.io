@@ -5,3 +5,4 @@ Trigger after unicodedata fix.
 Trigger workflow after fixing Supabase key for sitemap step.
 Trigger workflow after ensuring all static article pages.
 Trigger after fallback static article generator fix.
+Refresh related-article links for fallback pages.
