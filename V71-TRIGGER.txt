@@ -9,3 +9,5 @@ Refresh related-article links for fallback pages.
 Rebuild related article recommendations with improved matching.
 
 Refresh related article card UI
+
+Fix legacy related article sections
