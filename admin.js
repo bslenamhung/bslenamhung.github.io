@@ -141,11 +141,11 @@ function renderArticleVideoPreview(url){
 function renderArticleCoverPreview(url){const root=$("articleCoverPreview");if(!root)return;root.innerHTML=url?`<img src="${esc(url)}" alt="Xem trước ảnh đại diện">`:"";}
 function openArticleEditor(index=-1){
   editingArticleIndex=index;
-  const a=index>=0?D.articles[index]:{title:"",slug:"",slug:"",slug:"",slug:"",specialty:D.specialties[0]?.name||"Sản khoa",desc:"",image:"",content:"",videoUrl:"",published:false,seoTitle:"",seoDescription:"",keywords:"",seoImage:""};
+  const a=index>=0?D.articles[index]:{title:"",slug:"",slug:"",slug:"",slug:"",specialty:D.specialties[0]?.name||"Sản khoa",desc:"",image:"",content:"",videoUrl:"",published:false,seoTitle:"",seoDescription:"",keywords:"",localKeywords:"",seoImage:""};
   $("modalTitle").textContent=index>=0?"Sửa bài viết":"Thêm bài viết";
   $("editTitle").value=a.title||""; $("editSlug").value=a.slug||""; $("editDesc").value=a.desc||""; $("editImage").value=a.image||"";
   $("editVideoUrl").value=a.videoUrl||a.video||""; renderArticleVideoPreview(a.videoUrl||a.video||"");
-  $("editSeoTitle").value=a.seoTitle||""; $("editSeoDescription").value=a.seoDescription||""; $("editKeywords").value=a.keywords||"";
+  $("editSeoTitle").value=a.seoTitle||""; $("editSeoDescription").value=a.seoDescription||""; $("editKeywords").value=a.keywords||""; $("editLocalKeywords").value=a.localKeywords||"";
   $("editSeoImage").value=a.seoImage||a.image||"";
   $("editPublished").checked=a.published!==false;
   const sel=$("editSpecialty");sel.innerHTML=D.specialties.map(x=>`<option value="${esc(x.name)}">${esc(x.name)}</option>`).join("");sel.value=a.specialty||D.specialties[0]?.name||"";
