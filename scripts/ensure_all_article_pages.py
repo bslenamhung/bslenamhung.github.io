@@ -140,7 +140,7 @@ def main():
             elif "related-grid" not in existing:
                 # Giữ nguyên nội dung/SEO hiện có, chỉ nâng cấp danh sách bài liên quan cũ.
                 upgraded = re.sub(
-                    r'<section class="related-articles"[\\s\\S]*?</section>',
+                    r'<section class="related-articles">[\\s\\S]*?</section>',
                     related_articles_html(a, articles),
                     existing,
                     count=1
