@@ -60,6 +60,29 @@ def related_articles(current, published):
     scored.sort(key=lambda x: (-x[0], x[1]))
     return [x[2] for x in scored[:4]]
 
+def related_articles_html(current, all_articles):
+    related = related_articles(current, all_articles)
+    if not related:
+        return ''
+    cards = []
+    for r in related:
+        rslug = slugify(r.get('slug') or r.get('title'), str(r.get('id') or 'article'))
+        rurl = '../bai-viet/' + urllib.parse.quote(rslug, safe='-_.') + '.html'
+        rdesc = re.sub(r'<[^>]+>', ' ', str(r.get('desc') or ''))
+        rdesc = re.sub(r'\\s+', ' ', rdesc).strip()[:150]
+        cards.append(
+            '<a class="related-card" href="' + esc(rurl) + '">'
+            '<div class="related-tag">' + esc(r.get('specialty') or '') + '</div>'
+            '<h3>' + esc(r.get('title') or 'Bài viết') + '</h3>'
+            '<p>' + esc(rdesc) + '</p>'
+            '<span>Đọc bài viết →</span></a>'
+        )
+    return ('<section class="related-articles" aria-labelledby="relatedTitle">'
+            '<div class="related-head"><div><p class="article-tag">GỢI Ý ĐỌC THÊM</p>'
+            '<h2 id="relatedTitle">Bài viết liên quan</h2></div>'
+            '<a class="text-link" href="../index.html#articles">Xem tất cả bài viết →</a></div>'
+            '<div class="related-grid">' + ''.join(cards) + '</div></section>')
+
 def render(a, all_articles):
     title = a.get("title") or "Bài viết"
     desc = a.get("seoDescription") or a.get("desc") or ""
@@ -68,15 +91,7 @@ def render(a, all_articles):
     url = f"{BASE_URL}/bai-viet/{urllib.parse.quote(slug, safe='-_.')}.html"
     keywords = a.get("keywords") or ""
     content = a.get("content") or f"<p>{esc(desc)}</p>"
-    related = related_articles(a, all_articles)
-    related_html = ''
-    if related:
-        cards = []
-        for r in related:
-            rslug = slugify(r.get('slug') or r.get('title'), str(r.get('id') or 'article'))
-            rurl = '../bai-viet/' + urllib.parse.quote(rslug, safe='-_.') + '.html'
-            cards.append('<li><a href="' + esc(rurl) + '">' + esc(r.get('title') or 'Bài viết') + '</a></li>')
-        related_html = '<section class="related-articles" aria-label="Bài viết liên quan"><h2>Bài viết liên quan</h2><ul>' + ''.join(cards) + '</ul></section>'
+    related_html = related_articles_html(a, all_articles)
 
     schema = {
         "@context":"https://schema.org","@type":"Article","headline":title,
@@ -122,6 +137,17 @@ def main():
             if "related-articles" not in existing:
                 path.write_text(render(a,articles),encoding="utf-8")
                 created+=1
+            elif "related-grid" not in existing:
+                # Giữ nguyên nội dung/SEO hiện có, chỉ nâng cấp danh sách bài liên quan cũ.
+                upgraded = re.sub(
+                    r'<section class="related-articles"[\\s\\S]*?</section>',
+                    related_articles_html(a, articles),
+                    existing,
+                    count=1
+                )
+                if upgraded != existing:
+                    path.write_text(upgraded,encoding="utf-8")
+                    created+=1
     print(f"Da kiem tra {len(articles)} bai; tao {created} trang fallback.")
 
 if __name__=="__main__":
