@@ -2,6 +2,7 @@ const DEFAULT_DATA={site:{profileImage:'',aboutIntro:'Bác sĩ chuyên ngành S�
 let DATA=structuredClone(DEFAULT_DATA);
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 function articleId(a){if(a&&a.id)return String(a.id);const t=String(a?.title||'').trim();let h=2166136261;for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)}return 'legacy-'+(h>>>0).toString(36)}
+function articleSlug(a){const raw=String(a?.slug||a?.title||'').trim();const id=articleId(a);if(!raw)return id;const slug=raw.normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,120);return slug||id}
 
 
 async function recordContactClick(type){
@@ -100,11 +101,11 @@ function renderArticles(filter='',keepPage=false){
   const start=(currentArticlePage-1)*ARTICLES_PER_PAGE;
   const pageRows=rows.slice(start,start+ARTICLES_PER_PAGE);
   const grid=document.getElementById('articleGrid');
-  grid.innerHTML=pageRows.map((a)=>{const u='bai-viet/'+encodeURIComponent(articleId(a))+'.html';return '<article class="article-card"><div class="body">'+(a.image?'<img src="'+esc(a.image)+'" alt="'+esc(a.title)+'" loading="lazy">':'')+'<div class="article-tag">'+esc(a.specialty)+'</div><h3>'+esc(a.title)+'</h3><p>'+esc(a.desc)+'</p><a href="'+esc(u)+'">Đọc bài viết →</a></div></article>'}).join('');
+  grid.innerHTML=pageRows.map((a)=>{const u='bai-viet/'+encodeURIComponent(articleSlug(a))+'.html';return '<article class="article-card"><div class="body">'+(a.image?'<img src="'+esc(a.image)+'" alt="'+esc(a.title)+'" loading="lazy">':'')+'<div class="article-tag">'+esc(a.specialty)+'</div><h3>'+esc(a.title)+'</h3><p>'+esc(a.desc)+'</p><a href="'+esc(u)+'">Đọc bài viết →</a></div></article>'}).join('');
   document.getElementById('emptyState').hidden=rows.length>0;
   renderPagination(totalPages);
   if(keepPage)document.getElementById('articles')?.scrollIntoView({behavior:'smooth',block:'start'});
 }
-function openArticle(a){const id=articleId(a);if(!id)return;window.location.href='bai-viet/'+encodeURIComponent(id)+'.html';}
+function openArticle(a){const slug=articleSlug(a);if(!slug)return;window.location.href='bai-viet/'+encodeURIComponent(slug)+'.html';}
 function bindSpecialties(){document.querySelectorAll('.specialty-card').forEach(el=>el.addEventListener('click',()=>{const f=el.dataset.specialty;setTimeout(()=>renderArticles(f),50)}));}
 bindContactTracking();document.getElementById('searchInput')?.addEventListener('input',()=>renderArticles());document.getElementById('navToggle')?.addEventListener('click',()=>{const n=document.getElementById('mainNav'),b=document.getElementById('navToggle');const open=n?.classList.toggle('open');if(b)b.setAttribute('aria-expanded',String(!!open));});document.querySelectorAll('#mainNav a').forEach(a=>a.addEventListener('click',()=>{document.getElementById('mainNav')?.classList.remove('open');document.getElementById('navToggle')?.setAttribute('aria-expanded','false')}));render();
