@@ -26,6 +26,11 @@ jobs:
           SUPABASE_URL: https://tufzlxfrtdhestbemcly.supabase.co
           SUPABASE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY || 'sb_publishable_gsKYsz40vs6iyWqkb6zyqg_OwoM8k87' }}
         run: python scripts/generate_article_pages.py
+      - name: Dam bao tat ca bai viet co trang tinh
+        env:
+          SUPABASE_URL: https://tufzlxfrtdhestbemcly.supabase.co
+          SUPABASE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+        run: python scripts/ensure_all_article_pages.py
       - name: Tao sitemap tu Supabase
         env:
           SUPABASE_URL: https://tufzlxfrtdhestbemcly.supabase.co
