@@ -9,6 +9,7 @@
     for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)}
     return 'legacy-'+(h>>>0).toString(36);
   };
+  const slugOf=a=>{const raw=String(a?.slug||a?.title||'').trim();const id=idOf(a);if(!raw)return id;const slug=raw.normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,120);return slug||id;};
   const norm=s=>String(s||'').replace(/<[^>]*>/g,' ').replace(/&nbsp;|&#160;/gi,' ').replace(/&amp;/gi,'&').replace(/\s+/g,' ').trim().toLowerCase();
   function stripLeading(content,title,seoTitle){
     let out=String(content||'');
@@ -78,7 +79,7 @@ function linkifyArticleContentStatic(html){
   }
   function videoHtml(a){const id=youtubeId(a?.videoUrl||a?.video||'');return id?`<div class="article-video-wrap"><iframe src="https://www.youtube-nocookie.com/embed/${esc(id)}" title="${esc(a?.title||'Video bài viết')}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>`:''}
   function dateText(a){const raw=a?.publishedAt||a?.createdAt||a?.created_at||a?.date||'';if(!raw)return '';const d=new Date(raw);if(Number.isNaN(d.getTime()))return '';return new Intl.DateTimeFormat('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'}).format(d)}
-  function articleUrl(a){return new URL('bai-viet/'+encodeURIComponent(idOf(a))+'.html',location.origin+'/').href}
+  function articleUrl(a){return new URL('bai-viet/'+encodeURIComponent(slugOf(a))+'.html',location.origin+'/').href}
   function words(s){return new Set(String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').split(/[^a-z0-9]+/).filter(w=>w.length>=3))}
   function overlap(a,b){let n=0;for(const w of a)if(b.has(w))n++;return n}
   function related(current,list){
