@@ -1,16 +1,38 @@
-<!doctype html><html lang="vi"><head>
+<!doctype html>
+<html lang="vi"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Bài viết | Th.BSNT Lê Nam Hùng – Sản Phụ khoa</title>
-<meta name="description" content="Bài viết kiến thức Sản Phụ khoa của Th.BSNT Lê Nam Hùng.">
+<title>Đang chuyển đến bài viết...</title>
 <meta name="robots" content="noindex,follow">
-<link rel="canonical" href="https://bslenamhung.github.io/bai-viet.html">
-<link rel="stylesheet" href="style.css?v=65">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-config.js?v=65"></script>
+<link rel="canonical" href="https://bslenamhung.github.io/index.html#articles">
 </head><body>
-<header class="site-header"><div class="container nav-wrap"><a class="brand" href="index.html"><strong>BS<br>Lê Nam Hùng</strong><span>Sản Phụ khoa</span></a><button class="nav-toggle" id="navToggle" type="button" aria-label="Mở menu" aria-expanded="false">☰</button><nav id="mainNav"><a href="index.html">Trang chủ</a><a href="index.html#about">Về BS Lê Nam Hùng</a><a href="index.html#specialties">Chuyên môn</a><a href="index.html#clinic">Phòng khám</a><a href="index.html#contact">Liên hệ</a></nav></div></header>
-<main><section class="section"><div class="container"><div id="articlePage" class="article-page"><div class="empty">Đang tải bài viết...</div></div></div></section></main>
-<footer class="site-footer"><div class="container"><div>© <span id="year"></span> Th.BSNT Lê Nam Hùng – Sản Phụ khoa</div><div><a href="index.html">Về trang chủ</a></div></div></footer>
-
-<script>document.getElementById('navToggle')?.addEventListener('click',()=>{const n=document.getElementById('mainNav'),b=document.getElementById('navToggle');const open=n?.classList.toggle('open');if(b)b.setAttribute('aria-expanded',String(!!open));});document.querySelectorAll('#mainNav a').forEach(a=>a.addEventListener('click',()=>{document.getElementById('mainNav')?.classList.remove('open');document.getElementById('navToggle')?.setAttribute('aria-expanded','false')}));</script><script src="article-page.js?v=65"></script>
+<p style="font-family:Arial,sans-serif;text-align:center;margin:20vh 20px">Đang chuyển đến bài viết...</p>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js?v=73"></script>
+<script>
+(function(){
+  'use strict';
+  const id=new URLSearchParams(location.search).get('id');
+  const slugify=value=>{
+    const raw=String(value||'').trim();
+    const slug=raw.normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,120);
+    return slug;
+  };
+  const goHome=()=>{location.replace(new URL('index.html#articles',location.href).href)};
+  async function run(){
+    if(!id){goHome();return}
+    try{
+      const c=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY);
+      const r=await c.from('site_content_public').select('content').eq('id',1).maybeSingle();
+      const list=Array.isArray(r.data?.content?.articles)?r.data.content.articles:[];
+      const a=list.find(x=>x&&x.published!==false&&String(x.id||'')===id);
+      if(a){
+        const slug=slugify(a.slug||a.title);
+        if(slug){location.replace(new URL('bai-viet/'+encodeURIComponent(slug)+'.html',location.href).href);return}
+      }
+    }catch(e){}
+    goHome();
+  }
+  run();
+})();
+</script>
 </body></html>
