@@ -37,6 +37,29 @@ def fetch_articles():
         rows = json.loads(resp.read().decode("utf-8"))
     return (rows[0].get("content") or {}).get("articles") or []
 
+def article_words(value):
+    value = re.sub(r'<[^>]*>', ' ', str(value or ''))
+    value = unicodedata.normalize('NFKD', value).lower()
+    value = ''.join(ch for ch in value if not unicodedata.combining(ch)).replace('đ','d')
+    return {w for w in re.split(r'[^a-z0-9]+', value) if len(w) >= 3}
+
+def related_articles(current, published):
+    cur_spec = str(current.get('specialty') or '').strip().lower()
+    cur_title = article_words(current.get('title'))
+    cur_kw = article_words(f"{current.get('keywords') or ''} {current.get('localKeywords') or ''} {current.get('specialty') or ''}")
+    scored = []
+    for other in published:
+        if str(other.get('id')) == str(current.get('id')): continue
+        score = 0
+        if cur_spec and str(other.get('specialty') or '').strip().lower() == cur_spec: score += 45
+        other_kw = article_words(f"{other.get('keywords') or ''} {other.get('localKeywords') or ''} {other.get('specialty') or ''}")
+        other_title = article_words(other.get('title'))
+        score += min(len(cur_kw & other_kw), 8) * 7
+        score += min(len(cur_title & other_title), 5) * 5
+        scored.append((score, str(other.get('title') or ''), other))
+    scored.sort(key=lambda x: (-x[0], x[1]))
+    return [x[2] for x in scored[:4]]
+
 def render(a, all_articles):
     title = a.get("title") or "Bài viết"
     desc = a.get("seoDescription") or a.get("desc") or ""
@@ -45,6 +68,16 @@ def render(a, all_articles):
     url = f"{BASE_URL}/bai-viet/{urllib.parse.quote(slug, safe='-_.')}.html"
     keywords = a.get("keywords") or ""
     content = a.get("content") or f"<p>{esc(desc)}</p>"
+    related = related_articles(a, all_articles)
+    related_html = ''
+    if related:
+        cards = []
+        for r in related:
+            rslug = slugify(r.get('slug') or r.get('title'), str(r.get('id') or 'article'))
+            rurl = '../bai-viet/' + urllib.parse.quote(rslug, safe='-_.') + '.html'
+            cards.append('<li><a href="' + esc(rurl) + '">' + esc(r.get('title') or 'Bài viết') + '</a></li>')
+        related_html = '<section class="related-articles" aria-label="Bài viết liên quan"><h2>Bài viết liên quan</h2><ul>' + ''.join(cards) + '</ul></section>'
+
     schema = {
         "@context":"https://schema.org","@type":"Article","headline":title,
         "description":desc,"url":url,"mainEntityOfPage":{"@type":"WebPage","@id":url},
@@ -69,6 +102,7 @@ def render(a, all_articles):
 <h1>{esc(title)}</h1>
 {f'<img src="{esc(image)}" alt="{esc(title)}" loading="eager" style="width:100%;max-height:520px;object-fit:cover;border-radius:14px">' if image else ''}
 <div class="article-content">{content}</div>
+{related_html}
 </article>
 </main>
 </body></html>"""
@@ -83,6 +117,11 @@ def main():
         if not path.exists():
             path.write_text(render(a,articles),encoding="utf-8")
             created+=1
+        else:
+            existing = path.read_text(encoding="utf-8")
+            if "related-articles" not in existing:
+                path.write_text(render(a,articles),encoding="utf-8")
+                created+=1
     print(f"Da kiem tra {len(articles)} bai; tao {created} trang fallback.")
 
 if __name__=="__main__":
