@@ -38,6 +38,11 @@ async function loadData(){
    if(!error&&data?.content)return data.content;
   }
  }catch(e){}
+ // Fallback tĩnh: nội dung công khai được lưu cùng website để trang vẫn hiển thị khi Safari/CDN/API tạm thời không tải được.
+ try{
+  const local=await fetch('data.json?v=75',{cache:'no-store'});
+  if(local.ok){const snapshot=await local.json();if(snapshot&&typeof snapshot==='object')return snapshot;}
+ }catch(e){}
  return null;
 }
 function mergeWithDefaults(remote){
