@@ -11,3 +11,5 @@ Rebuild related article recommendations with improved matching.
 Refresh related article card UI
 
 Fix legacy related article sections
+
+Rebuild related article cards 2026-09-19 01:30
