@@ -1,17 +1,9 @@
-name: Tu dong cap nhat sitemap va bai viet
+name: Tu dong cap nhat bai viet va sitemap
 
 on:
   workflow_dispatch:
   push:
-    branches: [main, v73-final-test]
-    paths:
-      - 'index.html'
-      - 'script.js'
-      - 'script-core.js'
-      - 'admin.html'
-      - 'admin.js'
-      - 'scripts/**'
-      - '.github/workflows/update-sitemap.yml'
+    branches: [ main ]
   schedule:
     - cron: '*/15 * * * *'
 
@@ -19,62 +11,58 @@ permissions:
   contents: write
 
 jobs:
-  update-sitemap:
+  update-site-content:
     runs-on: ubuntu-latest
     steps:
       - name: Tai ma nguon
         uses: actions/checkout@v4
+
       - name: Cai Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
-      - name: Xoa cac trang bai viet tinh cu
-        run: rm -f bai-viet/*.html
+
       - name: Tao trang bai viet tinh tu Supabase
         env:
           SUPABASE_URL: https://tufzlxfrtdhestbemcly.supabase.co
-          SUPABASE_KEY: sb_publishable_gsKYsz40vs6iyWqkb6zyqg_OwoM8k87
+          SUPABASE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
         run: python scripts/generate_article_pages.py
-      - name: Sua bo cuc trang bai viet
-        run: python scripts/fix_article_layout.py
-      - name: Sua link bai viet sang URL dep
-        run: python scripts/fix_article_links.py
+
       - name: Tao sitemap tu Supabase
         env:
           SUPABASE_URL: https://tufzlxfrtdhestbemcly.supabase.co
-          SUPABASE_KEY: sb_publishable_gsKYsz40vs6iyWqkb6zyqg_OwoM8k87
+          SUPABASE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
         run: python scripts/update_sitemap.py
-      - name: Kiem tra sitemap va HTML bai viet
-        shell: bash
+
+      - name: Kiem tra dong bo bai viet va sitemap
+        run: python scripts/validate_article_build.py
+
+      - name: Kiem tra phu thuoc V71
         run: |
           set -e
-          if grep -q 'bai-viet.html?id=' sitemap.xml; then echo 'LOI: sitemap con URL bai-viet.html?id='; exit 1; fi
-          if grep -q '/bai-viet/legacy-' sitemap.xml; then echo 'LOI: sitemap con legacy article'; exit 1; fi
-          python - <<'PY'
-          from pathlib import Path
-          import re,sys
-          sitemap=Path('sitemap.xml').read_text(encoding='utf-8')
-          urls=re.findall(r'<loc>https://bslenamhung\.github\.io/bai-viet/([^<]+\.html)</loc>',sitemap)
-          files={p.name for p in Path('bai-viet').glob('*.html')}
-          sitemap_files={Path(u).name for u in urls}
-          if sitemap_files != files:
-              print('LOI sitemap/file mismatch'); print('missing',sorted(sitemap_files-files)); print('extra',sorted(files-sitemap_files)); sys.exit(1)
-          for p in Path('bai-viet').glob('*.html'):
-              t=p.read_text(encoding='utf-8')
-              if t.count('<h1>') > 1:
-                  print('LOI multiple H1',p); sys.exit(1)
-              if '../article-layout-fix.css?v=73-final' not in t:
-                  print('LOI missing layout CSS',p); sys.exit(1)
-          print('Article HTML validation: OK')
-          PY
-          python - <<'PY'
-          import xml.etree.ElementTree as ET
-          ET.parse('sitemap.xml')
-          print('XML sitemap: OK')
-          PY
-      - name: Luu V73 va sitemap
+          test -f article-layout-fix.css
+          test -f style.css
+          test -f script.js
+          test -f admin.js
+          test -f article-page.js
+          test -f clinic-page.js
+          test -f site-visit.js
+          test -f supabase-config.js
+          test ! -e scripts/fix_article_layout.py
+          test ! -e scripts/fix_article_links.py
+          test ! -e scripts/pretty_article_urls.py
+          test ! -e script-core.js
+          test ! -e static-article-live-core.js
+          echo "V71 dependency check: OK"
+
+      - name: Luu bai viet va sitemap
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A bai-viet sitemap.xml
-          if git diff --cached --quiet; then echo 'Khong co thay doi.'; else git commit -m 'chore: regenerate articles and sitemap'; git push; fi
+          if git diff --cached --quiet; then
+            echo 'Khong co thay doi.'
+          else
+            git commit -m 'chore: cap nhat bai viet va sitemap'
+            git push
+          fi
