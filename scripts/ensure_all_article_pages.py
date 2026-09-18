@@ -1,7 +1,18 @@
 #!/usr/bin/env python3
 """Ensure every published Supabase article has a static pretty-URL page."""
 from pathlib import Path
+import os
+import re
 import sys
+
+# Use the same public publishable key bundled with the frontend when the Actions secret is absent.
+if not os.environ.get('SUPABASE_KEY'):
+    cfg = Path(__file__).resolve().parents[1] / 'supabase-config.js'
+    if cfg.exists():
+        text = cfg.read_text(encoding='utf-8')
+        m = re.search(r"SUPABASE_(?:ANON_KEY|PUBLISHABLE_KEY)\s*=\s*['\"]([^'\"]+)['\"]", text)
+        if m:
+            os.environ['SUPABASE_KEY'] = m.group(1)
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from generate_article_pages import fetch_content, normalize_slug, render_article, OUT_DIR
