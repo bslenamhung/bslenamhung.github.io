@@ -23,7 +23,21 @@ function bindContactTracking(){
 }
 async function loadArticleViewTotal(){try{if(!window.supabase||!window.SUPABASE_URL)return;const c=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY);const r=await c.from('article_view_stats').select('view_count');if(!r.error){const total=(r.data||[]).reduce((n,x)=>n+Number(x.view_count||0),0);const el=document.getElementById('articleViewsTotal');if(el)el.textContent=total.toLocaleString('vi-VN')}}catch(e){}}
 async function loadData(){
- try{if(window.supabase&&SUPABASE_URL.startsWith('http')){const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);const {data,error}=await client.from('site_content_public').select('content').eq('id',1).maybeSingle();if(!error&&data?.content)return data.content}}catch(e){}
+ const key=window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY||'';
+ const base=String(window.SUPABASE_URL||'').trim();
+ if(!base||!/^https?:\\/\\//i.test(base)||!key)return null;
+ // Ưu tiên REST trực tiếp để trang vẫn tải được dữ liệu khi CDN supabase-js bị chặn trên Safari/iPhone.
+ try{
+  const res=await fetch(base.replace(/\\/$/,'')+'/rest/v1/site_content_public?id=eq.1&select=content',{method:'GET',headers:{apikey:key,Authorization:'Bearer '+key,Accept:'application/json'},cache:'no-store'});
+  if(res.ok){const rows=await res.json();if(Array.isArray(rows)&&rows[0]?.content)return rows[0].content;}
+ }catch(e){/* fallback sang supabase-js */}
+ try{
+  if(window.supabase){
+   const client=window.supabase.createClient(base,key);
+   const {data,error}=await client.from('site_content_public').select('content').eq('id',1).maybeSingle();
+   if(!error&&data?.content)return data.content;
+  }
+ }catch(e){}
  return null;
 }
 function mergeWithDefaults(remote){
