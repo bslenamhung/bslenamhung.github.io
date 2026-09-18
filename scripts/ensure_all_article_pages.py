@@ -46,13 +46,13 @@ def article_words(value):
 def related_articles(current, published):
     cur_spec = str(current.get('specialty') or '').strip().lower()
     cur_title = article_words(current.get('title'))
-    cur_kw = article_words(f"{current.get('keywords') or ''} {current.get('localKeywords') or ''} {current.get('specialty') or ''}")
+    cur_kw = article_words(f"{current.get('keywords') or ''} {current.get('localKeywords') or ''} {current.get('specialty') or ''} {current.get('desc') or ''}")
     scored = []
     for other in published:
         if str(other.get('id')) == str(current.get('id')): continue
         score = 0
         if cur_spec and str(other.get('specialty') or '').strip().lower() == cur_spec: score += 45
-        other_kw = article_words(f"{other.get('keywords') or ''} {other.get('localKeywords') or ''} {other.get('specialty') or ''}")
+        other_kw = article_words(f"{other.get('keywords') or ''} {other.get('localKeywords') or ''} {other.get('specialty') or ''} {other.get('desc') or ''}")
         other_title = article_words(other.get('title'))
         score += min(len(cur_kw & other_kw), 8) * 7
         score += min(len(cur_title & other_title), 5) * 5
