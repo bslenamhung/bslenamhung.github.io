@@ -1,9 +1,9 @@
-name: Tu dong cap nhat bai viet va sitemap
+name: Kiem tra va dong bo V71
 
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches: [ main, v71-clean-final-test ]
   schedule:
     - cron: '*/15 * * * *'
 
@@ -21,6 +21,14 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
+
+      - name: Kiem tra khoa Supabase
+        env:
+          SUPABASE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          set -e
+          test -n "$SUPABASE_KEY"
+          echo "Supabase publishable key: OK"
 
       - name: Tao trang bai viet tinh tu Supabase
         env:
@@ -40,20 +48,28 @@ jobs:
       - name: Kiem tra phu thuoc V71
         run: |
           set -e
-          test -f article-layout-fix.css
-          test -f style.css
-          test -f script.js
-          test -f admin.js
-          test -f article-page.js
-          test -f clinic-page.js
-          test -f site-visit.js
-          test -f supabase-config.js
+          for f in article-layout-fix.css style.css script.js admin.js article-page.js clinic-page.js site-visit.js supabase-config.js; do test -f "$f"; done
           test ! -e scripts/fix_article_layout.py
           test ! -e scripts/fix_article_links.py
           test ! -e scripts/pretty_article_urls.py
           test ! -e script-core.js
           test ! -e static-article-live-core.js
           echo "V71 dependency check: OK"
+
+      - name: Kiem tra syntax
+        run: |
+          python -m py_compile scripts/generate_article_pages.py scripts/update_sitemap.py scripts/validate_article_build.py
+          python - <<'PY'
+          from pathlib import Path
+          import re, urllib.parse
+          root=Path('.')
+          for p in root.glob('*.html'):
+              s=p.read_text(encoding='utf-8', errors='ignore')
+              for u in re.findall(r'(?:src|href)=["\']([^"\']+)', s, re.I):
+                  if u.startswith(('http://','https://','mailto:','tel:','#','data:','javascript:','/')): continue
+                  assert (p.parent/urllib.parse.urlparse(u).path).exists(), (p,u)
+          print('HTML local references: OK')
+          PY
 
       - name: Luu bai viet va sitemap
         run: |
