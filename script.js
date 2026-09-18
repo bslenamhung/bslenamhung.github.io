@@ -58,9 +58,27 @@ const ARTICLES_PER_PAGE=9;
 let currentArticlePage=1;
 let currentArticleFilter='';
 
+function normalizeSearchText(value){
+  return String(value??'').normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLowerCase()
+    .replace(/\\bquy\\s+i\\b/g,'quy 1').replace(/\\bquy\\s+ii\\b/g,'quy 2').replace(/\\bquy\\s+iii\\b/g,'quy 3')
+    .replace(/\\bquy\\s+iv\\b/g,'quy 4').replace(/\\bquy\\s+v\\b/g,'quy 5').replace(/\\s+/g,' ').trim();
+}
 function getFilteredArticles(filter=''){
-  const q=document.getElementById('searchInput')?.value.trim().toLowerCase()||'';
-  return (DATA.articles||[]).filter(a=>a.published!==false&&(!filter||a.specialty===filter)&&(!q||(String(a.title||'')+String(a.desc||'')+String(a.specialty||'')+String(a.content||'')).toLowerCase().includes(q)));
+  const q=normalizeSearchText(document.getElementById('searchInput')?.value||'');
+  const tokens=q.split(/\\s+/).filter(Boolean);
+  const rows=(DATA.articles||[]).filter(a=>a.published!==false&&(!filter||a.specialty===filter));
+  if(!q)return rows;
+  return rows.map(a=>{
+    const title=normalizeSearchText(a.title||''),desc=normalizeSearchText(a.desc||''),specialty=normalizeSearchText(a.specialty||''),content=normalizeSearchText(a.content||'');
+    const haystack=title+' '+desc+' '+specialty+' '+content;
+    const allTerms=tokens.every(t=>haystack.includes(t));
+    if(!allTerms)return null;
+    let score=0;
+    if(title.includes(q))score+=100;
+    if(title.split(' ').some(word=>word===q))score+=40;
+    tokens.forEach(t=>{if(title.includes(t))score+=15;if(desc.includes(t))score+=5;if(content.includes(t))score+=2});
+    return {a,score};
+  }).filter(Boolean).sort((x,y)=>y.score-x.score).map(x=>x.a);
 }
 
 function renderPagination(totalPages){
