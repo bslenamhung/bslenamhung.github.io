@@ -225,7 +225,7 @@ def article_words(value):
 def related_articles(current, published):
     cur_spec = str(current.get('specialty') or '').strip().lower()
     current_title = article_words(current.get('title') or '')
-    current_keywords = article_words(f"{current.get('keywords') or ''} {current.get('specialty') or ''}")
+    current_keywords = article_words(f"{current.get('keywords') or ''} {current.get('localKeywords') or ''} {current.get('specialty') or ''}")
     others = []
     for a in published:
         if article_id(a) == article_id(current):
@@ -233,7 +233,7 @@ def related_articles(current, published):
         score = 0
         if cur_spec and str(a.get('specialty') or '').strip().lower() == cur_spec:
             score += 45
-        other_keywords = article_words(f"{a.get('keywords') or ''} {a.get('specialty') or ''}")
+        other_keywords = article_words(f"{a.get('keywords') or ''} {a.get('localKeywords') or ''} {a.get('specialty') or ''}")
         other_title = article_words(a.get('title') or '')
         score += min(len(current_keywords & other_keywords), 8) * 7
         score += min(len(current_title & other_title), 5) * 5
@@ -268,8 +268,10 @@ def render_article(article, published):
         schema['image'] = [image]
     if specialty:
         schema['articleSection'] = specialty
-    if article.get('keywords'):
-        schema['keywords'] = str(article['keywords'])
+    keyword_parts = [str(article.get('keywords') or '').strip(), str(article.get('localKeywords') or '').strip()]
+    keyword_parts = [x for x in keyword_parts if x]
+    if keyword_parts:
+        schema['keywords'] = ', '.join(keyword_parts)
     if raw_date:
         schema['datePublished'] = raw_date
     if article.get('updatedAt'):
