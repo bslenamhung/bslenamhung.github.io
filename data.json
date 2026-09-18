@@ -1,10 +1,15 @@
 {
   "site": {
-    "aboutIntro": "Bác sĩ chuyên ngành Sản Phụ khoa với định hướng chia sẻ kiến thức y khoa dễ hiểu và đồng hành cùng người bệnh.",
-    "bioText": "Anh có thể chỉnh nội dung này trong trang Quản trị nội dung.",
-    "careerText": "Anh có thể cập nhật quá trình công tác, đơn vị công tác và các mốc chuyên môn.",
-    "expertiseText": "Sản khoa, Phụ khoa, Vô sinh – Hiếm muộn, Siêu âm, Hậu sản.",
-    "researchText": "Anh có thể cập nhật các đề tài, bài báo, hội nghị và hoạt động nghiên cứu khoa học."
+    "aboutIntro": "BS Lê Nam Hùng – bác sĩ chuyên ngành Sản Phụ khoa, định hướng cung cấp thông tin y khoa dễ hiểu, chính xác và đồng hành cùng người bệnh.",
+    "bioText": "Ths.BSNT Lê Nam Hùng làm việc tại Khoa Phụ sản BV Tỉnh Quảng Trị.\n- Tốt nghiệp Bác sỹ đa khoa năm 2016.\n- Tốt nghiệp Bác sỹ Nội trú Sản phụ khoa tại Trường Đại học Y Dược Huế năm 2019.",
+    "bioImage": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/about-bio/1788885588421-0fmeq4.jpg",
+    "careerText": "Học tập và làm việc tại BV trường đại học Y dược Huế, BV Trung ương Huế 2016-2019.\nLàm việc tại khoa Phụ Sản Bệnh viện đa khoa Tỉnh Quảng Trị năm 2019",
+    "careerImage": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/about-career/1788888001563-d636j1.jpg",
+    "profileImage": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/profile/doctor-1788858617352.jpg",
+    "expertiseText": "Sản khoa, Phụ khoa, Vô sinh – Hiếm muộn, phẫu thuật, siêu âm",
+    "expertiseImage": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/about-expertise/1788888148097-re1nz2.jpg",
+    "researchText": "- Một số thành tích khoa học:\n+ Báo cáo viên tại Hội nghị sản phụ khoa toàn quốc tháng 11/2020.\n+ Đăng bài trên tạp chí HOSREM tháng 3/2021.\n+ Báo cáo viên tại Hội nghị khoa học Sản phụ khoa BV Trung Ương Huế mở rộng tháng 09/2022.\n+ Báo cáo viên tại Hội nghị Sản Phụ khoa Khu Vực miền Trung và Tây Nguyên mở rộng 11/2023.\n+ Báo cáo viên tại Hội nghị khoa học Bệnh viện Đa Khoa Tỉnh Quảng Trị mở rộng 2024.",
+    "researchImage": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/about-research/1788886270897-xck2j0.png"
   },
   "specialties": [
     {
@@ -31,39 +36,243 @@
       "name": "Hậu sản",
       "icon": "🌿",
       "desc": "Chăm sóc mẹ sau sinh và các vấn đề hậu sản."
+    },
+    {
+      "name": "Thẩm mỹ",
+      "icon": "🦋",
+      "desc": "Tái tạo, làm mới tầng sinh môn, âm đạo, âm hộ."
+    },
+    {
+      "name": "Xét Nghiệm",
+      "icon": "XN",
+      "desc": "Các xét nghiệm trong quá trình mang thai."
     }
   ],
   "services": [
-    "Khám Sản khoa",
-    "Khám Phụ khoa",
-    "Vô sinh – Hiếm muộn",
-    "Siêu âm",
-    "Hậu sản"
+    {
+      "name": "Khám thai – siêu âm 5D",
+      "desc": "",
+      "published": true
+    },
+    {
+      "name": "Ung thư phụ khoa, vú",
+      "desc": "",
+      "published": true
+    },
+    {
+      "name": "Viêm nhiễm phụ khoa, rối loạn kinh nguyệt",
+      "desc": "",
+      "published": true
+    },
+    {
+      "name": "Đặt vòng, cấy que, tiêm thuốc tránh thai",
+      "desc": "",
+      "published": true
+    },
+    {
+      "name": "Khám tiền mãn kinh",
+      "desc": "",
+      "published": true
+    },
+    {
+      "name": "Nội tiết vô sinh hiếm muộn, IUI, IVF",
+      "desc": "",
+      "published": true
+    },
+    {
+      "name": "NIPT, ADN huyết thống",
+      "desc": "",
+      "published": true
+    },
+    {
+      "name": "Thẩm mỹ, tái tạo âm hộ, âm đạo",
+      "desc": "",
+      "published": true
+    }
   ],
   "clinic": {
-    "info": "Địa chỉ, thời gian làm việc và thông tin liên hệ sẽ được cập nhật.",
-    "booking": "Liên hệ trực tiếp để được hướng dẫn lịch khám.",
-    "phone": "",
+    "info": "🌸 PHÒNG KHÁM SẢN PHỤ KHOA THS.BSNT LÊ NAM HÙNG 🌸\n\"Điều trị bằng tri thức - chăm sóc từ trái tim\"\n\nVới mong muốn mang đến dịch vụ khám và chăm sóc Sản – Phụ khoa chất lượng, tận tâm và thân thiện, Phòng khám Sản Phụ khoa Ths.BSNT Lê Nam Hùng là địa chỉ đồng hành cùng chị em trong hành trình chăm sóc sức khỏe sinh sản.\n\n👨‍⚕️ Ths.BSNT Lê Nam Hùng với kinh nghiệm chuyên môn trong lĩnh vực Sản – Phụ khoa, trực tiếp thăm khám, tư vấn và theo dõi sức khỏe cho từng khách hàng.\n\n💗 Tận tâm trong thăm khám – Chính xác trong chẩn đoán – Hợp lý trong chi phí – An tâm trong điều trị.",
+    "logo": "clinic-logo.png",
     "zalo": "https://zalo.me/84946444812",
+    "hours": "Thứ 2-6: Sáng 11h20-13h; chiều 16h40-19h\nThứ 7-Chủ nhật: 7-19h\n+ Xét nghiệm tiểu đường thai kỳ (thai 24-28 tuần) vào T7 và CN.\n+ Thai trên 35 tuần có thể đến khám trước 20 phút để đo tim thai.\n+ Vui lòng đánh giá trang PK trên google map để chúng tôi cải thiện dịch vụ tốt hơn:\nhttps://g.page/r/CT7KGLYTePvHEBE/review\n\nLịch khám tuần 37 từ ngày 14/09/2026 đến ngày 20/09/2026",
+    "intro": "",
+    "phone": "0946444812",
+    "images": [
+      "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/clinic-image-1/1788889236218-gbq83p.jpg",
+      "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/clinic-image-2/1789274362942-0aw74q.jpeg",
+      "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/clinic-image-3/1789043306843-fixw4h.jpg",
+      "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/clinic-image-4/1788888209328-6wcfek.jpg"
+    ],
+    "mapUrl": "https://www.google.com/maps/place/16%C2%B048'14.8%22N+107%C2%B006'50.6%22E/@16.8041129,107.1114921,17z/data=!3m1!4b1!4m4!3m3!8m2!3d16.8041129!4d107.114067!18m1!1e1?entry=ttu",
     "zaloQr": "zalo-qr.jpg",
-    "mapUrl": "https://www.google.com/maps?q=16.8041129,107.1140670&entry=gps&shh=CAE&lucs=,94297699,94231188,94280568,47071704,94218641,94282134,94286869,100820247,100822499&g_ep=CAISEjI2LjMzLjEuOTYxODkxNDMyMBgAINeCAypTLDk0Mjk3Njk5LDk0MjMxMTg4LDk0MjgwNTY4LDQ3MDcxNzA0LDk0MjE4NjQxLDk0MjgyMTM0LDk0Mjg2ODY5LDEwMDgyMDI0NywxMDA4MjI0OTlCAlZO&skid=98e6f880-314f-4606-8230-22855b908a10&g_st=iz",
-    "intro": "Không gian phòng khám và thông tin khám được cập nhật để người bệnh dễ dàng theo dõi."
+    "address": "169A Lê Lợi - Nam Đông Hà - Quảng Trị",
+    "booking": "Liên hệ trực tiếp qua Zalo hoặc số điện thoại để được hướng dẫn đặt lịch khám.",
+    "tagline": "Điều trị bằng tri thức, chăm sóc từ trái tim",
+    "facebook": "https://www.facebook.com/DrLeNamHung/",
+    "weeklyScheduleImage": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/schedule/1789557246949-qpp7xi.jpg"
   },
   "articles": [
     {
-      "title": "Những điều cần lưu ý khi theo dõi thai kỳ",
+      "id": "art-mu57f8oz-dtybm2",
+      "title": "DOUBLE TEST SÀNG LỌC QUÝ I THAI KỲ",
+      "slug": "double-test-sang-loc-quy-1",
+      "specialty": "Xét Nghiệm",
+      "desc": "Double test là xét nghiệm sàng lọc quý I giúp đánh giá nguy cơ Down, Edwards và Patau.",
+      "image": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/cover/1789629859174-lx3vds.png",
+      "published": true
+    },
+    {
+      "id": "art-mu53srno-ha1nom",
+      "title": "SÀNG LỌC TIỀN SẢN GIẬT QUÝ I THAI KỲ",
+      "slug": "sang-loc-tien-san-giat-quy-1",
+      "specialty": "Xét Nghiệm",
+      "desc": "Sàng lọc tiền sản giật quý I từ 11–13 tuần 6 ngày giúp đánh giá nguy cơ và có kế hoạch theo dõi, dự phòng phù hợp cho mẹ bầu.",
+      "image": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/cover/1789623778224-5tibec.png",
+      "published": true
+    },
+    {
+      "id": "art-mu50gev9-6clnaz",
+      "title": "ĐO CTG TRONG THAI KỲ – THEO DÕI SỨC KHỎE EM BÉ",
+      "slug": "do-ctg-trong-thai-ky",
+      "specialty": "Xét Nghiệm",
+      "desc": "Đo CTG hay monitoring sản khoa giúp theo dõi nhịp tim thai và cơn co tử cung, hỗ trợ đánh giá tình trạng thai trong thai kỳ và chuyển dạ.",
+      "image": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/cover/1789618361765-6tp6lf.png",
+      "published": true
+    },
+    {
+      "id": "art-mu47thmq-0x3fzr",
+      "title": "Các mốc khám thai quan trọng. khám thai tại Đông Hà",
+      "slug": "cac-moc-kham-thai-quan-trong",
       "specialty": "Sản khoa",
-      "desc": "Nội dung mẫu để anh thay thế bằng bài viết thực tế của mình."
+      "desc": "Khám thai đúng lịch giúp bác sĩ theo dõi sự phát triển của thai nhi, phát hiện sớm các bất thường và đánh giá sức khỏe của mẹ trong suốt thai kỳ.",
+      "image": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/cover/1789570146510-gshurn.png",
+      "published": true
     },
     {
-      "title": "Khi nào nên đi khám phụ khoa?",
-      "specialty": "Phụ khoa",
-      "desc": "Nội dung mẫu để anh thay thế bằng bài viết thực tế của mình."
+      "id": "art-mu47sta1-579f0v",
+      "title": "Ngày dự sinh và tuổi thai",
+      "slug": "ngay-du-sinh-va-tuoi-thai",
+      "specialty": "Sản khoa",
+      "desc": "Ngày dự sinh và tuổi thai được tính như thế nào? Tìm hiểu cách tính tuổi thai, xác định ngày dự sinh bằng kỳ kinh cuối và siêu âm thai sớm.",
+      "image": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/cover/1789572876430-8vjlh5.png",
+      "published": true
     },
     {
-      "title": "Một số thông tin cơ bản về siêu âm thai",
-      "specialty": "Siêu âm",
-      "desc": "Nội dung mẫu để anh thay thế bằng bài viết thực tế của mình."
+      "id": "art-mu47pzkx-0g6e85",
+      "title": "HÀNH TRÌNH PHÁT TRIỂN THAI NHI THEO TỪNG TUẦN. SIÊU ÂM THAI QUẢNG TRỊ",
+      "slug": "hanh-trinh-phat-trien-cua-thai",
+      "specialty": "Sản khoa",
+      "desc": "Hành trình phát triển thai nhi theo từng tuần, từ thụ tinh, làm tổ đến các giai đoạn phát triển của thai.",
+      "image": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/cover/1789573297256-uplraf.png",
+      "published": true
+    },
+    {
+      "id": "art-mu46vxc0-17aafq",
+      "title": "Dinh dưỡng trong thai kỳ: Nên ăn gì tránh gì?",
+      "slug": "dinh-duong-trong-thai-ky",
+      "specialty": "Sản khoa",
+      "desc": "Dinh dưỡng thai kỳ với những nguyên tắc cơ bản giúp mẹ bầu lựa chọn thực phẩm phù hợp.",
+      "image": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/cover/1789568156900-frv8zy.png",
+      "published": true
+    },
+    {
+      "id": "art-mu3wv849-lqe3tw",
+      "title": "XÉT NGHIỆM NIPT THAI KỲ – SÀNG LỌC DỊ TẬT BẨM SINH KHÔNG XÂM LẤN",
+      "slug": "xet-nghiem-nipt-thai-ky",
+      "specialty": "Xét Nghiệm",
+      "desc": "NIPT là xét nghiệm sàng lọc trước sinh không xâm lấn được thực hiện bằng máu tĩnh mạch của mẹ.",
+      "image": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/cover/1789551639368-nu3ixe.png",
+      "published": true
+    },
+    {
+      "id": "art-mu3qpqhz-ffcnux",
+      "title": "XÉT NGHIỆM TIỂU ĐƯỜNG THAI KỲ: KHI NÀO CẦN LÀM VÀ QUY TRÌNH THỰC HIỆN?",
+      "slug": "xet-nghiem-tieu-duong-thai-ky",
+      "specialty": "Xét Nghiệm",
+      "desc": "Tiểu đường thai kỳ thường không có triệu chứng rõ ràng; xét nghiệm OGTT 75g thường thực hiện ở tuần 24–28.",
+      "image": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/cover/1789541002415-z7i0rd.png",
+      "published": true
+    },
+    {
+      "id": "art-mu3oun77-bu8li0",
+      "title": "Xét Nghiệm GBS (Liên cầu khuẩn nhóm B) thai kỳ",
+      "slug": "xet-nghiem-gbs-thai-ky",
+      "specialty": "Xét Nghiệm",
+      "desc": "Sàng lọc dịch âm đạo và trực tràng giúp phát hiện liên cầu khuẩn nhóm B có nguy cơ gây nhiễm trùng cho trẻ sơ sinh.",
+      "image": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/cover/1789560873789-wongiz.png",
+      "published": true
+    },
+    {
+      "id": "art-mtx6irjo-plum35",
+      "title": "Tăng cân ở trẻ em dựa vào công thức nào?",
+      "slug": "tang-can-o-tre-em",
+      "specialty": "Hậu sản",
+      "desc": "Thông tin tham khảo về đánh giá cân nặng ở trẻ em.",
+      "image": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/cover/1789218628166-51e9nu.png",
+      "published": true
+    },
+    {
+      "id": "art-mtx6evzz-fnjymp",
+      "title": "Chăm sóc rốn ở trẻ sơ sinh",
+      "slug": "cham-soc-ron-so-sinh",
+      "specialty": "Hậu sản",
+      "desc": "Hướng dẫn chăm sóc rốn ở trẻ sơ sinh và những dấu hiệu cần lưu ý.",
+      "image": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/cover/1789220024705-n4e813.png",
+      "published": true
+    },
+    {
+      "id": "art-mtsyfokd-l1zc5m",
+      "title": "Một số lưu ý sau khi mổ lấy thai giúp sản phụ phục hồi nhanh và tránh biến chứng",
+      "slug": "sau-mo-lay-thai",
+      "specialty": "Hậu sản",
+      "desc": "Một số điều quan trọng sau mổ lấy thai giúp sản phụ phục hồi và giảm nguy cơ biến chứng.",
+      "image": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/cover/1788964613791-vmu0ld.jfif",
+      "published": true
+    },
+    {
+      "id": "art-mtsu0l4l-qbs9no",
+      "title": "Tình dục và thai kỳ như thế nào cho hợ lý?",
+      "slug": "tinh-duc-va-thai-ky",
+      "specialty": "Sản khoa",
+      "desc": "Thông tin tham khảo về quan hệ tình dục trong thai kỳ và những trường hợp cần lưu ý.",
+      "image": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/cover/1789220641832-raw4u0.png",
+      "published": true
+    },
+    {
+      "id": "art-mtstp2ax-4v3i08",
+      "title": "Tư thế đi ngủ của bà bầu, có nên lo lắng?",
+      "slug": "tu-the-ngu-cho-ba-bau",
+      "specialty": "Sản khoa",
+      "desc": "Tư thế ngủ và những lưu ý trong thai kỳ.",
+      "image": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/cover/1789560958035-gg06ij.png",
+      "published": true
+    },
+    {
+      "id": "art-mtstmvto-7lmlit",
+      "title": "Đếm cử động thai: Hướng dẫn mẹ bầu theo dõi thai nhi tại nhà",
+      "slug": "huong-dan-dem-cu-dong-thai",
+      "specialty": "Sản khoa",
+      "desc": "Hướng dẫn mẹ bầu theo dõi cử động thai tại nhà.",
+      "image": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/cover/1788881088570-hltohz.jpg",
+      "published": true
+    },
+    {
+      "id": "art-mtstk8pj-q9sgzq",
+      "title": "Tăng cân trong thai kỳ bao nhiêu là hợp lý",
+      "slug": "tang-can-trong-thai-ky",
+      "specialty": "Sản khoa",
+      "desc": "Cân nặng trong thai kỳ và những điều mẹ bầu cần biết.",
+      "image": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/cover/1788880983283-e3hrhg.png",
+      "published": true
+    },
+    {
+      "id": "art-mtstgo23-ccym3n",
+      "title": "Ốm nghén khi mang thai: làm cách gì để giảm ốm nghén",
+      "slug": "om-nghen-khi-mang-thai",
+      "specialty": "Sản khoa",
+      "desc": "Ốm nghén thường gặp trong quý I thai kỳ và các cách giảm triệu chứng phù hợp.",
+      "image": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/cover/1789561569032-gcarwo.png",
+      "published": true
     }
   ]
 }
