@@ -21,8 +21,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
-      - name: Ap dung ho tro Slug V71
-        run: python scripts/apply_v71_slug.py
       - name: Tao trang bai viet tinh tu Supabase
         env:
           SUPABASE_URL: https://tufzlxfrtdhestbemcly.supabase.co
@@ -65,5 +63,5 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A admin.html admin.js scripts/generate_article_pages.py scripts/update_sitemap.py scripts/apply_v71_slug.py bai-viet sitemap.xml V71-CHANGELOG.txt
+          git add -A bai-viet sitemap.xml
           if git diff --cached --quiet; then echo "Khong co thay doi."; else git commit -m "feat: V71 slug bai viet va sitemap"; git push; fi
