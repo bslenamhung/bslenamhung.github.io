@@ -15,3 +15,5 @@ Fix legacy related article sections
 Rebuild related article cards 2026-09-19 01:30
 
 Fix related section attribute matching 2026-09-19
+
+Restore stable article generator template 2026-09-19
