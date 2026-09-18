@@ -69,13 +69,13 @@ def build_sitemap(content):
     if not isinstance(articles, list):
         raise RuntimeError('Danh sách articles không hợp lệ.')
     urls = [
-        (BASE_URL + '/', 'weekly', '1.0'),
-        (BASE_URL + '/phong-kham-san-phu-khoa.html', 'monthly', '0.9'),
-        (BASE_URL + '/bac-si-san-phu-khoa-quang-tri.html', 'monthly', '0.9'),
-        (BASE_URL + '/phong-kham-san-phu-khoa-quang-tri.html', 'monthly', '0.9'),
-        (BASE_URL + '/kham-phu-khoa-dong-ha.html', 'monthly', '0.8'),
-        (BASE_URL + '/kham-thai-dong-ha.html', 'monthly', '0.8'),
-        (BASE_URL + '/sieu-am-thai-dong-ha.html', 'monthly', '0.8'),
+        (BASE_URL + '/', 'weekly', '1.0', ''),
+        (BASE_URL + '/phong-kham-san-phu-khoa.html', 'monthly', '0.9', ''),
+        (BASE_URL + '/bac-si-san-phu-khoa-quang-tri.html', 'monthly', '0.9', ''),
+        (BASE_URL + '/phong-kham-san-phu-khoa-quang-tri.html', 'monthly', '0.9', ''),
+        (BASE_URL + '/kham-phu-khoa-dong-ha.html', 'monthly', '0.8', ''),
+        (BASE_URL + '/kham-thai-dong-ha.html', 'monthly', '0.8', ''),
+        (BASE_URL + '/sieu-am-thai-dong-ha.html', 'monthly', '0.8', ''),
     ]
     seen = set()
     duplicate_ids = set()
@@ -89,14 +89,17 @@ def build_sitemap(content):
             duplicate_ids.add(article_id)
             continue
         seen.add(article_id)
-        slug = normalize_slug(article.get('slug', ''), article_id)
+        slug = normalize_slug(article.get('slug') or article.get('title') or '', article_id)
         loc = BASE_URL + '/bai-viet/' + urllib.parse.quote(slug, safe='_-.') + '.html'
-        urls.append((loc, 'monthly', '0.8'))
+        raw_lastmod = str(article.get('updatedAt') or article.get('publishedAt') or '').strip()
+        lastmod = raw_lastmod.replace('+00:00', 'Z') if raw_lastmod else ''
+        urls.append((loc, 'monthly', '0.8', lastmod))
     if duplicate_ids:
         raise RuntimeError('Phát hiện ID bài viết trùng nhau: ' + ', '.join(sorted(duplicate_ids)))
     lines = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
-    for loc, freq, priority in urls:
-        lines.append(f'  <url><loc>{loc}</loc><changefreq>{freq}</changefreq><priority>{priority}</priority></url>')
+    for loc, freq, priority, lastmod in urls:
+        lastmod_xml = f'<lastmod>{lastmod}</lastmod>' if lastmod else ''
+        lines.append(f'  <url><loc>{loc}</loc>{lastmod_xml}<changefreq>{freq}</changefreq><priority>{priority}</priority></url>')
     lines.append('</urlset>')
     return '\n'.join(lines) + '\n'
 
