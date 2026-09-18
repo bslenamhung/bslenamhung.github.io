@@ -342,3 +342,8 @@ body{font-size:16px}
 .article-pagination .page-btn:disabled{opacity:.45;cursor:not-allowed}
 .article-pagination .page-ellipsis{min-width:20px;text-align:center;color:#7b8790;font-weight:700}
 @media(max-width:520px){.article-pagination{gap:5px;margin-top:24px}.article-pagination .page-btn{min-width:38px;height:38px;padding:0 8px;font-size:13px}.article-pagination .page-btn.prev,.article-pagination .page-btn.next{padding:0 10px}}
+
+
+/* Google review link in clinic hours */
+.clinic-review-link{display:inline-block;color:#1a73e8;font-weight:700;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.clinic-review-link:hover{color:#1558b0}
