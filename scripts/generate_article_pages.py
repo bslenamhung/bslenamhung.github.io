@@ -260,10 +260,29 @@ def render_article(article, published):
         '@type': 'BlogPosting',
         'headline': str(article.get('title') or title).strip(),
         'description': desc,
-        'author': {'@type': 'Person', 'name': 'ThS.BS Lê Nam Hùng', 'url': f'{BASE_URL}/#about'},
-        'publisher': {'@type': 'Organization', 'name': 'Phòng Khám Sản Phụ Khoa BS Hùng', 'url': BASE_URL},
+        'author': {
+            '@type': 'Person',
+            '@id': f'{BASE_URL}/#doctor',
+            'name': 'ThS.BSNT Lê Nam Hùng',
+            'jobTitle': 'Bác sĩ Sản Phụ khoa',
+            'url': f'{BASE_URL}/bac-si-san-phu-khoa-quang-tri.html',
+            'sameAs': ['https://www.facebook.com/DrLeNamHung/']
+        },
+        'publisher': {
+            '@type': 'Organization',
+            'name': 'Phòng Khám Sản Phụ Khoa BS Hùng',
+            'url': BASE_URL,
+            'logo': {'@type': 'ImageObject', 'url': f'{BASE_URL}/clinic-logo.png'}
+        },
+        'about': {
+            '@type': 'MedicalClinic',
+            '@id': f'{BASE_URL}/#clinic',
+            'name': 'Phòng khám chuyên khoa Phụ sản BS Hùng',
+            'url': f'{BASE_URL}/phong-kham-san-phu-khoa-quang-tri.html'
+        },
         'mainEntityOfPage': {'@type': 'WebPage', '@id': canonical},
         'url': canonical,
+        'inLanguage': 'vi-VN'
     }
     if image:
         schema['image'] = [image]
@@ -327,6 +346,20 @@ def render_article(article, published):
     image_html = f'<img class="article-page-cover" src="{esc(image)}" alt="{esc(title)}" loading="eager">' if image else ''
     desc_html = f'<p class="article-page-desc">{esc(short_desc)}</p>' if short_desc else ''
     date_html = f'<div class="article-published-date">📅 Ngày xuất bản: <strong>{esc(published_text)}</strong></div>' if published_text else ''
+    author_html = (
+        '<aside class="article-author-card" aria-label="Thông tin tác giả">'
+        '<div><strong>Tác giả</strong><span>ThS.BSNT Lê Nam Hùng – Bác sĩ Sản Phụ khoa</span>'
+        '<small>Phòng khám chuyên khoa Phụ sản BS Hùng · Đông Hà, Quảng Trị</small></div>'
+        '<a class="text-link" href="../bac-si-san-phu-khoa-quang-tri.html">Xem hồ sơ bác sĩ →</a>'
+        '</aside>'
+    )
+    local_links_html = (
+        '<div class="article-local-links"><strong>Thông tin liên quan</strong>'
+        '<a href="../kham-thai-dong-ha.html">Khám thai Đông Hà</a>'
+        '<a href="../kham-phu-khoa-dong-ha.html">Khám phụ khoa Đông Hà</a>'
+        '<a href="../phong-kham-san-phu-khoa-quang-tri.html">Phòng khám Sản Phụ khoa Quảng Trị</a>'
+        '</div>'
+    )
 
     jsonld = json.dumps(schema, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
     breadcrumb_jsonld = json.dumps(breadcrumb_schema, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
@@ -364,6 +397,8 @@ def render_article(article, published):
 {image_html}{video_html}{desc_html}
 <div class="article-full">{content}</div>
 {date_html}
+{author_html}
+{local_links_html}
 <p style="margin-top:32px"><a class="btn secondary" href="../index.html#articles">← Xem các bài viết khác</a></p>
 {rel_html}
 </article></div></section></main>
