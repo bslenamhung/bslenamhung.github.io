@@ -25,25 +25,36 @@ async function loadArticleViewTotal(){try{if(!window.supabase||!window.SUPABASE_
 async function loadData(){
  const key=window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY||'';
  const base=String(window.SUPABASE_URL||'').trim();
- if(!base||!/^https?:\/\//i.test(base)||!key)return null;
- // Ưu tiên REST trực tiếp để trang vẫn tải được dữ liệu khi CDN supabase-js bị chặn trên Safari/iPhone.
+ let remote=null;
+ if(base&&/^https?:\\/\\//i.test(base)&&key){
+  try{
+   const res=await fetch(base.replace(/\\/$/,'')+'/rest/v1/site_content_public?id=eq.1&select=content',{headers:{apikey:key,Authorization:'Bearer '+key,Accept:'application/json'},cache:'no-store'});
+   if(res.ok){const rows=await res.json();if(Array.isArray(rows)&&rows[0]?.content)remote=rows[0].content;}
+  }catch(e){}
+  if(!remote)try{
+   if(window.supabase){
+    const client=window.supabase.createClient(base,key);
+    const {data,error}=await client.from('site_content_public').select('content').eq('id',1).maybeSingle();
+    if(!error&&data?.content)remote=data.content;
+   }
+  }catch(e){}
+ }
  try{
-  const res=await fetch(base.replace(/\/$/,'')+'/rest/v1/site_content_public?id=eq.1&select=content',{method:'GET',headers:{apikey:key,Authorization:'Bearer '+key,Accept:'application/json'},cache:'no-store'});
-  if(res.ok){const rows=await res.json();if(Array.isArray(rows)&&rows[0]?.content)return rows[0].content;}
- }catch(e){/* fallback sang supabase-js */}
- try{
-  if(window.supabase){
-   const client=window.supabase.createClient(base,key);
-   const {data,error}=await client.from('site_content_public').select('content').eq('id',1).maybeSingle();
-   if(!error&&data?.content)return data.content;
+  const local=await fetch('data.json?v=81',{cache:'no-store'});
+  if(local.ok){
+   const snapshot=await local.json();
+   if(snapshot&&typeof snapshot==='object'){
+    if(!remote)return snapshot;
+    return {...remote,site:{...(snapshot.site||{}),...(remote.site||{})},clinic:{...(snapshot.clinic||{}),...(remote.clinic||{})},
+      specialties:Array.isArray(remote.specialties)&&remote.specialties.length?remote.specialties:(snapshot.specialties||[]),
+      services:Array.isArray(remote.services)&&remote.services.length?remote.services:(snapshot.services||[]),
+      articles:Array.isArray(snapshot.articles)&&snapshot.articles.length
+        ? snapshot.articles.map(localArticle=>({...localArticle,...((remote.articles||[]).find(a=>String(a?.id||'')===String(localArticle?.id||''))||{})}))
+        : (remote.articles||[])};
+   }
   }
  }catch(e){}
- // Fallback tĩnh: nội dung công khai được lưu cùng website để trang vẫn hiển thị khi Safari/CDN/API tạm thời không tải được.
- try{
-  const local=await fetch('data.json?v=75',{cache:'no-store'});
-  if(local.ok){const snapshot=await local.json();if(snapshot&&typeof snapshot==='object')return snapshot;}
- }catch(e){}
- return null;
+ return remote;
 }
 function mergeWithDefaults(remote){
   const r=remote&&typeof remote==='object'?remote:{};
