@@ -381,7 +381,7 @@ def render_article(article, published):
 {f'<meta name="twitter:image" content="{esc(image)}">' if image else ''}
 <script type="application/ld+json">{jsonld}</script>
 <script type="application/ld+json">{breadcrumb_jsonld}</script>
-<link rel="stylesheet" href="../style.css?v=69">
+<link rel="stylesheet" href="../style.css?v=69">\n<link rel="stylesheet" href="../seo-local.css?v=2">
 </head><body>
 <header class="site-header"><div class="container nav-wrap">
 <a class="brand" href="../index.html"><strong>BS<br>Lê Nam Hùng</strong><span>Sản Phụ khoa</span></a>
