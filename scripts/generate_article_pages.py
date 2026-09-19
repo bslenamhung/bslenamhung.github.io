@@ -150,6 +150,22 @@ def strip_duplicate_leading_title(content, title, seo_title=''):
     return out
 
 
+def clean_article_heading_structure(content):
+    """Keep one page H1 and sanitize editor-exported H1 wrappers inside article body.
+
+    Some imported article content contains many H1 tags around paragraphs/lists.
+    Those are body-content blocks, not page headings. Text-only H1 blocks become H2;
+    H1 blocks wrapping paragraphs/lists/tables are unwrapped to valid body HTML.
+    """
+    text = str(content or '')
+    def repl(match):
+        attrs, inner = match.group(1), match.group(2)
+        if re.search(r'<(?:p|ul|ol|table|div|hr|blockquote|section)\\b', inner, flags=re.I):
+            return inner
+        return f'<h2{attrs}>{inner}</h2>'
+    return re.sub(r'<h1\\b([^>]*)>([\\s\\S]*?)</h1>', repl, text, flags=re.I)
+
+
 def linkify_article_content(value):
     """Convert bare http(s) URLs in article text to clickable links.
     Existing HTML tags/links are preserved and URLs inside code/pre/script/style
@@ -250,7 +266,7 @@ def render_article(article, published):
     canonical = canonical_for(article)
     image = str(article.get('seoImage') or article.get('image') or '').strip()
     specialty = str(article.get('specialty') or '').strip()
-    content = linkify_article_content(strip_duplicate_leading_title(article.get('content') or '', article.get('title') or '', article.get('seoTitle') or ''))
+    content = clean_article_heading_structure(linkify_article_content(strip_duplicate_leading_title(article.get('content') or '', article.get('title') or '', article.get('seoTitle') or '')))
     short_desc = str(article.get('desc') or '').strip()
     published_text, raw_date = date_text(article)
     video = youtube_id(article.get('videoUrl') or article.get('video') or '')
