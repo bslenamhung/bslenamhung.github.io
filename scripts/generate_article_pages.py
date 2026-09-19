@@ -256,7 +256,12 @@ def related_articles(current, published):
         score += min(len(current_title & other_title), 5) * 5
         others.append((score, str(a.get('title') or ''), a))
     others.sort(key=lambda x: (-x[0], x[1]))
-    return [x[2] for x in others[:4]]
+    # Build a stronger internal-link graph: prioritize same specialty, then
+    # semantic keyword/title overlap, while keeping links deterministic.
+    # Six links give each article more useful paths to related content without
+    # turning the page into a keyword/link list.
+    selected = [x[2] for x in others[:6]]
+    return selected
 
 
 def render_article(article, published):
