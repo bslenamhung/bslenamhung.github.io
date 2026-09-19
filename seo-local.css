@@ -6,3 +6,20 @@
 /* Clinic page V41: clearer local SEO + patient navigation */
 .clinic-top{padding-top:30px}.clinic-hero-intro{max-width:760px;color:#586872;font-size:17px;line-height:1.7;margin:0 0 20px}.clinic-facts{margin-top:26px}.clinic-about-grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(280px,.75fr);gap:20px}.clinic-about-main,.clinic-contact-card{background:#fff;border:1px solid #e5eaed;border-radius:20px;padding:26px}.clinic-about-main h2,.clinic-contact-card h2{color:#17324a;margin:0 0 14px}.clinic-about-main p,.clinic-contact-card p{color:#586872;line-height:1.7}.clinic-quick-links{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:20px}.clinic-quick-links a{display:block;padding:16px;border:1px solid #e5eaed;border-radius:15px;text-decoration:none;background:#fbfcfc}.clinic-quick-links strong{display:block;color:#17324a;margin-bottom:5px}.clinic-quick-links span{font-size:14px;color:#6a7780}.clinic-contact-card{background:#f7f2ed}.clinic-contact-card a:not(.btn){color:#8c6849;font-weight:700}.clinic-service-grid{margin-top:8px}.clinic-service-grid .service-item{min-height:58px;display:flex;align-items:center}.faq-list{display:grid;gap:10px;margin-top:18px}.faq-list details{border:1px solid #e5eaed;border-radius:14px;background:#fbfcfc;padding:0 16px}.faq-list summary{cursor:pointer;padding:16px 4px;color:#17324a;font-weight:750}.faq-list p{padding:0 4px 16px;margin:0;color:#586872;line-height:1.7}.faq-list a{color:#8c6849;font-weight:700}.local-breadcrumb{margin-bottom:14px}
 @media(max-width:900px){.clinic-about-grid{grid-template-columns:1fr}.clinic-quick-links{grid-template-columns:1fr}}
+
+
+/* Local SEO author + contextual links */
+.article-author-card{margin:28px 0 20px;padding:18px 20px;border:1px solid rgba(25,35,45,.10);border-radius:16px;background:#fafbfc;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.article-author-card div{display:flex;flex-direction:column;gap:4px}
+.article-author-card strong{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+.article-author-card span{font-weight:700}
+.article-author-card small{opacity:.72}
+.article-local-links{margin:0 0 28px;padding:16px 18px;border-radius:16px;background:#fff7fa;border:1px solid rgba(180,70,110,.12);display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.article-local-links strong{width:100%;margin-bottom:2px}
+.article-local-links a{display:inline-block;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid rgba(25,35,45,.10);text-decoration:none}
+@media(max-width:700px){
+  .article-author-card{display:block}
+  .article-author-card .text-link{display:inline-block;margin-top:10px}
+  .article-local-links{display:block}
+  .article-local-links a{margin:6px 5px 0 0}
+}
