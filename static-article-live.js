@@ -102,18 +102,30 @@ function linkifyArticleContentStatic(html){
     root.innerHTML=`<div class="article-tag">${esc(a.specialty||'')}</div><h1>${esc(title)}</h1>${image?`<img class="article-page-cover" src="${esc(image)}" alt="${esc(title)}" loading="eager">`:''}${videoHtml(a)}${d?`<p class="article-page-desc">${esc(d)}</p>`:''}<div class="article-full">${content}</div>${date?`<div class="article-published-date">📅 Ngày xuất bản: <strong>${esc(date)}</strong></div>`:''}<p style="margin-top:32px"><a class="btn secondary" href="../index.html#articles">← Xem các bài viết khác</a></p>${relatedHtml(a,list)}`;
   }
   async function run(){
-    const root=document.getElementById('articleLiveRoot'); if(!root||!window.supabase||!window.SUPABASE_URL)return;
+    const root=document.getElementById('articleLiveRoot'); if(!root)return;
     const id=root.dataset.articleId||''; if(!id)return;
+    let list=[];
     try{
-      const c=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY);
-      const r=await c.from('site_content_public').select('content').eq('id',1).maybeSingle();
-      if(r.error||!r.data?.content)return;
-      const list=Array.isArray(r.data.content.articles)?r.data.content.articles:[];
-      const a=list.find(x=>x&&x.published!==false&&(idOf(x)===id||String(x.id||'')===id));
-      if(!a)return;
-      render(root,a,list);meta(a);
-      try{if(!window.__BSHUNG_ARTICLE_VIEW_RECORDED__){const vr=await c.rpc('record_article_view',{p_article_id:idOf(a),p_title:String(a.title||'')});if(vr?.error)throw vr.error;window.__BSHUNG_ARTICLE_VIEW_RECORDED__=true}}catch(e){console.warn('Không ghi được lượt xem bài viết:',e?.message||e)}
-    }catch(e){/* giữ nội dung tĩnh */}
+      if(window.supabase&&window.SUPABASE_URL){
+        const c=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY);
+        const r=await c.from('site_content_public').select('content').eq('id',1).maybeSingle();
+        if(!r.error&&r.data?.content&&Array.isArray(r.data.content.articles))list=r.data.content.articles;
+      }
+    }catch(e){}
+    if(!list.length)try{
+      const r=await fetch('../data.json?v=81',{cache:'no-store'});
+      if(r.ok){const d=await r.json();if(Array.isArray(d.articles))list=d.articles;}
+    }catch(e){}
+    const a=list.find(x=>x&&x.published!==false&&(idOf(x)===id||String(x.id||'')===id));
+    if(!a)return;
+    render(root,a,list);meta(a);
+    try{
+      if(window.supabase&&window.SUPABASE_URL&&!window.__BSHUNG_ARTICLE_VIEW_RECORDED__){
+        const c=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY);
+        const vr=await c.rpc('record_article_view',{p_article_id:idOf(a),p_title:String(a.title||'')});
+        if(vr?.error)throw vr.error; window.__BSHUNG_ARTICLE_VIEW_RECORDED__=true;
+      }
+    }catch(e){console.warn('Không ghi được lượt xem bài viết:',e?.message||e)}
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
 })();
