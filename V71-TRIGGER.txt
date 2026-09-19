@@ -21,3 +21,5 @@ Restore stable article generator template 2026-09-19
 Final rebuild from stable article template 2026-09-19
 
 Fix generator import final 2026-09-19
+
+Fix generator import and rebuild stable template 2026-09-19
