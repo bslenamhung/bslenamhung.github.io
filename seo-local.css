@@ -23,3 +23,5 @@
   .article-local-links{display:block}
   .article-local-links a{margin:6px 5px 0 0}
 }
+/* Internal topic links - local SEO V3 */
+.seo-related-links{margin:28px 0;padding:22px;border:1px solid #e5eaed;border-radius:20px;background:#fbfcfc}.seo-related-links h2{margin:0 0 8px;color:#17324a}.seo-related-links p{margin:0;color:#586872}.seo-related-links-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}.seo-related-links-grid a{display:inline-block;padding:9px 13px;border:1px solid #e5eaed;border-radius:999px;background:#fff;color:#17324a;text-decoration:none;font-weight:650}.seo-related-links-grid a:hover{text-decoration:underline}@media(max-width:600px){.seo-related-links{padding:18px}.seo-related-links-grid{display:grid;grid-template-columns:1fr}.seo-related-links-grid a{border-radius:12px}}
