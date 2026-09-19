@@ -23,3 +23,5 @@ Final rebuild from stable article template 2026-09-19
 Fix generator import final 2026-09-19
 
 Fix generator import and rebuild stable template 2026-09-19
+
+Local SEO V2 rebuild 2026-09-19
