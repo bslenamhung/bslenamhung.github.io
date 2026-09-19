@@ -160,14 +160,14 @@ def clean_article_heading_structure(content):
     text = str(content or '')
     def repl(match):
         attrs, inner = match.group(1), match.group(2)
-        if re.search(r'<(?:p|ul|ol|table|div|hr|blockquote|section)\\b', inner, flags=re.I):
+        if re.search(r'<(?:p|ul|ol|table|div|hr|blockquote|section)\b', inner, flags=re.I):
             return inner
         return f'<h2{attrs}>{inner}</h2>'
-    text = re.sub(r'<h1\\b([^>]*)>([\\s\\S]*?)</h1>', repl, text, flags=re.I)
+    text = re.sub(r'<h1\b([^>]*)>([\\s\\S]*?)</h1>', repl, text, flags=re.I)
     # A few editor exports contain nested/malformed H1 wrappers that a single
     # regex pass cannot pair safely. Remove any residual H1 tags from the
     # article body; the page-level H1 is rendered separately by the template.
-    return re.sub(r'</?h1\\b[^>]*>', '', text, flags=re.I)
+    return re.sub(r'</?h1\b[^>]*>', '', text, flags=re.I)
 
 
 def linkify_article_content(value):
