@@ -273,6 +273,42 @@
       "desc": "Ốm nghén thường gặp trong quý I thai kỳ và các cách giảm triệu chứng phù hợp.",
       "image": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/cover/1789561569032-gcarwo.png",
       "published": true
+    },
+    {
+      "id": "art-mu74onzm-poxc13",
+      "title": "THAI ỐNG CỔ TỬ CUNG: CA LÂM SÀNG, TỔNG QUAN CHẨN ĐOÁN VÀ ĐIỀU TRỊ",
+      "slug": "thai-ong-co-tu-cung",
+      "specialty": "Siêu âm",
+      "desc": "Thai ống cổ tử cung là một dạng thai ngoài tử cung hiếm gặp nhưng có nguy cơ xuất huyết nặng. Tìm hiểu chẩn đoán bằng siêu âm và các phương pháp điều trị bảo tồn",
+      "image": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/seo/1789746197886-ch96wf.png",
+      "published": true,
+      "publishedAt": "2026-09-18T15:43:32.722Z",
+      "updatedAt": "2026-09-18T15:43:32.722Z",
+      "keywords": "thai ống cổ tử cung, thai làm tổ ở cổ tử cung, thai ngoài tử cung ở cổ tử cung, chẩn đoán thai ống cổ tử cung, siêu âm thai ống cổ tử cung, điều trị thai ống cổ tử cung"
+    },
+    {
+      "id": "art-mu736tss-3rmzzs",
+      "title": "SIÊU ÂM BƠM NƯỚC LÒNG TỬ CUNG",
+      "slug": "sieu-am-bom-nuoc-long-tu-cung",
+      "specialty": "Siêu âm",
+      "desc": "Siêu âm bơm nước lòng tử cung giúp phát hiện polyp, u xơ dưới niêm, dính buồng tử cung và các bất thường trong lòng tử cung",
+      "image": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/seo/1789743689217-6lymae.jpg",
+      "published": true,
+      "publishedAt": "2026-09-18T15:01:40.828Z",
+      "updatedAt": "2026-09-18T15:01:40.828Z",
+      "keywords": "siêu âm bơm nước lòng tử cung, siêu âm bơm nước buồng tử cung, sonohysterography, SIS, siêu âm buồng tử cung"
+    },
+    {
+      "id": "art-mu72wj36-03l5cy",
+      "title": "KHI NÀO NÊN ĐI KHÁM PHỤ KHOA? KHÁM PHỤ KHOA TẠI QUẢNG TRỊ",
+      "slug": "khi-nao-nen-di-kham-phu-khoa",
+      "specialty": "Phụ khoa",
+      "desc": "Khi nào nên đi khám phụ khoa? Tìm hiểu các dấu hiệu bất thường, thời điểm nên khám và vai trò của khám phụ khoa định kỳ đối với sức khỏe phụ nữ.",
+      "image": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/seo/1789743057184-i6w789.png",
+      "published": true,
+      "publishedAt": "2026-09-18T14:53:40.386Z",
+      "updatedAt": "2026-09-18T14:53:40.386Z",
+      "keywords": "khám phụ khoa, khám phụ khoa định kỳ, khi nào cần khám phụ khoa, dấu hiệu cần khám phụ khoa"
     }
   ]
 }
