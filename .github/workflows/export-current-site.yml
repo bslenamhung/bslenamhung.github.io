@@ -1,0 +1,21 @@
+name: Export current website ZIP
+
+on:
+  push:
+    paths:
+      - '.github/workflows/export-current-site.yml'
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create ZIP
+        run: |
+          zip -qr BSLENAMHUNG-GITHUB-CURRENT.zip . -x ".git/*" ".github/workflows/export-current-site.yml"
+      - name: Upload ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: BSLENAMHUNG-GITHUB-CURRENT
+          path: BSLENAMHUNG-GITHUB-CURRENT.zip
+          retention-days: 1
