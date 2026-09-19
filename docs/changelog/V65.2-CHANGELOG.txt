@@ -1,0 +1,21 @@
+V65.2 – KHÓA CHẶT SITEMAP + KIỂM TRA TRƯỚC KHI PUSH
+
+Mục tiêu:
+- Dùng URL tĩnh /bai-viet/<id>.html làm URL chuẩn cho bài viết.
+- Loại hoàn toàn URL cũ /bai-viet.html?id=... khỏi sitemap.
+- Giữ các trang legacy-*.html để tương thích URL cũ nhưng KHÔNG đưa legacy vào sitemap.
+- Tự động cập nhật bài viết + sitemap mỗi 15 phút và vẫn cho phép chạy thủ công.
+- Nếu sitemap sai, workflow phải FAIL và KHÔNG commit/push sitemap sai.
+
+Cơ chế kiểm tra:
+1. Python compile toàn bộ scripts.
+2. Node --check toàn bộ JavaScript ở thư mục gốc.
+3. Kiểm tra canonical, title, meta description, H1, BlogPosting của từng trang tĩnh.
+4. Kiểm tra sitemap không có query string.
+5. Kiểm tra sitemap không có bai-viet.html?id=...
+6. Kiểm tra sitemap không có /bai-viet/legacy-...
+7. Đối chiếu toàn bộ trang tĩnh ổn định với URL bài viết trong sitemap.
+8. Kiểm tra bai-viet.html cũ có noindex.
+9. Chỉ sau khi tất cả kiểm tra đạt mới git add/commit/push.
+
+Không thay đổi Supabase, dữ liệu bài viết, tracking lượt xem hoặc giao diện website.

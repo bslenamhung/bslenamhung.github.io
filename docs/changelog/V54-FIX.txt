@@ -1,0 +1,8 @@
+V54 FIX - Google article indexing
+-----------------------------------
+Fixed GitHub Actions workflow:
+- Generates static article pages in /bai-viet/
+- Updates sitemap.xml
+- Stages new/untracked article files before checking for changes
+
+No website content changes are required.

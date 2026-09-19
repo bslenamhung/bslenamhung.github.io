@@ -1,0 +1,13 @@
+V65.1 – XỬ LÝ LEGACY URL
+
+Mục tiêu:
+- Giữ các trang bai-viet/legacy-*.html để tương thích URL cũ.
+- Không đưa legacy-* vào sitemap công khai.
+- Sitemap chỉ chứa các bài có ID ổn định (art-* hoặc ID hợp lệ khác).
+- Validator không coi legacy page là lỗi thiếu sitemap.
+- Không thay đổi Supabase, giao diện, tracking, URL bài viết chuẩn hoặc GitHub Actions.
+
+Kiểm tra:
+- update_sitemap.py bỏ qua legacy-* khi tạo sitemap.
+- validate_article_build.py kiểm tra legacy-* không xuất hiện trong sitemap.
+- URL động bai-viet.html?id=... vẫn bị chặn khỏi sitemap.

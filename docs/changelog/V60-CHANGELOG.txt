@@ -1,0 +1,9 @@
+V60 – Sửa triệt để bài viết quản trị không cập nhật trên trang tĩnh
+
+1. Trang /bai-viet/<id>.html vẫn có HTML tĩnh để Google đọc ngay.
+2. Khi người dùng mở trang, static-article-live.js sẽ đọc dữ liệu mới nhất từ Supabase và thay phần nội dung bằng bản mới nếu có.
+3. Nếu Supabase/mạng lỗi, nội dung HTML tĩnh vẫn hiển thị bình thường.
+4. Giữ canonical, sitemap và cấu trúc URL cũ.
+5. Loại bỏ bản sao tiêu đề ở đầu nội dung bài viết nếu quản trị viên đã chèn lại tiêu đề.
+6. Tối ưu lại chữ bài viết trên mobile: nội dung 16px, line-height 1.76; tiêu đề 25–27px; H2 22px; H3 18px.
+7. Không cần chờ GitHub Actions để người dùng thấy nội dung mới trên trang bài viết tĩnh.

@@ -1,0 +1,27 @@
+PRIORITY 1 AUDIT
+
+{
+  "source": "/mnt/data/BSLENAMHUNG-GITHUB-CURRENT-FINAL(1).zip",
+  "removed_cache_artifacts": true,
+  "alt_images_added_or_updated": 13,
+  "base64_images_remaining": [
+    [
+      "bai-viet/hanh-trinh-phat-trien-cua-thai.html",
+      "png",
+      258384
+    ]
+  ],
+  "changes": [
+    "Xóa thư mục scripts/__pycache__",
+    "Sửa meta description bài thai-ong-co-tu-cung.html bị cắt chữ",
+    "Bổ sung alt cho ảnh trong bai-viet/tu-the-ngu-cho-ba-bau.html",
+    "Bổ sung alt cho ảnh trong bai-viet/cac-moc-kham-thai-quan-trong.html",
+    "Bổ sung alt cho ảnh trong bai-viet/xet-nghiem-nipt-thai-ky.html",
+    "Bổ sung alt cho ảnh trong bai-viet/dinh-duong-trong-thai-ky.html",
+    "Bổ sung alt cho ảnh trong bai-viet/hanh-trinh-phat-trien-cua-thai.html",
+    "Bổ sung alt cho ảnh trong bai-viet/tinh-duc-va-thai-ky.html",
+    "Bổ sung alt cho ảnh trong bai-viet/thai-ong-co-tu-cung.html"
+  ]
+}
+
+BASE64 FIX: Đã tách ảnh PNG nhúng 258 KB thành file tĩnh và thay bằng URL GitHub Pages.

@@ -1,0 +1,11 @@
+V71 FINAL – SLUG BÀI VIẾT
+
+- Xây dựng trên V70.
+- Admin cho phép nhập Đường dẫn bài viết (Slug).
+- Ví dụ: do-ctg-trong-thai-ky
+- URL: /bai-viet/do-ctg-trong-thai-ky.html
+- Nếu bỏ trống slug, hệ thống dùng art-ID làm fallback.
+- Sitemap ưu tiên slug.
+- Validator hỗ trợ slug và art-ID cũ.
+- Không dùng bai-viet.html?id=... hoặc legacy-...
+- Workflow tự động mỗi 15 phút.

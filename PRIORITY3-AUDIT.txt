@@ -1,0 +1,6 @@
+PRIORITY 3 FIX (8 + 9)
+
+Đã chuyển 21 file changelog/fix cũ vào docs/changelog/.
+Đã làm sạch HTML Word ở 10 file.
+
+Các nội dung người dùng, link, ảnh và cấu trúc bài viết được giữ nguyên; chỉ loại bỏ dấu vết định dạng Word như MsoNormal, WordSection*, xmlns Word và thuộc tính mso-*.

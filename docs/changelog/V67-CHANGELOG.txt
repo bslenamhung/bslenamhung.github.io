@@ -1,0 +1,6 @@
+V67 - FIX LIÊN KẾT URL TRONG BÀI VIẾT
+- Dán URL http/https/www vào trình soạn thảo: URL tự trở thành liên kết có thể bấm.
+- Khi lưu bài viết: URL thuần được chuẩn hóa thành thẻ <a>.
+- Bài viết cũ cũng được tự động chuyển URL thuần thành liên kết khi hiển thị.
+- Bộ sinh trang tĩnh áp dụng linkify để các trang /bai-viet/*.html được sửa khi workflow chạy.
+- Không thay đổi cấu trúc URL bài viết, canonical hoặc sitemap.

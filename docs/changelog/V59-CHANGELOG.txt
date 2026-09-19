@@ -1,0 +1,7 @@
+V59 – FIX TRÙNG TIÊU ĐỀ BÀI VIẾT
+
+- Xóa bản sao tiêu đề nếu nội dung editor đã chứa lại đúng tiêu đề ở đầu bài.
+- Áp dụng cho cả trang bai-viet.html?id=... và trang HTML tĩnh /bai-viet/<id>.html.
+- Chỉ xóa block tiêu đề trùng khớp ở đầu nội dung; không xóa các tiêu đề hợp lệ ở phần sau bài.
+- Giữ nguyên Supabase, quản trị, lượt xem, liên hệ, video, SEO, sitemap và GitHub Actions của V58.
+- Tăng cache-bust CSS từ v58 lên v59.

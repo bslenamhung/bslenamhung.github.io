@@ -1,0 +1,29 @@
+V68 – FIX LINK BÀI VIẾT (17/09/2026)
+
+Mục tiêu:
+- Sửa lỗi URL được dán trực tiếp vào nội dung bài viết nhưng hiển thị như chữ, không click được.
+- Áp dụng đồng thời cho trang bài viết động /bai-viet.html?id=... và trang tĩnh /bai-viet/<id>.html.
+- Không thay đổi URL SEO chính/canonical của bài viết tĩnh.
+
+Đã sửa:
+1. article-page.js
+   - Linkify các URL http/https dạng text thành thẻ <a>.
+   - Không đụng vào URL đã nằm trong thẻ <a>, code, pre, script, style, textarea.
+   - Link cùng domain mở trong tab hiện tại; link ngoài domain mở tab mới với rel=noopener noreferrer.
+   - Trang động tiếp tục noindex và canonical về URL bài viết tĩnh để tránh trùng lặp SEO.
+
+2. static-article-live.js
+   - Khi nội dung tĩnh được cập nhật trực tiếp từ Supabase, URL dán trong nội dung vẫn trở thành link click được.
+
+3. scripts/generate_article_pages.py
+   - Khi GitHub Actions tạo HTML tĩnh, URL dạng text được chuyển thành link click được.
+   - Giữ nguyên các thẻ HTML và các link <a> đã có.
+
+4. style.css
+   - Thêm style .article-inline-link.
+
+Kiểm tra:
+- Node syntax check: article-page.js OK.
+- Node syntax check: static-article-live.js OK.
+- Python compile: generate_article_pages.py OK.
+- Test mẫu: URL trong đoạn văn tạo đúng <a href="...">.

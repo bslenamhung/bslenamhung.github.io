@@ -1,0 +1,9 @@
+V64 – KIỂM TRA VÀ SỬA TOÀN BỘ
+
+1. Chỉ còn một bộ đếm lượt truy cập: site-visit.js.
+2. Loại bỏ bộ đếm trùng trong script.js.
+3. Chống ghi trùng lượt xem bài viết trên cùng một lần tải.
+4. article-page.js và static-article-live.js ghi lượt xem qua cùng RPC.
+5. Đồng bộ cache JS/CSS lên v64.
+6. Giữ cơ chế cập nhật bài viết realtime từ Supabase và HTML tĩnh làm fallback SEO.
+7. Kèm SQL V64 để đồng bộ site_content_public và làm RPC lượt xem bền vững.

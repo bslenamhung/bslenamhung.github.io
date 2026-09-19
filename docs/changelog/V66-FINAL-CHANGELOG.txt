@@ -1,0 +1,10 @@
+V66 FINAL – LÀM LẠI HỆ THỐNG BÀI VIẾT
+
+1. Thêm nút “Xóa bài cũ” trong Quản trị > Bài viết. Nút này chỉ xóa các bài legacy chưa có ID chuẩn (legacy-*), có 2 bước xác nhận và tự lưu lên Supabase.
+2. Bài mới luôn được cấp ID ổn định dạng art-...
+3. Trang bài viết tĩnh dùng /bai-viet/art-....html.
+4. Sitemap chỉ chứa URL HTTPS không có query string; không chứa bai-viet.html?id=... và không chứa legacy-...
+5. Workflow chạy mỗi 15 phút và kiểm tra sitemap trước khi commit.
+6. Bộ validator đối chiếu URL sitemap với file HTML thực tế, kiểm tra canonical/title/description/H1/BlogPosting và chặn URL động cũ.
+7. generate_article_pages.py xóa thư mục bai-viet rồi tạo lại đúng các bài đang xuất bản; do đó file legacy cũ không bị giữ lại sau mỗi lần đồng bộ.
+8. Không thay đổi Supabase SQL / hệ thống thống kê lượt truy cập và lượt xem bài viết.

@@ -1,0 +1,11 @@
+PRIORITY 2 FIX
+
+- Chuẩn hóa GitHub Actions dùng duy nhất secrets.SUPABASE_PUBLISHABLE_KEY
+- Thêm bước kiểm tra GitHub Secrets trước khi build
+- Đặt trang phong-kham-san-phu-khoa.html thành noindex,follow và canonical về URL chính
+- Bổ sung .gitignore cho __pycache__ và file Python sinh tự động
+
+Lưu ý: GitHub repository phải có hai Secrets:
+SUPABASE_URL
+SUPABASE_PUBLISHABLE_KEY
+Workflow sẽ dừng sớm nếu thiếu một trong hai secret.

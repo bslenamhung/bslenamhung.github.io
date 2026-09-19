@@ -1,0 +1,8 @@
+V61 – KIỂM TRA VÀ ỔN ĐỊNH BÀI VIẾT
+
+- Cập nhật cache-busting toàn bộ JS/CSS nội bộ lên v61 để tránh trình duyệt giữ mã cũ.
+- Sửa logic trang bài viết tĩnh: chỉ thay nội dung bằng bài đang xuất bản và giữ HTML tĩnh làm fallback.
+- Tăng khả năng loại bỏ tiêu đề bị nhập lặp ở đầu nội dung bài viết.
+- Kiểm tra ID bài viết trùng nhau trước khi tạo trang tĩnh/sitemap để tránh ghi đè URL.
+- Giữ GitHub Actions tạo lại trang bài viết và sitemap tự động.
+- Không thay đổi cấu trúc URL bài viết hiện tại.
