@@ -23,38 +23,49 @@ function bindContactTracking(){
 }
 async function loadArticleViewTotal(){try{if(!window.supabase||!window.SUPABASE_URL)return;const c=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY);const r=await c.from('article_view_stats').select('view_count');if(!r.error){const total=(r.data||[]).reduce((n,x)=>n+Number(x.view_count||0),0);const el=document.getElementById('articleViewsTotal');if(el)el.textContent=total.toLocaleString('vi-VN')}}catch(e){}}
 async function loadData(){
- const key=window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY||'';
- const base=String(window.SUPABASE_URL||'').trim();
- let remote=null;
- if(base&&/^https?:\\/\\//i.test(base)&&key){
+  // Local data.json is the authoritative source for the public article list.
+  // Supabase is used only to enrich site/clinic/specialty/service data.
+  let localSnapshot=null;
   try{
-   const res=await fetch(base.replace(/\\/$/,'')+'/rest/v1/site_content_public?id=eq.1&select=content',{headers:{apikey:key,Authorization:'Bearer '+key,Accept:'application/json'},cache:'no-store'});
-   if(res.ok){const rows=await res.json();if(Array.isArray(rows)&&rows[0]?.content)remote=rows[0].content;}
+    const local=await fetch('data.json?v=82',{cache:'no-store'});
+    if(local.ok){
+      const snapshot=await local.json();
+      if(snapshot&&typeof snapshot==='object') localSnapshot=snapshot;
+    }
   }catch(e){}
-  if(!remote)try{
-   if(window.supabase){
-    const client=window.supabase.createClient(base,key);
-    const {data,error}=await client.from('site_content_public').select('content').eq('id',1).maybeSingle();
-    if(!error&&data?.content)remote=data.content;
-   }
-  }catch(e){}
- }
- try{
-  const local=await fetch('data.json?v=81',{cache:'no-store'});
-  if(local.ok){
-   const snapshot=await local.json();
-   if(snapshot&&typeof snapshot==='object'){
-    if(!remote)return snapshot;
-    return {...remote,site:{...(snapshot.site||{}),...(remote.site||{})},clinic:{...(snapshot.clinic||{}),...(remote.clinic||{})},
-      specialties:Array.isArray(remote.specialties)&&remote.specialties.length?remote.specialties:(snapshot.specialties||[]),
-      services:Array.isArray(remote.services)&&remote.services.length?remote.services:(snapshot.services||[]),
-      articles:Array.isArray(snapshot.articles)&&snapshot.articles.length
-        ? snapshot.articles.map(localArticle=>({...localArticle,...((remote.articles||[]).find(a=>String(a?.id||'')===String(localArticle?.id||''))||{})}))
-        : (remote.articles||[])};
-   }
+
+  let remote=null;
+  const key=window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY||'';
+  const base=String(window.SUPABASE_URL||'').trim();
+  if(base&&/^https?:\\/\\//i.test(base)&&key){
+    try{
+      const controller=new AbortController();
+      const timer=setTimeout(()=>controller.abort(),5000);
+      const res=await fetch(base.replace(/\\/$/,'')+'/rest/v1/site_content_public?id=eq.1&select=content',{
+        headers:{apikey:key,Authorization:'Bearer '+key,Accept:'application/json'},
+        cache:'no-store',
+        signal:controller.signal
+      });
+      clearTimeout(timer);
+      if(res.ok){
+        const rows=await res.json();
+        if(Array.isArray(rows)&&rows[0]?.content) remote=rows[0].content;
+      }
+    }catch(e){}
   }
- }catch(e){}
- return remote;
+
+  if(!localSnapshot) return remote;
+  if(!remote) return localSnapshot;
+
+  return {
+    ...remote,
+    site:{...(localSnapshot.site||{}),...(remote.site||{})},
+    clinic:{...(localSnapshot.clinic||{}),...(remote.clinic||{})},
+    specialties:Array.isArray(remote.specialties)&&remote.specialties.length?remote.specialties:(localSnapshot.specialties||[]),
+    services:Array.isArray(remote.services)&&remote.services.length?remote.services:(localSnapshot.services||[]),
+    // IMPORTANT: never let Supabase hide/disable local static articles.
+    articles:Array.isArray(localSnapshot.articles)?localSnapshot.articles:[]
+  };
 }
 function mergeWithDefaults(remote){
   const r=remote&&typeof remote==='object'?remote:{};
