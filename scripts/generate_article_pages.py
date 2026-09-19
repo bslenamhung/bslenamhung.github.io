@@ -11,6 +11,7 @@ import re
 import shutil
 import urllib.parse
 import urllib.request
+import unicodedata
 from datetime import datetime
 from pathlib import Path
 
