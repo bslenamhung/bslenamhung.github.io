@@ -58,7 +58,7 @@ def related_articles(current, published):
         score += min(len(cur_title & other_title), 5) * 5
         scored.append((score, str(other.get('title') or ''), other))
     scored.sort(key=lambda x: (-x[0], x[1]))
-    return [x[2] for x in scored[:4]]
+    return [x[2] for x in scored[:6]]
 
 def related_articles_html(current, all_articles):
     related = related_articles(current, all_articles)
@@ -96,7 +96,7 @@ def render(a, all_articles):
     schema = {
         "@context":"https://schema.org","@type":"Article","headline":title,
         "description":desc,"url":url,"mainEntityOfPage":{"@type":"WebPage","@id":url},
-        "author":{"@type":"Person","name":"Ths.BSNT Lê Nam Hùng"},
+        "author":{"@type":"Person","name":"ThS.BSNT Lê Nam Hùng"},
         "publisher":{"@type":"Organization","name":"Phòng khám chuyên khoa Phụ sản BS Hùng"}
     }
     if image: schema["image"]=[image]
