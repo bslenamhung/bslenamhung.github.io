@@ -30,3 +30,4 @@ Local SEO V2 rebuild 2026-09-19
 SEO V3 canonical/entity cleanup 2026-09-19
 Internal linking graph optimization 2026-09-19
 Harden article heading cleanup and internal linking 2026-09-19
+Final article heading and internal-link rebuild 2026-09-19
