@@ -23,41 +23,21 @@ function bindContactTracking(){
 }
 async function loadArticleViewTotal(){try{if(!window.supabase||!window.SUPABASE_URL)return;const c=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY);const r=await c.from('article_view_stats').select('view_count');if(!r.error){const total=(r.data||[]).reduce((n,x)=>n+Number(x.view_count||0),0);const el=document.getElementById('articleViewsTotal');if(el)el.textContent=total.toLocaleString('vi-VN')}}catch(e){}}
 async function loadData(){
-  // Bản public ưu tiên dữ liệu tĩnh để trang không bị treo khi Supabase chậm/mất kết nối.
-  // Supabase chỉ là nguồn phụ, không được phép chặn việc render giao diện.
+  // Không để mạng/Supabase chặn giao diện. data.json chỉ được phép chờ tối đa 2 giây.
   try{
-    const local=await fetch('data.json?v=84',{cache:'no-store'});
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(),2000);
+    const local=await fetch('./data.json?v=85',{cache:'no-store',signal:controller.signal});
+    clearTimeout(timer);
     if(local.ok){
       const snapshot=await local.json();
-      if(snapshot&&typeof snapshot==='object'){
-        return snapshot;
-      }
+      if(snapshot&&typeof snapshot==='object') return snapshot;
     }
   }catch(e){
-    console.warn('Không tải được data.json:',e);
+    console.warn('data.json chậm/không khả dụng:',e);
   }
-  // Chỉ dùng Supabase khi data.json không khả dụng.
-  const key=window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY||'';
-  const base=String(window.SUPABASE_URL||'').trim();
-  if(base&&/^https?:\\/\\//i.test(base)&&key){
-    try{
-      const controller=new AbortController();
-      const timer=setTimeout(()=>controller.abort(),4000);
-      const res=await fetch(base.replace(/\\/$/,'')+'/rest/v1/site_content_public?id=eq.1&select=content',{
-        headers:{apikey:key,Authorization:'Bearer '+key,Accept:'application/json'},
-        cache:'no-store',
-        signal:controller.signal
-      });
-      clearTimeout(timer);
-      if(res.ok){
-        const rows=await res.json();
-        if(Array.isArray(rows)&&rows[0]?.content)return rows[0].content;
-      }
-    }catch(e){
-      console.warn('Supabase không khả dụng, dùng dữ liệu mặc định:',e);
-    }
-  }
-  return null;
+  // Có dữ liệu dự phòng ngay trong script, nên trang vẫn phải render.
+  return DEFAULT_DATA;
 }
 function mergeWithDefaults(remote){
   const r=remote&&typeof remote==='object'?remote:{};
