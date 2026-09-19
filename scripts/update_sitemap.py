@@ -70,7 +70,6 @@ def build_sitemap(content):
         raise RuntimeError('Danh sách articles không hợp lệ.')
     urls = [
         (BASE_URL + '/', 'weekly', '1.0', ''),
-        (BASE_URL + '/phong-kham-san-phu-khoa.html', 'monthly', '0.9', ''),
         (BASE_URL + '/bac-si-san-phu-khoa-quang-tri.html', 'monthly', '0.9', ''),
         (BASE_URL + '/phong-kham-san-phu-khoa-quang-tri.html', 'monthly', '0.9', ''),
         (BASE_URL + '/kham-phu-khoa-dong-ha.html', 'monthly', '0.8', ''),
