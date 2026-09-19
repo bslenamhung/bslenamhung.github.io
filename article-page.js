@@ -1,9 +1,22 @@
 const escPage=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 function articleIdPage(a){if(a&&a.id)return String(a.id);const t=String(a?.title||'').trim();let h=2166136261;for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)}return 'legacy-'+(h>>>0).toString(36)}
 async function loadSite(){
-  const fallback={articles:[]};
-  try{const c=window.supabase?.createClient?.(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY);if(c){const r=await c.from('site_content_public').select('content').eq('id',1).maybeSingle();if(!r.error&&r.data?.content)return r.data.content}}catch(e){}
-  return fallback;
+  let remote=null;
+  try{
+    const c=window.supabase?.createClient?.(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY);
+    if(c){const r=await c.from('site_content_public').select('content').eq('id',1).maybeSingle();if(!r.error&&r.data?.content)remote=r.data.content;}
+  }catch(e){}
+  try{
+    const r=await fetch('../data.json?v=81',{cache:'no-store'});
+    if(r.ok){
+      const local=await r.json();
+      if(local&&typeof local==='object'){
+        if(!remote)return local;
+        return {...remote,articles:Array.isArray(local.articles)&&local.articles.length?local.articles:(remote.articles||[])};
+      }
+    }
+  }catch(e){}
+  return remote||{articles:[]};
 }
 async function recordArticleViewPage(a){
   try{
