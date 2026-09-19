@@ -6,10 +6,12 @@ on:
     paths:
       - 'V71-TRIGGER.txt'
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '*/5 * * * *'
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
   update-sitemap:
@@ -64,6 +66,14 @@ jobs:
           ET.parse('sitemap.xml')
           print('XML sitemap: OK')
           PY
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: '.'
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
       - name: Luu V71 va sitemap
         run: |
           git config user.name "github-actions[bot]"
