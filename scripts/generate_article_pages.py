@@ -28,6 +28,7 @@ SUPABASE_URL = os.environ.get('SUPABASE_URL', '').rstrip('/')
 SUPABASE_KEY = os.environ.get('SUPABASE_KEY', '')
 BASE_URL = 'https://bslenamhung.github.io'
 OUT_DIR = Path('bai-viet')
+DATA_JSON = Path('data.json')
 
 
 def esc(value):
@@ -447,6 +448,9 @@ def main():
     if not isinstance(articles, list):
         raise RuntimeError('Danh sách articles không hợp lệ.')
     published = [a for a in articles if isinstance(a, dict) and a.get('published') is not False]
+    # Keep the homepage snapshot synchronized with the same Supabase source.
+    DATA_JSON.write_text(json.dumps(content, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    print(f'Đã đồng bộ data.json: {len(published)} bài viết đã xuất bản.')
 
     ids = [safe_id(article_id(a)) for a in published]
     duplicates = sorted({x for x in ids if ids.count(x) > 1})
