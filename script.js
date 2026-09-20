@@ -28,7 +28,7 @@ async function loadData(){
   try{
     const controller=new AbortController();
     const timer=setTimeout(()=>controller.abort(),2000);
-    const local=await fetch('./data-home.json?v=1',{cache:'no-store',signal:controller.signal});
+    const local=await fetch('./data-home.json?v=1',{cache:'default',signal:controller.signal});
     clearTimeout(timer);
     if(local.ok){
       const snapshot=await local.json();
