@@ -212,6 +212,34 @@ def linkify_article_content(value):
         out.append(url_re.sub(repl,segment))
     return ''.join(out)
 
+def add_article_image_alt(content, article_title):
+    """Ensure every article-body image has a useful non-empty alt attribute.
+
+    Existing non-empty alt text is preserved. Missing or empty alt attributes
+    receive a concise title-based description.
+    """
+    text = str(content or '')
+    title = re.sub(r'\s+', ' ', str(article_title or '')).strip()
+    if not title:
+        title = 'Hình ảnh trong bài viết Sản Phụ khoa'
+    counter = 0
+
+    def repl(match):
+        nonlocal counter
+        tag = match.group(0)
+        alt_match = re.search(r'\balt\s*=\s*(["\'])(.*?)\1', tag, flags=re.I | re.S)
+        if alt_match and alt_match.group(2).strip():
+            return tag
+        counter += 1
+        alt_text = title if counter == 1 else f'{title} - hình {counter}'
+        alt_text = html.escape(alt_text, quote=True)
+        if alt_match:
+            start, end = alt_match.span(2)
+            return tag[:start] + alt_text + tag[end:]
+        return tag[:-1] + f' alt="{alt_text}">'
+
+    return re.sub(r'<img\b[^>]*>', repl, text, flags=re.I)
+
 def clean_desc(article):
     raw = str(article.get('seoDescription') or article.get('desc') or article.get('content') or '')
     raw = re.sub(r'<[^>]+>', ' ', raw)
@@ -277,6 +305,7 @@ def render_article(article, published):
     image = str(article.get('seoImage') or article.get('image') or '').strip()
     specialty = str(article.get('specialty') or '').strip()
     content = clean_article_heading_structure(linkify_article_content(strip_duplicate_leading_title(article.get('content') or '', article.get('title') or '', article.get('seoTitle') or '')))
+    content = add_article_image_alt(content, str(article.get('title') or title))
     short_desc = str(article.get('desc') or '').strip()
     published_text, raw_date = date_text(article)
     video = youtube_id(article.get('videoUrl') or article.get('video') or '')
