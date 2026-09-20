@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://bslenamhung.github.io/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://bslenamhung.github.io/bac-si-san-phu-khoa-quang-tri.html</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://bslenamhung.github.io/phong-kham-san-phu-khoa-quang-tri.html</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://bslenamhung.github.io/kham-phu-khoa-dong-ha.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://bslenamhung.github.io/kham-thai-dong-ha.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://bslenamhung.github.io/sieu-am-thai-dong-ha.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://bslenamhung.github.io/</loc><lastmod>2026-09-20</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://bslenamhung.github.io/bac-si-san-phu-khoa-quang-tri.html</loc><lastmod>2026-09-20</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://bslenamhung.github.io/phong-kham-san-phu-khoa-quang-tri.html</loc><lastmod>2026-09-20</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://bslenamhung.github.io/kham-phu-khoa-dong-ha.html</loc><lastmod>2026-09-20</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://bslenamhung.github.io/kham-thai-dong-ha.html</loc><lastmod>2026-09-20</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://bslenamhung.github.io/sieu-am-thai-dong-ha.html</loc><lastmod>2026-09-20</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://bslenamhung.github.io/bai-viet/sieu-am-sang-loc-quy-1.html</loc><lastmod>2026-09-20T00:02:59.348Z</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://bslenamhung.github.io/bai-viet/thai-ong-co-tu-cung.html</loc><lastmod>2026-09-18T15:43:32.722Z</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://bslenamhung.github.io/bai-viet/sieu-am-bom-nuoc-long-tu-cung.html</loc><lastmod>2026-09-18T15:01:40.828Z</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
