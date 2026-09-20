@@ -35,3 +35,5 @@ Final article heading and internal-link rebuild 2026-09-19
 Sync data.json + deploy Pages automatically 2026-09-20T06:00:00+07:00
 
 Persist data.json sync fix 2026-09-20T06:05:00+07:00
+
+ALT image auto-fix 2026-09-20T07:00:00+07:00
