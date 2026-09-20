@@ -477,9 +477,38 @@ def main():
     if not isinstance(articles, list):
         raise RuntimeError('Danh sách articles không hợp lệ.')
     published = [a for a in articles if isinstance(a, dict) and a.get('published') is not False]
-    # Keep the homepage snapshot synchronized with the same Supabase source.
+    # Keep the homepage snapshots synchronized with the same Supabase source.
+    # data.json keeps full article content for static-page generation.
     DATA_JSON.write_text(json.dumps(content, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+    def article_sort_key(a):
+        raw = a.get('publishedAt') or a.get('createdAt') or a.get('created_at') or a.get('date') or ''
+        return str(raw or '')
+
+    published_sorted = sorted(published, key=article_sort_key, reverse=True)
+    homepage_articles = []
+    for a in published_sorted:
+        homepage_articles.append({
+            k: a.get(k)
+            for k in ('id', 'title', 'slug', 'specialty', 'desc', 'seoDescription', 'keywords',
+                      'image', 'seoImage', 'published', 'publishedAt', 'createdAt', 'created_at',
+                      'date', 'updatedAt')
+            if k in a
+        })
+
+    homepage_content = {
+        'site': content.get('site') or {},
+        'specialties': content.get('specialties') or [],
+        'services': content.get('services') or [],
+        'clinic': content.get('clinic') or {},
+        'articles': homepage_articles,
+    }
+    Path('data-home.json').write_text(
+        json.dumps(homepage_content, ensure_ascii=False, separators=(',', ':')) + '\n',
+        encoding='utf-8'
+    )
     print(f'Đã đồng bộ data.json: {len(published)} bài viết đã xuất bản.')
+    print(f'Đã tạo data-home.json: {len(homepage_articles)} bài metadata, không chứa content.')
 
     ids = [safe_id(article_id(a)) for a in published]
     duplicates = sorted({x for x in ids if ids.count(x) > 1})
