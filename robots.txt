@@ -4,3 +4,4 @@ Disallow: /admin.html
 Disallow: /admin-login.html
 
 Sitemap: https://bslenamhung.github.io/sitemap.xml
+Sitemap: https://bslenamhung.github.io/sitemap.txt
