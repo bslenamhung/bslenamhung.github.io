@@ -27,7 +27,7 @@ async function loadData(){
   try{
     const controller=new AbortController();
     const timer=setTimeout(()=>controller.abort(),2000);
-    const local=await fetch('./data.json?v=85',{cache:'no-store',signal:controller.signal});
+    const local=await fetch('./data-home.json?v=1',{cache:'no-store',signal:controller.signal});
     clearTimeout(timer);
     if(local.ok){
       const snapshot=await local.json();
@@ -82,14 +82,14 @@ function getFilteredArticles(filter=''){
   const rows=(DATA.articles||[]).filter(a=>a.published!==false&&(!filter||a.specialty===filter));
   if(!q)return rows;
   return rows.map(a=>{
-    const title=normalizeSearchText(a.title||''),desc=normalizeSearchText(a.desc||''),specialty=normalizeSearchText(a.specialty||''),content=normalizeSearchText(a.content||'');
-    const haystack=title+' '+desc+' '+specialty+' '+content;
+    const title=normalizeSearchText(a.title||''),desc=normalizeSearchText(a.desc||''),specialty=normalizeSearchText(a.specialty||''),keywords=normalizeSearchText(a.keywords||'');
+    const haystack=title+' '+desc+' '+specialty+' '+keywords;
     const allTerms=tokens.every(t=>haystack.includes(t));
     if(!allTerms)return null;
     let score=0;
     if(title.includes(q))score+=100;
     if(title.split(' ').some(word=>word===q))score+=40;
-    tokens.forEach(t=>{if(title.includes(t))score+=15;if(desc.includes(t))score+=5;if(content.includes(t))score+=2});
+    tokens.forEach(t=>{if(title.includes(t))score+=15;if(desc.includes(t))score+=5;if(keywords.includes(t))score+=3});
     return {a,score};
   }).filter(Boolean).sort((x,y)=>y.score-x.score).map(x=>x.a);
 }
