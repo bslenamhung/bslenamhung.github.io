@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Generate static, crawlable HTML pages for published articles from Supabase.
 
-The existing bai-viet.html?id=... URLs remain functional. New/static pages are
-published at /bai-viet/<id>.html and are used as canonical URLs and sitemap URLs.
+Published article pages use human-readable slugs as their canonical URLs.
+Legacy article-ID URLs are kept only as lightweight permanent-style redirect
+stubs so Google and old links can migrate safely to the new slug URLs.
 """
 import html
 import json
@@ -264,6 +265,30 @@ def article_link(article):
     return canonical_for(article)
 
 
+def render_legacy_redirect(article):
+    """Create a lightweight redirect stub from the old ID URL to the slug URL.
+
+    GitHub Pages is static hosting, so we cannot emit an HTTP 301 directly.
+    A zero-second meta refresh plus JavaScript fallback and canonical signal
+    gives Google a permanent-style redirect signal while keeping old links
+    usable. Legacy redirect URLs are never added to the sitemap.
+    """
+    aid = safe_id(article_id(article))
+    target = canonical_for(article)
+    title = str(article.get('title') or 'Bài viết Sản Phụ khoa').strip()
+    return f'''<!doctype html>
+<html lang="vi"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{esc(title)}</title>
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="{esc(target)}">
+<meta http-equiv="refresh" content="0;url={esc(target)}">
+<script>window.location.replace({json.dumps(target, ensure_ascii=False)});</script>
+</head><body>
+<p>Trang đã chuyển sang địa chỉ mới. <a href="{esc(target)}">Mở bài viết</a>.</p>
+</body></html>'''
+
+
 def article_words(value):
     value = re.sub(r'<[^>]*>', ' ', str(value or ''))
     value = unicodedata.normalize('NFKD', value).lower()
@@ -519,12 +544,20 @@ def main():
         shutil.rmtree(OUT_DIR)
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
+    legacy_redirects = 0
     for article in published:
         aid = safe_id(article_id(article))
         slug = normalize_slug(article.get('slug', ''), aid)
         (OUT_DIR / f'{slug}.html').write_text(render_article(article, published), encoding='utf-8')
 
+        # Preserve the old /bai-viet/<article-id>.html URL as a redirect stub.
+        # Do not overwrite a real slug page if the slug happens to equal the ID.
+        if slug != aid:
+            (OUT_DIR / f'{aid}.html').write_text(render_legacy_redirect(article), encoding='utf-8')
+            legacy_redirects += 1
+
     print(f'Đã tạo {len(published)} trang bài viết tĩnh trong {OUT_DIR}/.')
+    print(f'Đã tạo {legacy_redirects} URL chuyển tiếp từ ID cũ sang slug đẹp; các URL này không được đưa vào sitemap.')
 
 
 if __name__ == '__main__':
