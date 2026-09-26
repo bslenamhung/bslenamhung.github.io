@@ -50,7 +50,7 @@ jobs:
           if grep -q '/bai-viet/legacy-' sitemap.xml; then echo "LOI: sitemap con legacy article"; exit 1; fi
           python - <<'PY'
           from pathlib import Path
-          import re,sys
+          import re,sys,json
           sitemap=Path('sitemap.xml').read_text(encoding='utf-8')
           urls=re.findall(r'<loc>https://bslenamhung\.github\.io/bai-viet/([^<]+\.html)</loc>',sitemap)
           files={p.name for p in Path('bai-viet').glob('*.html')}
