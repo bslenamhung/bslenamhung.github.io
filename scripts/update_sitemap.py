@@ -75,6 +75,7 @@ def build_sitemap(content):
         (BASE_URL + '/kham-phu-khoa-dong-ha.html', 'monthly', '0.8', ''),
         (BASE_URL + '/kham-thai-dong-ha.html', 'monthly', '0.8', ''),
         (BASE_URL + '/sieu-am-thai-dong-ha.html', 'monthly', '0.8', ''),
+        (BASE_URL + '/bmi.html', 'monthly', '0.8', ''),
     ]
     seen = set()
     duplicate_ids = set()
