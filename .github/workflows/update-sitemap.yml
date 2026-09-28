@@ -5,6 +5,8 @@ on:
   push:
     paths:
       - 'V71-TRIGGER.txt'
+      - 'bmi.html'
+      - 'scripts/update_sitemap.py'
   schedule:
     - cron: '*/5 * * * *'
 
