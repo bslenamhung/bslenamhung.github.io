@@ -10,6 +10,7 @@ from pathlib import Path
 SUPABASE_URL = os.environ.get('SUPABASE_URL', '').rstrip('/')
 SUPABASE_KEY = os.environ.get('SUPABASE_KEY', '')
 BASE_URL = 'https://bslenamhung.github.io'
+SITEMAP_TXT = Path('sitemap.txt')
 
 
 def normalize_slug(value, fallback_id):
@@ -114,6 +115,16 @@ def main():
         print(f'Đã cập nhật sitemap: {xml.count("<url>")} URL.')
     else:
         print('Sitemap không thay đổi.')
+
+    # Keep the plain-text sitemap synchronized with the XML sitemap.
+    sitemap_urls = re.findall(r'<loc>(https://bslenamhung\\.github\\.io/[^<]+)</loc>', xml)
+    sitemap_txt = '\n'.join(sitemap_urls) + '\n'
+    old_txt = SITEMAP_TXT.read_text(encoding='utf-8') if SITEMAP_TXT.exists() else ''
+    if old_txt != sitemap_txt:
+        SITEMAP_TXT.write_text(sitemap_txt, encoding='utf-8')
+        print(f'Đã cập nhật sitemap.txt: {len(sitemap_urls)} URL.')
+    else:
+        print('sitemap.txt không thay đổi.')
 
 
 if __name__ == '__main__':
