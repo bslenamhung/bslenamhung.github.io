@@ -8,6 +8,15 @@ const emailFor = username => username.trim().toLowerCase() + "@patients.bs-hung.
 const fmt = n => new Intl.NumberFormat("vi-VN", { maximumFractionDigits: 0 }).format(n);
 const ga = r => r.ga_days ? r.ga_weeks + " tuần " + r.ga_days + " ngày" : r.ga_weeks + " tuần";
 const dateVi = s => s ? new Date(s + "T12:00:00").toLocaleDateString("vi-VN") : "—";
+function gestationAt(dueDate,onDate) {
+ if(!dueDate||!onDate)return null;
+ const diff=Math.round((Date.parse(dueDate+"T00:00:00Z")-Date.parse(onDate+"T00:00:00Z"))/86400000);
+ const ageDays=280-diff;
+ if(!Number.isFinite(ageDays)||ageDays<0||ageDays>294)return {invalid:true};
+ return {weeks:Math.floor(ageDays/7),days:ageDays%7,ageDays};
+}
+const todayLocal=()=>{const n=new Date();return new Date(n.getTime()-n.getTimezoneOffset()*60000).toISOString().slice(0,10)};
+const gestationText=g=>g&&!g.invalid?g.weeks+" tuần "+g.days+" ngày":"Không tính được tuổi thai (kiểm tra ngày dự sinh)";
 const allowedTypes = ["application/pdf","image/jpeg","image/png","image/webp","application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
 const maxFileBytes = 10 * 1024 * 1024;
 function view(id) { ["loginView","patientView","adminView"].forEach(k => $(k).hidden = k !== id); }
@@ -63,7 +72,7 @@ $("loginForm").addEventListener("submit", async e => {
   user = data.user; await routeUser();
 });
 async function routeUser() {
-  const { data, error } = await db.from("profiles").select("user_id,username,display_name,phone,address").eq("user_id", user.id).single();
+  const { data, error } = await db.from("profiles").select("user_id,username,display_name,phone,address,para,medical_history,due_date").eq("user_id", user.id).single();
   if (error || !data) { await db.auth.signOut(); view("loginView"); fail("loginError", "Không đọc được hồ sơ. Vui lòng liên hệ quản trị viên."); return; }
   profile = data;
   if (user.app_metadata?.role === "admin") { view("adminView"); await loadPatients(); }
@@ -75,6 +84,10 @@ async function loadPatient() {
   $("patientProfileUsername").textContent = profile.username || "—";
   $("patientProfilePhone").textContent = profile.phone || "Chưa cập nhật";
   $("patientProfileAddress").textContent = profile.address || "Chưa cập nhật";
+  $("patientProfilePara").textContent = profile.para || "Chưa cập nhật";
+  $("patientProfileHistory").textContent = profile.medical_history || "Chưa cập nhật";
+  $("patientProfileDueDate").textContent = profile.due_date ? dateVi(profile.due_date) : "Chưa cập nhật";
+  $("patientProfileGestation").textContent = profile.due_date ? gestationText(gestationAt(profile.due_date,todayLocal())) : "Chưa cập nhật";
   const { data, error } = await db.from("fetal_weight_records").select("scan_date,ga_weeks,ga_days,efw_grams,note").eq("patient_user_id", user.id).order("scan_date");
   if (error) { toast("Không tải được lịch sử khám."); return; }
   records = data || [];
@@ -98,7 +111,7 @@ async function loadPatient() {
   $("patientTestsEmpty").hidden = testFiles.length > 0;
 }
 async function loadPatients() {
-  const { data, error } = await db.from("profiles").select("user_id,username,display_name,phone,address").order("display_name");
+  const { data, error } = await db.from("profiles").select("user_id,username,display_name,phone,address,para,medical_history,due_date").order("display_name");
   if (error) { toast("Không tải được danh sách hồ sơ."); return; }
   const select = $("patientSelect"); select.replaceChildren(new Option("— Chọn bệnh nhân —", ""));
   (data || []).filter(p => p.user_id !== user.id).forEach(p => select.add(new Option((p.display_name || p.username) + " (" + p.username + ")", p.user_id)));
@@ -108,9 +121,9 @@ async function loadSelectedPatient() {
   $("adminPatientHistory").replaceChildren(); $("adminTestHistory").replaceChildren(); $("adminPatientProfile").replaceChildren();
   fail("recordMessage",""); fail("testMessage","");
   if (!selectedPatient) return;
-  const { data: p, error: pError } = await db.from("profiles").select("username,display_name,phone,address").eq("user_id",selectedPatient).single();
+  const { data: p, error: pError } = await db.from("profiles").select("username,display_name,phone,address,para,medical_history,due_date").eq("user_id",selectedPatient).single();
   if (pError) { toast("Không tải được thông tin bệnh nhân."); return; }
-  [["Họ tên",p.display_name],["Tên đăng nhập",p.username],["Số điện thoại",p.phone],["Địa chỉ",p.address]].forEach(([label,value])=>{
+  [["Họ tên",p.display_name],["Tên đăng nhập",p.username],["Số điện thoại",p.phone],["Địa chỉ",p.address],["PARA",p.para],["Tiền sử bệnh",p.medical_history],["Ngày dự sinh",p.due_date?dateVi(p.due_date):null],["Tuổi thai theo ngày khám",p.due_date?gestationText(gestationAt(p.due_date,$("scanDate").value||todayLocal())):null]].forEach(([label,value])=>{
     const line=document.createElement("div"); const strong=document.createElement("strong"); strong.textContent=label+": "; line.append(strong,document.createTextNode(value || "Chưa cập nhật")); $("adminPatientProfile").append(line);
   });
   const { data, error } = await db.from("fetal_weight_records").select("scan_date,ga_weeks,ga_days,efw_grams,note").eq("patient_user_id", selectedPatient).order("scan_date", { ascending:false });
@@ -135,23 +148,44 @@ async function loadSelectedPatient() {
   });
   if (!(tests || []).length) addHistoryLine($("adminTestHistory"),"Chưa có phiếu xét nghiệm được cập nhật.");
 }
-$("patientSelect").addEventListener("change", loadSelectedPatient);
+$("patientSelect").addEventListener("change", async()=>{await loadSelectedPatient();await refreshRecordGestation();});
+
+function refreshNewPatientGestation(){const d=$("newPatientDueDate").value;const g=gestationAt(d,todayLocal());$("newPatientGestation").textContent=!d?"Nhập ngày dự sinh để tự tính tuổi thai.":"Tuổi thai hôm nay: "+gestationText(g);}
+async function refreshRecordGestation(){
+ const date=$("scanDate").value||todayLocal();
+ if(!selectedPatient){$("gaWeeks").value="";$("gaDays").value="";$("recordGestationHint").textContent="Chọn bệnh nhân có ngày dự sinh để tự tính tuổi thai theo ngày khám.";return;}
+ const {data:p,error}=await db.from("profiles").select("due_date").eq("user_id",selectedPatient).single();
+ if(error||!p?.due_date){$("gaWeeks").value="";$("gaDays").value="";$("recordGestationHint").textContent="Hồ sơ chưa có ngày dự sinh. Hãy bổ sung ngày dự sinh.";return;}
+ const g=gestationAt(p.due_date,date);$("gaWeeks").value=g&&!g.invalid?g.weeks:"";$("gaDays").value=g&&!g.invalid?g.days:"";
+ $("recordGestationHint").textContent="Tuổi thai ngày "+dateVi(date)+": "+gestationText(g)+". Ngày dự sinh: "+dateVi(p.due_date)+".";
+}
+$("newPatientDueDate").addEventListener("input",refreshNewPatientGestation);
+$("scanDate").addEventListener("change",refreshRecordGestation);
+
 $("createPatientForm").addEventListener("submit", async e => {
   e.preventDefault(); fail("createMessage", "");
   if (user?.app_metadata?.role !== "admin") { fail("createMessage", "Tài khoản không có quyền quản trị."); return; }
   const display_name = $("newPatientName").value.trim(), username = $("newUsername").value.trim().toLowerCase(), password = $("newPassword").value;
   const phone = $("newPatientPhone").value.trim(), address = $("newPatientAddress").value.trim();
+  const para=$("newPatientPara").value.trim(), medical_history=$("newPatientHistory").value.trim(), due_date=$("newPatientDueDate").value;
+  const newGa=gestationAt(due_date,todayLocal());
+  if(!due_date||!newGa||newGa.invalid){fail("createMessage","Ngày dự sinh chưa hợp lệ hoặc tuổi thai nằm ngoài khoảng 0–42 tuần.");return;}
   if (!/^[a-z0-9._-]{4,32}$/.test(username) || password.length < 10) { fail("createMessage", "Tên đăng nhập hoặc mật khẩu chưa đáp ứng yêu cầu."); return; }
   const { data: { session } } = await db.auth.getSession();
-  const { data, error } = await db.functions.invoke("admin-create-patient", { body: { display_name, username, password, phone, address }, headers: { Authorization: "Bearer " + session.access_token } });
+  const { data, error } = await db.functions.invoke("admin-create-patient", { body: { display_name, username, password, phone, address, para, medical_history, due_date }, headers: { Authorization: "Bearer " + session.access_token } });
   if (error || data?.error) { fail("createMessage", "Không tạo được tài khoản: " + (data?.error || error.message)); return; }
-  fail("createMessage", "Đã tạo tài khoản " + username + ". Hãy trao mật khẩu riêng cho bệnh nhân.");
-  $("createPatientForm").reset(); await loadPatients();
+  fail("createMessage", "Đã tạo tài khoản " + username + ". Tuổi thai hôm nay: " + gestationText(newGa) + ". Hãy trao mật khẩu riêng cho bệnh nhân.");
+  $("createPatientForm").reset(); $("newPatientGestation").textContent="Nhập ngày dự sinh để tự tính tuổi thai."; await loadPatients();
 });
 $("recordForm").addEventListener("submit", async e => {
   e.preventDefault(); fail("recordMessage", "");
   if (user?.app_metadata?.role !== "admin" || !selectedPatient) { fail("recordMessage", "Hãy đăng nhập bằng tài khoản bác sĩ và chọn bệnh nhân."); return; }
-  const row = { patient_user_id:selectedPatient, created_by:user.id, scan_date:$("scanDate").value, ga_weeks:Number($("gaWeeks").value), ga_days:Number($("gaDays").value), efw_grams:Number($("efw").value), note:$("recordNote").value.trim() || null };
+  const {data: sp,error: spe}=await db.from("profiles").select("due_date").eq("user_id",selectedPatient).single();
+  if(spe||!sp?.due_date){fail("recordMessage","Hồ sơ bệnh nhân chưa có ngày dự sinh. Hãy cập nhật trước.");return;}
+  const g=gestationAt(sp.due_date,$("scanDate").value);
+  if(!g||g.invalid||g.weeks<1||g.weeks>42){fail("recordMessage","Không tính được tuổi thai hợp lệ. Vui lòng kiểm tra ngày dự sinh và ngày khám.");return;}
+  $("gaWeeks").value=g.weeks;$("gaDays").value=g.days;
+  const row = { patient_user_id:selectedPatient, created_by:user.id, scan_date:$("scanDate").value, ga_weeks:g.weeks, ga_days:g.days, efw_grams:Number($("efw").value), note:$("recordNote").value.trim() || null };
   const { error } = await db.from("fetal_weight_records").insert(row);
   if (error) { fail("recordMessage", "Không lưu được: " + error.message); return; }
   fail("recordMessage", "Đã lưu lần khám."); $("recordNote").value = ""; $("efw").value = ""; await loadSelectedPatient();
