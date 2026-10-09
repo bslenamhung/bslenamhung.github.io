@@ -374,7 +374,7 @@ function intergrowthEfwCentile(ga, percentile) {
   const sigma = 1e-4 * (-6.997171 + 0.057559 * Math.pow(ga,3) - 0.01493946 * Math.pow(ga,3) * Math.log(ga));
   const zValues = {3:-1.880794,10:-1.281552,50:0,90:1.281552,97:1.880794};
   const z=zValues[percentile];
-  const logWeight = Math.abs(lambda)<1e-8 ? mu * Math.exp(sigma*z) : mu * Math.pow(1 + lambda*sigma*z, -1/lambda);
+  const logWeight = Math.abs(lambda)<1e-8 ? mu * Math.exp(sigma*z) : mu * Math.pow(1 + lambda*sigma*z, 1/lambda);
   return Math.exp(logWeight);
 }
 function drawChart(data, canvasId="weightChart", emptyId="chartEmpty") {
