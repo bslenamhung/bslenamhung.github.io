@@ -308,7 +308,7 @@ $("createPatientForm").addEventListener("submit", async e => {
   const para=$("newPatientPara").value.trim(), medical_history=$("newPatientHistory").value.trim(), due_date=dueDateIso($("newPatientDueDate").value);
   const newGa=gestationAt(due_date,todayLocal());
   if(!due_date||!newGa||newGa.invalid){fail("createMessage","Ngày dự sinh không hợp lệ. Nhập đúng dạng dd/mm/yyyy (ví dụ 25/04/2027) và kiểm tra tuổi thai trong khoảng 0–42 tuần.");return;}
-  if (!/^[a-z0-9._-]{4,32}$/.test(username) || password.length < 10) { fail("createMessage", "Tên đăng nhập hoặc mật khẩu chưa đáp ứng yêu cầu."); return; }
+  if (!/^[a-z0-9._-]{4,32}$/.test(username) || password.length < 8) { fail("createMessage", "Tên đăng nhập hoặc mật khẩu chưa đáp ứng yêu cầu."); return; }
   const existing = await db.from("profiles").select("user_id").eq("username", username).maybeSingle();
   if (existing.error) { fail("createMessage", "Chưa kiểm tra được tên đăng nhập. Vui lòng thử lại."); return; }
   if (existing.data) { fail("createMessage", "Tên đăng nhập \"" + username + "\" đã tồn tại. Vui lòng chọn tên khác."); $("newUsername").focus(); return; }
