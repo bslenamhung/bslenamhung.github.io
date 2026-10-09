@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Cổng theo dõi cân nặng thai nhi của Phòng khám chuyên khoa Phụ sản BS Hùng">
+<title>Theo dõi thai kỳ | BS Hùng</title><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><div class="logo" aria-hidden="true">♡</div><div><strong>PHÒNG KHÁM CHUYÊN KHOA PHỤ SẢN BS HÙNG</strong><small>Đồng hành cùng mẹ trong thai kỳ</small></div></header>
+<main>
+<section id="loginView" class="login">
+  <div><span class="eyebrow">CỔNG THÔNG TIN THAI KỲ</span><h1>Theo dõi cân nặng thai nhi</h1><p>Xem biểu đồ cân nặng ước tính của bé qua từng lần khám.</p></div>
+  <form id="loginForm" class="panel"><h2>Đăng nhập</h2><label>Email bác sĩ hoặc tên đăng nhập bệnh nhân<input id="username" required autocomplete="username" placeholder="Bác sĩ: email · Bệnh nhân: tên đăng nhập"></label><small>Bác sĩ đăng nhập bằng email đã đăng ký. Bệnh nhân dùng tên đăng nhập do phòng khám cấp.</small><label>Mật khẩu<input id="password" type="password" required autocomplete="current-password"></label><button class="primary">Đăng nhập</button><p id="loginError" class="error" role="alert"></p><small>Tài khoản do phòng khám cấp. Không chia sẻ mật khẩu.</small></form>
+</section>
+<section id="patientView" hidden>
+ <div class="head"><div><span class="eyebrow">HỒ SƠ CÁ NHÂN</span><h1>Xin chào, <span id="patientName"></span></h1><p class="muted">Các lần khám được phòng khám cập nhật.</p></div><button class="secondary logout">Đăng xuất</button></div>
+ <div class="stats"><article><small>Lần khám gần nhất</small><strong id="lastVisit">—</strong><small id="lastGa">Chưa có dữ liệu</small></article><article class="pink"><small>EFW gần nhất</small><strong id="lastWeight">—</strong><small>Cân nặng ước tính (gam)</small></article><article><small>Số lần khám</small><strong id="visitCount">0</strong></article></div>
+ <section class="panel"><div class="head"><div><h2>Biểu đồ cân nặng thai nhi</h2><small class="muted">Tuổi thai (tuần) · Cân nặng ước tính (g)</small></div><button id="downloadCsv" class="secondary" type="button">Xuất CSV</button></div><div class="chart"><canvas id="weightChart" width="1000" height="420"></canvas><div id="chartEmpty" class="empty">Chưa có lần khám nào được cập nhật.</div></div><p class="note">Đường nối thể hiện các số đo đã ghi nhận, không phải đường bách phân vị hay kết luận chẩn đoán.</p></section>
+ <section class="panel"><h2>Lịch sử khám</h2><div class="scroll"><table><thead><tr><th>Ngày khám</th><th>Tuổi thai</th><th>EFW</th><th>Ghi chú</th></tr></thead><tbody id="patientRows"></tbody></table></div></section>
+</section>
+<section id="adminView" hidden>
+ <div class="head"><div><span class="eyebrow">KHU VỰC QUẢN TRỊ</span><h1>Quản lý hồ sơ thai kỳ</h1><p class="muted">Tạo tài khoản bệnh nhân và cập nhật số đo.</p></div><button class="secondary logout">Đăng xuất</button></div>
+ <div class="adminGrid"><section class="panel"><h2>Tạo tài khoản bệnh nhân</h2><form id="createPatientForm" class="stack"><label>Họ tên<input id="newPatientName" required maxlength="120"></label><label>Tên đăng nhập<input id="newUsername" required minlength="4" maxlength="32" pattern="[A-Za-z0-9._-]+" autocomplete="off"></label><label>Mật khẩu khởi tạo<input id="newPassword" type="password" required minlength="10" autocomplete="new-password"></label><button class="primary">Tạo tài khoản</button><p id="createMessage" class="message" role="status"></p><small>Gửi thông tin đăng nhập riêng cho đúng bệnh nhân.</small></form></section>
+ <section class="panel"><h2>Chọn bệnh nhân</h2><label>Hồ sơ<select id="patientSelect"><option value="">— Chọn bệnh nhân —</option></select></label><div id="adminPatientHistory" class="history"></div></section></div>
+ <section class="panel"><h2>Nhập lần khám mới</h2><form id="recordForm" class="formGrid"><label>Ngày khám<input id="scanDate" type="date" required></label><div class="ga"><label>Tuần thai<input id="gaWeeks" type="number" min="1" max="42" required></label><label>Ngày lẻ<input id="gaDays" type="number" min="0" max="6" value="0" required></label></div><label>Cân nặng ước tính EFW (g)<input id="efw" type="number" min="100" max="7000" required></label><label>Ghi chú tùy chọn<input id="recordNote" maxlength="500"></label><div><button class="primary">Lưu lần khám</button><p id="recordMessage" class="message" role="status"></p></div></form></section>
+</section>
+<div id="globalMessage" class="toast" hidden role="status"></div>
+</main><footer><strong>Phòng khám chuyên khoa Phụ sản BS Hùng</strong><span>Điều trị bằng tri thức, chăm sóc từ trái tim</span><small>Thông tin hỗ trợ theo dõi, không thay thế đánh giá của bác sĩ.</small></footer>
+<script type="module" src="app.js"></script></body></html>
