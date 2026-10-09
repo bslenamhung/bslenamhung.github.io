@@ -471,3 +471,29 @@ body{font-size:16px}
 @media(max-width:360px){
   #about .about-card-media{height:145px!important;min-height:145px!important}
 }
+
+
+/* Final clinic gallery correction: show every pixel of all four photos */
+#clinicGallery .clinic-photo-link{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  height:190px!important;
+  background:#f5f7f8!important;
+  overflow:hidden!important;
+}
+#clinicGallery .clinic-photo-link img{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  background:#f5f7f8!important;
+}
+@media(max-width:900px){
+  #clinicGallery .clinic-photo-link{height:180px!important}
+}
+@media(max-width:520px){
+  #clinicGallery .clinic-photo-link{height:165px!important;border-radius:10px!important}
+  #clinicGallery .clinic-photo-link img{object-fit:contain!important}
+}
