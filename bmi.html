@@ -49,12 +49,12 @@
 .sex-option label span:first-child{font-size:28px;line-height:1;color:#aeb8bd}
 .sex-option input:checked+label{border-color:#9a7252;background:#fffaf7;color:#20323f;box-shadow:0 6px 18px rgba(154,114,82,.10)}
 .sex-option input:checked+label span:first-child{color:#9a7252}
-.measure{display:grid;grid-template-columns:1fr 112px;gap:18px;align-items:center}
+.measure{display:flex;justify-content:center;align-items:center}
 .measure-value{text-align:center;font-size:38px;font-weight:800;color:#20323f;white-space:nowrap}
 .measure-value small{font-size:20px;color:#9a7252}
-.bmi-range{width:100%;accent-color:#9a7252}
-.bmi-number{width:100%;height:48px;border:1px solid #dbe2e6;border-radius:12px;text-align:center;font-size:20px;font-weight:700;color:#20323f}
-.bmi-range-row{display:flex;justify-content:space-between;color:#8a959b;font-size:12px;margin-top:7px}
+.bmi-range{display:none}
+.bmi-number{width:220px;max-width:100%;height:56px;border:1px solid #dbe2e6;border-radius:12px;text-align:center;font-size:24px;font-weight:700;color:#20323f;background:#fff;padding:0 14px}
+.bmi-range-row{display:none}
 .result{margin-top:24px;border-radius:20px;background:#f8fbfc;padding:26px;text-align:center}
 .result .result-label{color:#68747c;font-weight:700}
 .result .bmi-value{font-size:56px;line-height:1.05;color:#20323f;font-weight:900;margin:6px 0}
@@ -71,7 +71,7 @@
 .bmi-note strong{color:#20323f}
 @media(max-width:640px){
  .bmi-hero{padding:38px 0 25px}.bmi-card{padding:18px;border-radius:20px}
- .measure{grid-template-columns:1fr}.measure-value{order:-1}.bmi-number{max-width:150px;margin:auto}
+ .measure{display:flex}.bmi-number{width:100%;max-width:240px;margin:auto}
  .sex-options{gap:10px}.sex-option label{min-height:58px}
  .result .bmi-value{font-size:48px}.bmi-table{font-size:13px}
 }
@@ -103,20 +103,18 @@
    </div>
   </div>
   <div class="bmi-section">
-   <label class="bmi-label" for="heightRange">Chiều cao của bạn</label>
+   <label class="bmi-label" for="heightNumber">Chiều cao của bạn</label>
    <div class="measure">
-    <input id="heightRange" class="bmi-range" type="range" min="120" max="220" step="1" value="170" aria-label="Chiều cao">
-    <input id="heightNumber" class="bmi-number" type="number" min="120" max="220" step="1" value="170" aria-label="Chiều cao tính bằng centimet">
+    <input id="heightNumber" class="bmi-number" type="number" min="120" max="220" step="1" value="170" inputmode="numeric" aria-label="Nhập chiều cao tính bằng centimet" placeholder="Ví dụ: 170">
    </div>
-   <div class="bmi-range-row"><span>120 cm</span><span>220 cm</span></div>
+   <p class="result-note">Nhập chiều cao bằng centimet (cm), từ 120 đến 220 cm.</p>
   </div>
   <div class="bmi-section">
-   <label class="bmi-label" for="weightRange">Cân nặng của bạn</label>
+   <label class="bmi-label" for="weightNumber">Cân nặng của bạn</label>
    <div class="measure">
-    <input id="weightRange" class="bmi-range" type="range" min="30" max="180" step="0.1" value="65" aria-label="Cân nặng">
-    <input id="weightNumber" class="bmi-number" type="number" min="30" max="180" step="0.1" value="65" aria-label="Cân nặng tính bằng kilogram">
+    <input id="weightNumber" class="bmi-number" type="number" min="30" max="180" step="0.1" value="65" inputmode="decimal" aria-label="Nhập cân nặng tính bằng kilogram" placeholder="Ví dụ: 65">
    </div>
-   <div class="bmi-range-row"><span>30 kg</span><span>180 kg</span></div>
+   <p class="result-note">Nhập cân nặng bằng kilôgam (kg), từ 30 đến 180 kg.</p>
   </div>
   <div class="result" aria-live="polite">
    <div class="result-label">Chỉ số BMI của bạn</div>
@@ -146,30 +144,23 @@
 const nav=document.getElementById('mainNav'),navBtn=document.getElementById('navToggle');
 navBtn?.addEventListener('click',()=>{const open=nav?.classList.toggle('open');navBtn.setAttribute('aria-expanded',String(!!open));});
 document.querySelectorAll('#mainNav a').forEach(a=>a.addEventListener('click',()=>nav?.classList.remove('open')));
-const hR=document.getElementById('heightRange'),hN=document.getElementById('heightNumber'),wR=document.getElementById('weightRange'),wN=document.getElementById('weightNumber');
+const hN=document.getElementById('heightNumber'),wN=document.getElementById('weightNumber');
 const valueEl=document.getElementById('bmiValue'),catEl=document.getElementById('bmiCategory'),noteEl=document.getElementById('bmiNote');
-function clamp(v,min,max){return Math.min(max,Math.max(min,v));}
-function sync(source,target,min,max){
- source.addEventListener('input',()=>{
-  const v=clamp(Number(source.value)||min,min,max);
-  target.value=v; calculate();
- });
-}
 function calculate(){
- const h=clamp(Number(hN.value)||170,120,220);
- const w=clamp(Number(wN.value)||65,30,180);
- hN.value=h;wN.value=w;hR.value=h;wR.value=w;
- const bmi=w/((h/100)*(h/100));
- valueEl.textContent=bmi.toFixed(1);
- let cat='Bình thường',note='Theo phân loại BMI người trưởng thành của WHO.';
+ const h=Number(hN.value),w=Number(wN.value);
+ if(!hN.value||!wN.value||!Number.isFinite(h)||!Number.isFinite(w)||h<120||h>220||w<30||w>180){
+  valueEl.textContent='—';catEl.textContent='Nhập số hợp lệ';noteEl.textContent='Chiều cao: 120–220 cm. Cân nặng: 30–180 kg.';return;
+ }
+ const bmi=w/((h/100)*(h/100));valueEl.textContent=bmi.toFixed(1);
+ let cat='Bình thường',note='BMI nằm trong khoảng 18,5–24,9 theo phân loại người trưởng thành.';
  if(bmi<18.5){cat='Thiếu cân';note='Cân nặng thấp hơn khoảng BMI bình thường. Nên xem xét chế độ dinh dưỡng và sức khỏe tổng thể.';}
- else if(bmi<25){cat='Bình thường';note='BMI nằm trong khoảng 18,5–24,9 theo phân loại người trưởng thành.';}
+ else if(bmi<25){cat='Bình thường';}
  else if(bmi<30){cat='Thừa cân';note='BMI từ 25 đến dưới 30. Có thể trao đổi với nhân viên y tế về dinh dưỡng, vận động và các yếu tố nguy cơ.';}
  else {cat='Béo phì';note='BMI từ 30 trở lên. Nên được đánh giá thêm các yếu tố nguy cơ chuyển hóa và sức khỏe tổng thể.';}
  catEl.textContent=cat;noteEl.textContent=note;
 }
-sync(hR,hN,120,220);sync(hN,hR,120,220);sync(wR,wN,30,180);sync(wN,wR,30,180);
-document.getElementById('resetBtn').addEventListener('click',()=>{hN.value=170;hR.value=170;wN.value=65;wR.value=65;calculate();});
+hN.addEventListener('input',calculate);wN.addEventListener('input',calculate);
+document.getElementById('resetBtn').addEventListener('click',()=>{hN.value='';wN.value='';valueEl.textContent='—';catEl.textContent='Nhập chiều cao và cân nặng';noteEl.textContent='Nhập chiều cao và cân nặng để xem kết quả BMI.';hN.focus();});
 document.getElementById('year').textContent=new Date().getFullYear();
 calculate();
 </script>
