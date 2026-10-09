@@ -169,7 +169,7 @@ async function loadPatients() {
 }
 async function loadSelectedPatient() {
   selectedPatient = $("patientSelect").value || null;
-  $("adminPatientHistory").replaceChildren(); $("adminTestHistory").replaceChildren(); $("adminPatientProfile").replaceChildren();
+  $("adminPatientHistory").replaceChildren(); $("adminTestHistory").replaceChildren(); $("adminPatientProfile").replaceChildren(); drawChart([], "adminWeightChart", "adminWeightChartEmpty");
   $("editPatientForm").hidden=true; $("editPatientButton").hidden=true;
   fail("recordMessage",""); fail("testMessage",""); fail("editPatientMessage","");
   if (!selectedPatient) return;
@@ -183,7 +183,7 @@ async function loadSelectedPatient() {
   $("editPatientButton").hidden=false;
   const { data, error } = await db.from("fetal_weight_records").select("scan_date,follow_up_date,ga_weeks,ga_days,efw_grams,note").eq("patient_user_id", selectedPatient).order("scan_date", { ascending:false });
   if (error) { toast("Không tải được lịch sử bệnh nhân."); return; }
-  (data || []).forEach(r => addHistoryLine($("adminPatientHistory"),dateVi(r.scan_date) + (r.follow_up_date ? " · Hẹn tái khám: " + dateVi(r.follow_up_date) : "") + " · " + ga(r) + " · " + (r.efw_grams==null?"Chưa nhập EFW":fmt(r.efw_grams) + " g") + (r.note ? " · " + r.note : "")));
+  (data || []).forEach(r => addHistoryLine($("adminPatientHistory"),dateVi(r.scan_date) + (r.follow_up_date ? " · Hẹn tái khám: " + dateVi(r.follow_up_date) : "") + " · " + ga(r) + " · " + (r.efw_grams==null?"Chưa nhập EFW":fmt(r.efw_grams) + " g") + (r.note ? " · " + r.note : ""))); drawChart(data || [], "adminWeightChart", "adminWeightChartEmpty");
   if (!(data || []).length) addHistoryLine($("adminPatientHistory"),"Chưa có số đo được cập nhật.");
   const { data: tests, error: testError } = await db.from("patient_test_records").select("id,test_date,test_name").eq("patient_user_id", selectedPatient).order("test_date", {ascending:false});
   if (testError) { toast("Không tải được lịch sử xét nghiệm."); return; }
@@ -197,7 +197,7 @@ async function loadSelectedPatient() {
       line.append(document.createElement("br"));
       if (f.mime_type.startsWith("image/")) {
         const img=document.createElement("img"); img.src=f.signedUrl; img.alt="Ảnh phiếu xét nghiệm"; img.loading="lazy"; img.className="adminTestThumb"; line.append(img);
-      } else line.append(makeLink(f.signedUrl,f.file_name,f.mime_type));
+      } else if (f.mime_type === "application/pdf") { const frame=document.createElement("iframe"); frame.src=f.signedUrl; frame.title="Phiếu xét nghiệm PDF"; frame.className="adminTestPdfPreview"; line.append(frame); line.append(makeLink(f.signedUrl,f.file_name,f.mime_type)); } else line.append(makeLink(f.signedUrl,f.file_name,f.mime_type));
     });
     $("adminTestHistory").append(line);
   });
@@ -363,8 +363,8 @@ $("testForm").addEventListener("submit", async e => {
   $("testForm").reset(); await loadSelectedPatient();
   fail("testMessage", "Đã tải phiếu xét nghiệm lên thành công.");
 });
-function drawChart(data) {
-  const canvas = $("weightChart"), ctx = canvas.getContext("2d"), empty = $("chartEmpty");
+function drawChart(data, canvasId="weightChart", emptyId="chartEmpty") {
+  const canvas = $(canvasId), ctx = canvas.getContext("2d"), empty = $(emptyId);
   ctx.clearRect(0,0,canvas.width,canvas.height);
   const pts = [...data].filter(p=>p.efw_grams!==null&&p.efw_grams!==undefined&&Number.isFinite(Number(p.efw_grams))).sort((a,b) => (a.ga_weeks*7+a.ga_days)-(b.ga_weeks*7+b.ga_days));
   empty.hidden = pts.length > 0;
