@@ -14,3 +14,5 @@
 #patientSearch+*{margin-top:0}.patientSearchCount{display:block;clear:both;margin:4px 0 12px;line-height:1.5;min-height:0;position:static;font-weight:400}#patientSearch{display:block;margin-bottom:0}#patientSearchCount+label{margin-top:0}
 
 .patientQuickNav{margin:0 0 18px;padding:0}.patientQuickNav a{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:13px 16px;border:1px solid #efcbd9;border-radius:12px;background:#fff0f6;color:#843651;text-decoration:none;font-weight:700}.patientQuickNav a:hover,.patientQuickNav a:focus-visible{background:#f9e4ed;outline:2px solid #b84e79;outline-offset:2px}.patientQuickNav a span{font-size:18px}
+
+#newPatientName,#newPatientAddress{text-transform:uppercase}.profileGrid [id*="Name"],.profileGrid [id*="Address"],#adminPatientProfile [data-field="display_name"],#adminPatientProfile [data-field="address"]{text-transform:uppercase}
