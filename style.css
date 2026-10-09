@@ -589,3 +589,41 @@ body{font-size:16px}
   .clinic-gallery .clinic-photo-link{height:150px!important;border-radius:10px!important}
   .clinic-gallery .clinic-photo-link img{object-fit:contain!important}
 }
+
+
+/* FINAL OVERRIDE: equal gallery frames; whole photo contained, never use natural-height masonry */
+@media(max-width:520px){
+  #clinicGallery{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    grid-auto-rows:160px!important;
+    align-items:stretch!important;
+    gap:8px!important;
+  }
+  #clinicGallery .clinic-photo-link{
+    display:flex!important;
+    width:100%!important;
+    height:160px!important;
+    min-height:160px!important;
+    max-height:160px!important;
+    align-self:stretch!important;
+    align-items:center!important;
+    justify-content:center!important;
+    overflow:hidden!important;
+    border:1px solid #e5eaed!important;
+    border-radius:10px!important;
+    background:#f4f6f7!important;
+  }
+  #clinicGallery .clinic-photo-link img{
+    display:block!important;
+    width:100%!important;
+    height:100%!important;
+    min-height:0!important;
+    max-height:100%!important;
+    object-fit:contain!important;
+    object-position:center!important;
+    border:0!important;
+    border-radius:0!important;
+    background:#f4f6f7!important;
+  }
+}
