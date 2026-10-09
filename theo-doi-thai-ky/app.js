@@ -170,13 +170,17 @@ async function loadPatients() {
 async function loadSelectedPatient() {
   selectedPatient = $("patientSelect").value || null;
   $("adminPatientHistory").replaceChildren(); $("adminTestHistory").replaceChildren(); $("adminPatientProfile").replaceChildren();
-  fail("recordMessage",""); fail("testMessage","");
+  $("editPatientForm").hidden=true; $("editPatientButton").hidden=true;
+  fail("recordMessage",""); fail("testMessage",""); fail("editPatientMessage","");
   if (!selectedPatient) return;
   const { data: p, error: pError } = await db.from("profiles").select("username,display_name,phone,address,para,medical_history,due_date").eq("user_id",selectedPatient).single();
   if (pError) { toast("Không tải được thông tin bệnh nhân."); return; }
   [["Họ tên",p.display_name],["Tên đăng nhập",p.username],["Số điện thoại",p.phone],["Địa chỉ",p.address],["PARA",p.para],["Tiền sử bệnh",p.medical_history],["Ngày dự sinh",p.due_date?dateVi(p.due_date):null],["Tuổi thai theo ngày khám",p.due_date?gestationText(gestationAt(p.due_date,dueDateIso($("scanDate").value)||todayLocal())):null]].forEach(([label,value])=>{
     const line=document.createElement("div"); const strong=document.createElement("strong"); strong.textContent=label+": "; line.append(strong,document.createTextNode(value || "Chưa cập nhật")); $("adminPatientProfile").append(line);
   });
+  $("editPatientName").value=p.display_name||""; $("editPatientPhone").value=p.phone||""; $("editPatientAddress").value=p.address||"";
+  $("editPatientPara").value=p.para||""; $("editPatientHistory").value=p.medical_history||""; $("editPatientDueDate").value=isoToDateVi(p.due_date||"");
+  $("editPatientButton").hidden=false;
   const { data, error } = await db.from("fetal_weight_records").select("scan_date,follow_up_date,ga_weeks,ga_days,efw_grams,note").eq("patient_user_id", selectedPatient).order("scan_date", { ascending:false });
   if (error) { toast("Không tải được lịch sử bệnh nhân."); return; }
   (data || []).forEach(r => addHistoryLine($("adminPatientHistory"),dateVi(r.scan_date) + (r.follow_up_date ? " · Hẹn tái khám: " + dateVi(r.follow_up_date) : "") + " · " + ga(r) + " · " + (r.efw_grams==null?"Chưa nhập EFW":fmt(r.efw_grams) + " g") + (r.note ? " · " + r.note : "")));
@@ -199,6 +203,21 @@ async function loadSelectedPatient() {
   });
   if (!(tests || []).length) addHistoryLine($("adminTestHistory"),"Chưa có phiếu xét nghiệm được cập nhật.");
 }
+$("editPatientButton").addEventListener("click",()=>{if(!selectedPatient)return;$("editPatientForm").hidden=false;$("editPatientMessage").textContent="";});
+$("cancelEditPatient").addEventListener("click",()=>{$("editPatientForm").hidden=true;$("editPatientMessage").textContent="";});
+$("editPatientPara").addEventListener("input",()=>{const v=$("editPatientPara").value;if(v&&!/^\\d{0,4}$/.test(v)){$("editPatientPara").value=v.replace(/\\D/g,"").slice(0,4);}});
+$("editPatientDueDate").addEventListener("input",()=>{const iso=dueDateIso($("editPatientDueDate").value);const g=gestationAt(iso,todayLocal());$("editPatientGestation").textContent=iso?"Tuổi thai hôm nay: "+gestationText(g):"Nhập ngày dự sinh theo dd/mm/yyyy.";});
+$("editPatientForm").addEventListener("submit",async e=>{
+ e.preventDefault();fail("editPatientMessage","");
+ if(user?.app_metadata?.role!=="admin"||!selectedPatient){fail("editPatientMessage","Vui lòng chọn hồ sơ bệnh nhân.");return;}
+ const display_name=$("editPatientName").value.trim().toLocaleUpperCase("vi-VN"),phone=$("editPatientPhone").value.trim(),address=$("editPatientAddress").value.trim().toLocaleUpperCase("vi-VN"),para=$("editPatientPara").value.trim(),medical_history=$("editPatientHistory").value.trim(),due_date=dueDateIso($("editPatientDueDate").value);
+ if(!display_name){fail("editPatientMessage","Vui lòng nhập họ tên.");return;}
+ if(para&&!/^\\d{4}$/.test(para)){fail("editPatientMessage","PARA phải gồm đúng 4 chữ số hoặc để trống.");return;}
+ const g=gestationAt(due_date,todayLocal());if(!due_date||!g||g.invalid){fail("editPatientMessage","Ngày dự sinh không hợp lệ hoặc tuổi thai ngoài khoảng 0–42 tuần.");return;}
+ const {error}=await db.from("profiles").update({display_name,phone:phone||null,address:address||null,para:para||null,medical_history:medical_history||null,due_date}).eq("user_id",selectedPatient);
+ if(error){fail("editPatientMessage","Không cập nhật được hồ sơ: "+error.message);return;}
+ fail("editPatientMessage","Đã cập nhật hồ sơ thành công.");await loadPatients();$("patientSelect").value=selectedPatient;await loadSelectedPatient();await refreshRecordGestation();
+});
 $("patientSearch").addEventListener("input",renderPatientOptions); $("patientSelect").addEventListener("change", async()=>{await loadSelectedPatient();await refreshRecordGestation();});
 
 function dueDateIso(value){
@@ -279,7 +298,7 @@ $("newPatientName").addEventListener("input",()=>{const el=$("newPatientName");c
  if(value.length>4){ $("newPatientPara").value=""; toast("PARA chỉ được nhập đúng 4 chữ số. Vui lòng nhập lại."); }
 });
 $("refreshWeeklySchedule").addEventListener("click",loadWeeklyClinicSchedule);
-initDateCalendar("newPatientDueDate"); initDateCalendar("scanDate"); initDateCalendar("followUpDate"); $("scanDate").value=isoToDateVi(todayLocal()); $("scanDate").addEventListener("change",refreshRecordGestation);
+initDateCalendar("newPatientDueDate"); initDateCalendar("scanDate"); initDateCalendar("followUpDate"); initDateCalendar("editPatientDueDate"); $("scanDate").value=isoToDateVi(todayLocal()); $("scanDate").addEventListener("change",refreshRecordGestation);
 
 $("createPatientForm").addEventListener("submit", async e => {
   e.preventDefault(); fail("createMessage", "");
