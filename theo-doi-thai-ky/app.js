@@ -246,7 +246,7 @@ async function refreshRecordGestation(){
  $("recordGestationHint").textContent="Tuổi thai ngày "+dateVi(date)+": "+gestationText(g)+". Ngày dự sinh: "+dateVi(p.due_date)+".";
 }
 
-$("newPatientPara").addEventListener("input",()=>{
+$("newPatientName").addEventListener("input",()=>{const el=$("newPatientName");const pos=el.selectionStart;el.value=el.value.toLocaleUpperCase("vi-VN");if(pos!==null)el.setSelectionRange(pos,pos);}); $("newPatientAddress").addEventListener("input",()=>{const el=$("newPatientAddress");const pos=el.selectionStart;el.value=el.value.toLocaleUpperCase("vi-VN");if(pos!==null)el.setSelectionRange(pos,pos);}); $("newPatientPara").addEventListener("input",()=>{
  const value=$("newPatientPara").value;
  if(value && !/^[0-9]*$/.test(value)){ $("newPatientPara").value=""; toast("PARA chỉ được nhập 4 chữ số. Vui lòng nhập lại."); return; }
  if(value.length>4){ $("newPatientPara").value=""; toast("PARA chỉ được nhập đúng 4 chữ số. Vui lòng nhập lại."); }
@@ -256,8 +256,8 @@ initDateCalendar("newPatientDueDate"); initDateCalendar("scanDate"); $("scanDate
 $("createPatientForm").addEventListener("submit", async e => {
   e.preventDefault(); fail("createMessage", "");
   if (user?.app_metadata?.role !== "admin") { fail("createMessage", "Tài khoản không có quyền quản trị."); return; }
-  const display_name = $("newPatientName").value.trim(), username = $("newUsername").value.trim().toLowerCase(), password = $("newPassword").value;
-  const phone = $("newPatientPhone").value.trim(), address = $("newPatientAddress").value.trim();
+  const display_name = $("newPatientName").value.trim().toLocaleUpperCase("vi-VN"), username = $("newUsername").value.trim().toLowerCase(), password = $("newPassword").value;
+  const phone = $("newPatientPhone").value.trim(), address = $("newPatientAddress").value.trim().toLocaleUpperCase("vi-VN");
   const para=$("newPatientPara").value.trim(), medical_history=$("newPatientHistory").value.trim(), due_date=dueDateIso($("newPatientDueDate").value);
   const newGa=gestationAt(due_date,todayLocal());
   if(!due_date||!newGa||newGa.invalid){fail("createMessage","Ngày dự sinh không hợp lệ. Nhập đúng dạng dd/mm/yyyy (ví dụ 25/04/2027) và kiểm tra tuổi thai trong khoảng 0–42 tuần.");return;}
