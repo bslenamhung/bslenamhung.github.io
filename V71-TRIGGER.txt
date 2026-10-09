@@ -40,3 +40,4 @@ ALT image auto-fix 2026-09-20T07:00:00+07:00
 
 
 Fix Pages environment for deploy 2026-09-20T08:00:00+07:00
+Refresh weekly clinic schedule image from current Supabase URL 2026-10-09.
