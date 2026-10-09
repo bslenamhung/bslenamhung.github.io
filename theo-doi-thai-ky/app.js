@@ -196,9 +196,9 @@ function initDateCalendar(inputId){
   const prev=document.createElement("button");prev.type="button";prev.textContent="‹";prev.setAttribute("aria-label","Tháng trước");
   const label=document.createElement("strong");label.textContent=shown.toLocaleDateString("vi-VN",{month:"long",year:"numeric"});
   const next=document.createElement("button");next.type="button";next.textContent="›";next.setAttribute("aria-label","Tháng sau");
-  prev.addEventListener("click",()=>{shown=new Date(shown.getFullYear(),shown.getMonth()-1,1);render();});
-  next.addEventListener("click",()=>{shown=new Date(shown.getFullYear(),shown.getMonth()+1,1);render();});
-  head.append(prev,label,next);popup.append(head);
+  prev.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();shown=new Date(shown.getFullYear(),shown.getMonth()-1,1);render();});
+  next.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();shown=new Date(shown.getFullYear(),shown.getMonth()+1,1);render();});
+  head.append(prev,label,next);popup.append(head); head.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();});
   const grid=document.createElement("div");grid.className="dateCalendarGrid";
   ["CN","T2","T3","T4","T5","T6","T7"].forEach(day=>{const el=document.createElement("span");el.className="dateCalendarWeekday";el.textContent=day;grid.append(el);});
   const offset=new Date(shown.getFullYear(),shown.getMonth(),1).getDay(),count=new Date(shown.getFullYear(),shown.getMonth()+1,0).getDate();
@@ -218,7 +218,7 @@ function initDateCalendar(inputId){
   today.addEventListener("click",()=>{const now=new Date(),iso=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0");input.value=isoToDateVi(iso);shown=new Date(now.getFullYear(),now.getMonth(),1);popup.hidden=true;input.dispatchEvent(new Event("input",{bubbles:true}));input.dispatchEvent(new Event("change",{bubbles:true}));});
   foot.append(clear,today);popup.append(foot);
  }
- document.querySelector('[data-calendar="'+inputId+'"]').addEventListener("click",()=>{popup.hidden=!popup.hidden;if(!popup.hidden){const iso=dueDateIso(input.value);if(iso)shown=new Date(Number(iso.slice(0,4)),Number(iso.slice(5,7))-1,1);else{const now=new Date();shown=new Date(now.getFullYear(),now.getMonth(),1);}render();}});
+ document.querySelector('[data-calendar="'+inputId+'"]').addEventListener("click",e=>{e.preventDefault();e.stopPropagation();popup.hidden=!popup.hidden;if(!popup.hidden){const iso=dueDateIso(input.value);if(iso)shown=new Date(Number(iso.slice(0,4)),Number(iso.slice(5,7))-1,1);else{const now=new Date();shown=new Date(now.getFullYear(),now.getMonth(),1);}render();}});
  input.addEventListener("input",()=>{
   formatDateInput(input);
   if(inputId==="newPatientDueDate"){
