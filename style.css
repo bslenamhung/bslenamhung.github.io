@@ -1683,9 +1683,9 @@ body{font-size:16px}
   padding: 0 !important;
   border: 0 !important;
   border-radius: 8px !important;
-  object-fit: cover !important;
+  object-fit: contain !important;
   object-position: center center !important;
-  background: #f5f7f8 !important;
+  background: #fff !important;
   transform: none !important;
   transition: transform .2s ease !important;
 }
