@@ -108,6 +108,7 @@ async function loadPatient() {
  await loadWeeklyClinicSchedule();
   $("patientName").textContent = profile.display_name || profile.username;
   $("patientProfileName").textContent = profile.display_name || "Chưa cập nhật";
+  $("patientProfileDob").textContent = profile.date_of_birth ? dateVi(profile.date_of_birth) : "Chưa cập nhật";
   $("patientProfileUsername").textContent = profile.username || "—";
   $("patientProfilePhone").textContent = profile.phone || "Chưa cập nhật";
   $("patientProfileAddress").textContent = profile.address || "Chưa cập nhật";
