@@ -1253,3 +1253,61 @@ body{font-size:16px}
   #clinicGallery.clinic-gallery > a.clinic-photo-link { height: 250px !important; max-height: 250px !important; padding: 4px !important; }
   .article-card img { height: 150px !important; max-height: 150px !important; }
 }
+
+
+/* V80 — phóng to ảnh phòng khám trong lớp phủ giống hộp thông tin BS Lê Nam Hùng */
+.clinic-photo-modal { z-index: 220 !important; }
+.clinic-photo-modal .article-modal-backdrop { background: rgba(20,30,35,.78) !important; }
+.clinic-photo-modal-card {
+  position: relative;
+  z-index: 1;
+  width: min(1100px, calc(100% - 28px));
+  max-height: 92vh;
+  overflow: auto;
+  margin: 4vh auto;
+  padding: 22px;
+  border: 1px solid #e6ecee;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 20px 70px rgba(0,0,0,.25);
+  text-align: center;
+}
+.clinic-photo-modal-card .article-modal-close {
+  position: sticky;
+  float: right;
+  top: 0;
+  right: 0;
+  z-index: 2;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #e5eaed;
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
+}
+.clinic-photo-modal-caption {
+  padding: 8px 48px 14px 0;
+  text-align: left;
+  color: #24353f;
+  font-weight: 700;
+}
+.clinic-photo-modal-image {
+  display: block;
+  width: auto !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: 78vh !important;
+  margin: 0 auto !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  border: 1px solid #e6ecee;
+  border-radius: 12px;
+  background: #f4f7f8;
+}
+#clinicGallery .clinic-photo-link { cursor: zoom-in !important; }
+@media(max-width:520px) {
+  .clinic-photo-modal-card { width: calc(100% - 16px); margin: 3vh auto; padding: 12px; max-height: 94vh; }
+  .clinic-photo-modal-image { max-height: 82vh !important; }
+}
