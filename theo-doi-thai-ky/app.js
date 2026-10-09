@@ -3,7 +3,7 @@ const SUPABASE_URL = "https://ckwhjyzomppsdplnkdeq.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_FmJK_HkQxhoQ04dIzI1mCg_eupXeR48";
 const db = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 const $ = id => document.getElementById(id);
-let user = null, profile = null, records = [], selectedPatient = null;
+let user = null, profile = null, records = [], selectedPatient = null, patientDirectory = [];
 const emailFor = username => username.trim().toLowerCase() + "@patients.bs-hung.invalid";
 const fmt = n => new Intl.NumberFormat("vi-VN", { maximumFractionDigits: 0 }).format(n);
 const ga = r => r.ga_days ? r.ga_weeks + " tuần " + r.ga_days + " ngày" : r.ga_weeks + " tuần";
@@ -110,11 +110,35 @@ async function loadPatient() {
   renderPatientFiles(tests || [], testFiles);
   $("patientTestsEmpty").hidden = testFiles.length > 0;
 }
+function normalizePatientSearch(value) {
+ return String(value||"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").replace(/đ/g,"d").replace(/Đ/g,"D").toLowerCase().trim();
+}
+function renderPatientOptions() {
+ const select=$("patientSelect"), query=normalizePatientSearch($("patientSearch").value);
+ const terms=query.split(/\\s+/).filter(Boolean);
+ const filtered=patientDirectory.filter(p=>{
+  const haystack=normalizePatientSearch([p.display_name,p.username,p.phone].filter(Boolean).join(" "));
+  return terms.every(term=>haystack.includes(term));
+ });
+ const selected=patientDirectory.find(p=>p.user_id===selectedPatient);
+ select.replaceChildren();
+ select.add(new Option("— Chọn bệnh nhân —",""));
+ if(selected && !filtered.some(p=>p.user_id===selected.user_id)) select.add(new Option("Đang chọn: "+(selected.display_name||selected.username)+" ("+selected.username+")",selected.user_id));
+ filtered.forEach(p=>{
+  const label=(p.display_name||p.username)+" · "+p.username+(p.phone?" · "+p.phone:"");
+  select.add(new Option(label,p.user_id));
+ });
+ select.value=selectedPatient||"";
+ $("patientSearchCount").textContent=query
+  ? "Tìm thấy "+filtered.length+" / "+patientDirectory.length+" bệnh nhân. Chọn đúng họ tên và tên đăng nhập."
+  : "Có "+patientDirectory.length+" bệnh nhân. Gõ không dấu cũng tìm được.";
+ if(query && filtered.length===0) $("patientSearchCount").textContent="Không tìm thấy bệnh nhân phù hợp. Thử họ tên không dấu, tên đăng nhập hoặc số điện thoại.";
+}
 async function loadPatients() {
-  const { data, error } = await db.from("profiles").select("user_id,username,display_name,phone,address,para,medical_history,due_date").order("display_name");
-  if (error) { toast("Không tải được danh sách hồ sơ."); return; }
-  const select = $("patientSelect"); select.replaceChildren(new Option("— Chọn bệnh nhân —", ""));
-  (data || []).filter(p => p.user_id !== user.id).forEach(p => select.add(new Option((p.display_name || p.username) + " (" + p.username + ")", p.user_id)));
+ const { data, error } = await db.from("profiles").select("user_id,username,display_name,phone,address,para,medical_history,due_date").order("display_name");
+ if (error) { toast("Không tải được danh sách hồ sơ."); return; }
+ patientDirectory=(data||[]).filter(p=>p.user_id!==user.id);
+ renderPatientOptions();
 }
 async function loadSelectedPatient() {
   selectedPatient = $("patientSelect").value || null;
@@ -148,7 +172,7 @@ async function loadSelectedPatient() {
   });
   if (!(tests || []).length) addHistoryLine($("adminTestHistory"),"Chưa có phiếu xét nghiệm được cập nhật.");
 }
-$("patientSelect").addEventListener("change", async()=>{await loadSelectedPatient();await refreshRecordGestation();});
+$("patientSearch").addEventListener("input",renderPatientOptions); $("patientSelect").addEventListener("change", async()=>{await loadSelectedPatient();await refreshRecordGestation();});
 
 function dueDateIso(value){
  const parts=(value||"").trim().split("/");
