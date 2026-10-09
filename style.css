@@ -1214,13 +1214,13 @@ body{font-size:16px}
 }
 #clinicGallery.clinic-gallery > a.clinic-photo-link > img {
   display: block !important;
-  width: 100% !important;
+  width: auto !important;
   height: 100% !important;
   min-width: 0 !important;
   min-height: 0 !important;
   max-width: 100% !important;
   max-height: 100% !important;
-  margin: 0 !important;
+  margin: 0 auto !important;
   padding: 0 !important;
   border: 0 !important;
   border-radius: 8px !important;
