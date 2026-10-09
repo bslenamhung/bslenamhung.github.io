@@ -166,7 +166,7 @@ $("testForm").addEventListener("submit", async e => {
   const row = { patient_user_id:selectedPatient, created_by:user.id, test_date:new Date().toISOString().slice(0,10), test_name:"Phiếu xét nghiệm" };
   const { data: test, error } = await db.from("patient_test_records").insert(row).select("id").single();
   if (error || !test) { fail("testMessage", "Không tạo được phiếu xét nghiệm: " + (error?.message || "Lỗi không xác định")); return; }
-  const safeName = file.name.normalize("NFKD").replace(/[\\u0300-\\u036f]/g,"").replace(/[^a-zA-Z0-9._-]/g,"_").slice(-100) || "phieu-xet-nghiem";
+  const safeName = file.name.normalize("NFKD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-zA-Z0-9._-]/g,"_").slice(-100) || "phieu-xet-nghiem";
   const path = selectedPatient + "/" + test.id + "/" + crypto.randomUUID() + "_" + safeName;
   const { error: uploadError } = await db.storage.from("patient-lab-files").upload(path, file, { contentType:file.type, upsert:false });
   if (uploadError) { fail("testMessage", "Không tải được tệp lên: " + uploadError.message); return; }
