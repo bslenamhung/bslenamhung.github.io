@@ -1615,3 +1615,25 @@ body{font-size:16px}
     border-radius: 11px !important;
   }
 }
+
+
+/* Compact the specialty cards on the homepage only */
+#specialties.section{padding-top:48px;padding-bottom:48px}
+#specialties .section-head{margin-bottom:22px}
+#specialties .specialty-grid{gap:12px}
+#specialties .specialty-card{padding:18px 14px;border-radius:15px}
+#specialties .specialty-icon{font-size:24px;line-height:1.2}
+#specialties .specialty-card h3{margin:9px 0 5px;font-size:17px;line-height:1.35}
+#specialties .specialty-card p{font-size:13px;line-height:1.45}
+@media(max-width:900px){
+  #specialties.section{padding-top:38px;padding-bottom:38px}
+  #specialties .specialty-grid{gap:10px}
+}
+@media(max-width:520px){
+  #specialties.section{padding-top:32px;padding-bottom:32px}
+  #specialties .section-head{margin-bottom:16px}
+  #specialties .specialty-card{padding:12px 10px!important;border-radius:12px!important}
+  #specialties .specialty-icon{font-size:21px!important}
+  #specialties .specialty-card h3{margin:7px 0 4px!important;font-size:15px!important;line-height:1.3!important}
+  #specialties .specialty-card p{font-size:12px!important;line-height:1.4!important}
+}
