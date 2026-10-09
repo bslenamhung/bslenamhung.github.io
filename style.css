@@ -1182,3 +1182,74 @@ body{font-size:16px}
     padding: 4px !important;
   }
 }
+
+
+/* V79 — thống nhất khung ảnh theo phần “Về BS Lê Nam Hùng”.
+   Giữ kích thước khung phù hợp từng khu vực; ảnh phòng khám vẫn hiển thị trọn vẹn. */
+#clinicGallery.clinic-gallery {
+  width: 100% !important;
+  max-width: none !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  align-items: stretch !important;
+}
+#clinicGallery.clinic-gallery > a.clinic-photo-link {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 320px !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-height: 320px !important;
+  margin: 0 !important;
+  padding: 8px !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  border: 1px solid #e6ecee !important;
+  border-radius: 12px !important;
+  background: #f4f7f8 !important;
+  box-shadow: none !important;
+}
+#clinicGallery.clinic-gallery > a.clinic-photo-link > img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  background: transparent !important;
+}
+/* Ảnh thu nhỏ trong danh sách bài viết dùng cùng kiểu viền và nền của khung About. */
+.article-card img {
+  display: block !important;
+  width: 100% !important;
+  height: 170px !important;
+  max-height: 170px !important;
+  margin: 0 0 12px !important;
+  padding: 6px !important;
+  box-sizing: border-box !important;
+  border: 1px solid #e6ecee !important;
+  border-radius: 12px !important;
+  background: #f4f7f8 !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  box-shadow: none !important;
+}
+@media (max-width: 900px) {
+  #clinicGallery.clinic-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 10px !important; }
+  #clinicGallery.clinic-gallery > a.clinic-photo-link { height: 280px !important; max-height: 280px !important; padding: 5px !important; }
+}
+@media (max-width: 520px) {
+  #clinicGallery.clinic-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px !important; }
+  #clinicGallery.clinic-gallery > a.clinic-photo-link { height: 250px !important; max-height: 250px !important; padding: 4px !important; }
+  .article-card img { height: 150px !important; max-height: 150px !important; }
+}
