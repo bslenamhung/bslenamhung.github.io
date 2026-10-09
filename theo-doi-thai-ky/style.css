@@ -16,3 +16,5 @@
 .patientQuickNav{margin:0 0 18px;padding:0}.patientQuickNav a{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:13px 16px;border:1px solid #efcbd9;border-radius:12px;background:#fff0f6;color:#843651;text-decoration:none;font-weight:700}.patientQuickNav a:hover,.patientQuickNav a:focus-visible{background:#f9e4ed;outline:2px solid #b84e79;outline-offset:2px}.patientQuickNav a span{font-size:18px}
 
 #newPatientName,#newPatientAddress{text-transform:uppercase}.profileGrid [id*="Name"],.profileGrid [id*="Address"],#adminPatientProfile [data-field="display_name"],#adminPatientProfile [data-field="address"]{text-transform:uppercase}
+
+.rememberLogin{display:flex;align-items:center;gap:9px;margin:2px 0 0;font-weight:600}.rememberLogin input{width:17px;height:17px;margin:0;accent-color:#b84d7d}.rememberHint{display:block;margin-top:-8px;margin-bottom:4px;line-height:1.5;color:var(--muted)}
