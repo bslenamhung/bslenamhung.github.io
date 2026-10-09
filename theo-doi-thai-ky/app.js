@@ -151,7 +151,9 @@ async function loadSelectedPatient() {
 $("patientSelect").addEventListener("change", async()=>{await loadSelectedPatient();await refreshRecordGestation();});
 
 function dueDateIso(value){
- const m=/^(\\d{2})\\/(\\d{2})\\/(\\d{4})$/.exec((value||"").trim());
+ const parts=(value||"").trim().split("/");
+ if(parts.length!==3||parts[0].length!==2||parts[1].length!==2||parts[2].length!==4||parts.some(part=>part.split("").some(ch=>ch<"0"||ch>"9")))return null;
+ const m=[(value||"").trim(),parts[0],parts[1],parts[2]];
  if(!m)return null;
  const day=Number(m[1]),month=Number(m[2]),year=Number(m[3]);
  const d=new Date(Date.UTC(year,month-1,day));
@@ -160,7 +162,7 @@ function dueDateIso(value){
 }
 function formatDueDateInput(){
  const el=$("newPatientDueDate");
- const digits=el.value.replace(/\\D/g,"").slice(0,8);
+ const digits=el.value.split("").filter(ch=>ch>="0"&&ch<="9").join("").slice(0,8);
  el.value=digits.length>4?digits.slice(0,2)+"/"+digits.slice(2,4)+"/"+digits.slice(4):digits.length>2?digits.slice(0,2)+"/"+digits.slice(2):digits;
 }
 function refreshNewPatientGestation(){
