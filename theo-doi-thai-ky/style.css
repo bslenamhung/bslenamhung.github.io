@@ -30,3 +30,5 @@
 .adminHistoryChart{min-height:220px;margin:10px 0 14px}.adminHistoryChart canvas{display:block;width:100%;height:auto}.adminTestGallery .adminTestFileLine{border-bottom:1px solid var(--line);padding:12px 0!important}.adminTestPdfPreview{display:block;width:100%;max-width:560px;height:440px;border:1px solid var(--line);border-radius:8px;margin:10px 0}.adminTestThumb{max-width:100%;width:auto;max-height:500px;object-fit:contain}@media(max-width:720px){.adminTestPdfPreview{height:420px}}
 
 .followUpPanel{border-left:4px solid #c85b86}.nextFollowUpValue{font-size:1.15rem;font-weight:750;margin:8px 0}.nextFollowUpValue.hasFollowUp{color:#9b315d}
+
+#editPatientDob{display:block!important;visibility:visible!important;min-height:44px}.editPatientForm label:has(#editPatientDob){display:flex!important;visibility:visible!important;order:0}
