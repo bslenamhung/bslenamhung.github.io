@@ -173,12 +173,12 @@ async function loadSelectedPatient() {
   $("editPatientForm").hidden=true; $("editPatientButton").hidden=true;
   fail("recordMessage",""); fail("testMessage",""); fail("editPatientMessage","");
   if (!selectedPatient) return;
-  const { data: p, error: pError } = await db.from("profiles").select("username,display_name,phone,address,para,medical_history,due_date").eq("user_id",selectedPatient).single();
+  const { data: p, error: pError } = await db.from("profiles").select("username,display_name,phone,address,para,medical_history,due_date,date_of_birth").eq("user_id",selectedPatient).single();
   if (pError) { toast("Không tải được thông tin bệnh nhân."); return; }
-  [["Họ tên",p.display_name],["Tên đăng nhập",p.username],["Số điện thoại",p.phone],["Địa chỉ",p.address],["PARA",p.para],["Tiền sử bệnh",p.medical_history],["Ngày dự sinh",p.due_date?dateVi(p.due_date):null],["Tuổi thai theo ngày khám",p.due_date?gestationText(gestationAt(p.due_date,dueDateIso($("scanDate").value)||todayLocal())):null]].forEach(([label,value])=>{
+  [["Họ tên",p.display_name],["Ngày sinh",p.date_of_birth?dateVi(p.date_of_birth):null],["Tên đăng nhập",p.username],["Số điện thoại",p.phone],["Địa chỉ",p.address],["PARA",p.para],["Tiền sử bệnh",p.medical_history],["Ngày dự sinh",p.due_date?dateVi(p.due_date):null],["Tuổi thai theo ngày khám",p.due_date?gestationText(gestationAt(p.due_date,dueDateIso($("scanDate").value)||todayLocal())):null]].forEach(([label,value])=>{
     const line=document.createElement("div"); const strong=document.createElement("strong"); strong.textContent=label+": "; line.append(strong,document.createTextNode(value || "Chưa cập nhật")); $("adminPatientProfile").append(line);
   });
-  $("editPatientName").value=p.display_name||""; $("editPatientPhone").value=p.phone||""; $("editPatientAddress").value=p.address||"";
+  $("editPatientName").value=p.display_name||""; $("editPatientDob").value=p.date_of_birth||""; $("editPatientPhone").value=p.phone||""; $("editPatientAddress").value=p.address||"";
   $("editPatientPara").value=p.para||""; $("editPatientHistory").value=p.medical_history||""; $("editPatientDueDate").value=isoToDateVi(p.due_date||"");
   $("editPatientButton").hidden=false;
   const { data, error } = await db.from("fetal_weight_records").select("scan_date,follow_up_date,ga_weeks,ga_days,efw_grams,note").eq("patient_user_id", selectedPatient).order("scan_date", { ascending:false });
@@ -210,11 +210,11 @@ $("editPatientDueDate").addEventListener("input",()=>{const iso=dueDateIso($("ed
 $("editPatientForm").addEventListener("submit",async e=>{
  e.preventDefault();fail("editPatientMessage","");
  if(user?.app_metadata?.role!=="admin"||!selectedPatient){fail("editPatientMessage","Vui lòng chọn hồ sơ bệnh nhân.");return;}
- const display_name=$("editPatientName").value.trim().toLocaleUpperCase("vi-VN"),phone=$("editPatientPhone").value.trim(),address=$("editPatientAddress").value.trim().toLocaleUpperCase("vi-VN"),para=$("editPatientPara").value.trim(),medical_history=$("editPatientHistory").value.trim(),due_date=dueDateIso($("editPatientDueDate").value);
- if(!display_name){fail("editPatientMessage","Vui lòng nhập họ tên.");return;}
+ const display_name=$("editPatientName").value.trim().toLocaleUpperCase("vi-VN"),date_of_birth=$("editPatientDob").value||null,phone=$("editPatientPhone").value.trim(),address=$("editPatientAddress").value.trim().toLocaleUpperCase("vi-VN"),para=$("editPatientPara").value.trim(),medical_history=$("editPatientHistory").value.trim(),due_date=dueDateIso($("editPatientDueDate").value);
+ if(!display_name){fail("editPatientMessage","Vui lòng nhập họ tên.");return;} if(date_of_birth&&date_of_birth>todayLocal()){fail("editPatientMessage","Ngày sinh không thể ở tương lai.");return;}
  if(para&&!/^\d{4}$/.test(para)){fail("editPatientMessage","PARA phải gồm đúng 4 chữ số hoặc để trống.");return;}
  const g=gestationAt(due_date,todayLocal());if(!due_date||!g||g.invalid){fail("editPatientMessage","Ngày dự sinh không hợp lệ hoặc tuổi thai ngoài khoảng 0–42 tuần.");return;}
- const {error}=await db.from("profiles").update({display_name,phone:phone||null,address:address||null,para:para||null,medical_history:medical_history||null,due_date}).eq("user_id",selectedPatient);
+ const {error}=await db.from("profiles").update({display_name,date_of_birth,phone:phone||null,address:address||null,para:para||null,medical_history:medical_history||null,due_date}).eq("user_id",selectedPatient);
  if(error){fail("editPatientMessage","Không cập nhật được hồ sơ: "+error.message);return;}
  fail("editPatientMessage","Đã cập nhật hồ sơ thành công.");await loadPatients();$("patientSelect").value=selectedPatient;await loadSelectedPatient();await refreshRecordGestation();
 });
@@ -303,7 +303,7 @@ initDateCalendar("newPatientDueDate"); initDateCalendar("scanDate"); initDateCal
 $("createPatientForm").addEventListener("submit", async e => {
   e.preventDefault(); fail("createMessage", "");
   if (user?.app_metadata?.role !== "admin") { fail("createMessage", "Tài khoản không có quyền quản trị."); return; }
-  const display_name = $("newPatientName").value.trim().toLocaleUpperCase("vi-VN"), username = $("newUsername").value.trim().toLowerCase(), password = $("newPassword").value;
+  const display_name = $("newPatientName").value.trim().toLocaleUpperCase("vi-VN"), username = $("newUsername").value.trim().toLowerCase(), password = $("newPassword").value, date_of_birth=$("newPatientDob").value;
   const phone = $("newPatientPhone").value.trim(), address = $("newPatientAddress").value.trim().toLocaleUpperCase("vi-VN");
   const para=$("newPatientPara").value.trim(), medical_history=$("newPatientHistory").value.trim(), due_date=dueDateIso($("newPatientDueDate").value);
   const newGa=gestationAt(due_date,todayLocal());
@@ -313,7 +313,7 @@ $("createPatientForm").addEventListener("submit", async e => {
   if (existing.error) { fail("createMessage", "Chưa kiểm tra được tên đăng nhập. Vui lòng thử lại."); return; }
   if (existing.data) { fail("createMessage", "Tên đăng nhập \"" + username + "\" đã tồn tại. Vui lòng chọn tên khác."); $("newUsername").focus(); return; }
   const { data: { session } } = await db.auth.getSession();
-  const { data, error } = await db.functions.invoke("admin-create-patient", { body: { display_name, username, password, phone, address, para, medical_history, due_date }, headers: { Authorization: "Bearer " + session.access_token } });
+  const { data, error } = await db.functions.invoke("admin-create-patient", { body: { display_name, username, password, phone, address, para, medical_history, due_date, date_of_birth }, headers: { Authorization: "Bearer " + session.access_token } });
   const serverMessage = data?.error || error?.message || "";
   if (error || data?.error) {
     if (/tên đăng nhập đã tồn tại|already registered|already been registered|user already exists|duplicate key/i.test(serverMessage)) {
