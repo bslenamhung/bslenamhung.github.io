@@ -32,3 +32,6 @@
 .followUpPanel{border-left:4px solid #c85b86}.nextFollowUpValue{font-size:1.15rem;font-weight:750;margin:8px 0}.nextFollowUpValue.hasFollowUp{color:#9b315d}
 
 #editPatientDob{display:block!important;visibility:visible!important;min-height:44px}.editPatientForm label:has(#editPatientDob){display:flex!important;visibility:visible!important;order:0}
+
+
+.followUpReminder{display:flex;align-items:flex-start;gap:15px;border:1px solid #efb8cd;background:linear-gradient(135deg,#fff2f7,#fff);box-shadow:0 8px 24px #8d315314}.followUpReminderIcon{flex:0 0 44px;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:#f8dce8;color:#a23462;font-size:23px}.followUpReminderContent{min-width:0;flex:1}.followUpReminderContent h2{margin:0 0 8px;color:#8d3156}.followUpReminderEyebrow{font-size:10px;letter-spacing:.1em;font-weight:800;color:#a23462;margin:0 0 5px}.followUpReminderDate{margin:0 0 4px;font-size:15px}.followUpReminderDate strong{color:#8d3156}.followUpReminderContent .muted{margin:5px 0 14px;font-size:12px}.followUpReminderContent button{min-width:110px}@media(max-width:480px){.followUpReminder{gap:10px;padding:14px}.followUpReminderIcon{flex-basis:36px;width:36px;height:36px;font-size:19px}.followUpReminderContent button{width:100%}}
