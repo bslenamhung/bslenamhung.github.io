@@ -412,3 +412,19 @@ body{font-size:16px}
   .clinic-gallery .clinic-photo-link{border-radius:10px}
   .clinic-gallery .clinic-photo-link img{height:145px!important}
 }
+
+
+/* Profile section: compact responsive cards, keep full image visible */
+#about .about-links{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;margin-top:18px!important}
+#about .about-card-btn{width:100%;min-width:0;min-height:0!important;padding:10px!important;gap:7px!important;border-radius:12px!important;overflow:hidden}
+#about .about-card-media{width:100%;height:82px!important;flex:none!important;border-radius:8px!important;background:#f5f7f8!important;overflow:hidden}
+#about .about-card-media img{display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;object-position:center!important;background:#f5f7f8!important}
+#about .about-photo-placeholder{display:none!important}
+#about .about-card-label{font-size:14px!important;line-height:1.3!important;padding:0 18px 0 1px!important;overflow-wrap:anywhere}
+#about .about-arrow{right:8px!important;bottom:6px!important;font-size:19px!important}
+@media(max-width:380px){
+  #about .about-links{gap:7px!important}
+  #about .about-card-btn{padding:7px!important}
+  #about .about-card-media{height:68px!important}
+  #about .about-card-label{font-size:12px!important}
+}
