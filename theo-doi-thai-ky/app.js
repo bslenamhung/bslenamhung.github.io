@@ -76,7 +76,7 @@ $("loginForm").addEventListener("submit", async e => {
   user = data.user; await routeUser();
 });
 async function routeUser() {
-  const { data, error } = await db.from("profiles").select("user_id,username,display_name,phone,address,para,medical_history,due_date").eq("user_id", user.id).single();
+  const { data, error } = await db.from("profiles").select("user_id,username,display_name,phone,address,para,medical_history,due_date,date_of_birth").eq("user_id", user.id).single();
   if (error || !data) { await db.auth.signOut(); view("loginView"); fail("loginError", "Không đọc được hồ sơ. Vui lòng liên hệ quản trị viên."); return; }
   profile = data;
   if (user.app_metadata?.role === "admin") { view("adminView"); await loadPatients(); }
