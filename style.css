@@ -627,3 +627,81 @@ body{font-size:16px}
     background:#f4f6f7!important;
   }
 }
+
+
+/* SITE-WIDE IMAGE DISPLAY FIX — preserve the complete original image */
+.article-card img,
+.article-modal-content img,
+.clinic-gallery img,
+.clinic-gallery .clinic-photo-link img,
+.weekly-schedule img,
+.clinic-page .clinic-hero-media img{
+  object-fit:contain!important;
+  object-position:center!important;
+  background:#f4f6f7!important;
+}
+.article-card img{
+  display:block!important;
+  width:100%!important;
+  height:190px!important;
+  max-height:190px!important;
+  margin:0!important;
+  border-radius:12px!important;
+}
+.article-modal-content img{
+  display:block!important;
+  width:auto!important;
+  max-width:100%!important;
+  height:auto!important;
+  max-height:70vh!important;
+  margin:0 auto 18px!important;
+}
+.article-full img,
+.article-full figure img,
+.article-full picture img{
+  display:block!important;
+  width:auto!important;
+  max-width:100%!important;
+  height:auto!important;
+  max-height:none!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  margin:18px auto!important;
+  border-radius:10px!important;
+}
+.article-full figure,
+.article-full picture{
+  max-width:100%!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
+.clinic-gallery .clinic-photo-link,
+.clinic-gallery a{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+  background:#f4f6f7!important;
+}
+.clinic-gallery .clinic-photo-link img,
+.clinic-gallery a img,
+.clinic-gallery img{
+  width:100%!important;
+  height:100%!important;
+  max-height:100%!important;
+  object-fit:contain!important;
+}
+.weekly-schedule img{
+  width:100%!important;
+  height:auto!important;
+  max-height:none!important;
+}
+@media(max-width:520px){
+  .article-card img{height:155px!important;max-height:155px!important}
+  .article-full img,
+  .article-full figure img,
+  .article-full picture img{
+    max-width:100%!important;
+    max-height:none!important;
+  }
+}
