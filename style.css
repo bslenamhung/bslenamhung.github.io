@@ -508,3 +508,15 @@ body{font-size:16px}
   #clinicGallery .clinic-photo-link{height:auto!important}
   #clinicGallery .clinic-photo-link img{height:auto!important;max-height:none!important}
 }
+
+
+/* Hero clinic logo: square frame and show the complete logo without cropping */
+.hero-profile-wrap{display:flex!important;justify-content:center!important;align-items:center!important;margin:0 auto 22px!important}
+.hero-profile-image{width:190px!important;height:190px!important;max-width:100%!important;object-fit:contain!important;object-position:center!important;background:#fff!important;border-radius:18px!important;padding:10px!important}
+.hero-profile-wrap .hero-avatar{width:190px!important;height:190px!important;border-radius:18px!important}
+@media(max-width:820px){
+  .hero-profile-image,.hero-profile-wrap .hero-avatar{width:180px!important;height:180px!important}
+}
+@media(max-width:520px){
+  .hero-profile-image,.hero-profile-wrap .hero-avatar{width:170px!important;height:170px!important}
+}
