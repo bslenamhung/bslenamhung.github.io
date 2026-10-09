@@ -179,7 +179,7 @@ async function loadSelectedPatient() {
   [["Họ tên",p.display_name],["Ngày sinh",p.date_of_birth?dateVi(p.date_of_birth):null],["Tên đăng nhập",p.username],["Số điện thoại",p.phone],["Địa chỉ",p.address],["PARA",p.para],["Tiền sử bệnh",p.medical_history],["Ngày dự sinh",p.due_date?dateVi(p.due_date):null],["Tuổi thai theo ngày khám",p.due_date?gestationText(gestationAt(p.due_date,dueDateIso($("scanDate").value)||todayLocal())):null]].forEach(([label,value])=>{
     const line=document.createElement("div"); const strong=document.createElement("strong"); strong.textContent=label+": "; line.append(strong,document.createTextNode(value || "Chưa cập nhật")); $("adminPatientProfile").append(line);
   });
-  $("editPatientName").value=p.display_name||""; $("editPatientDob").value=p.date_of_birth||""; $("editPatientPhone").value=p.phone||""; $("editPatientAddress").value=p.address||"";
+  $("editPatientName").value=p.display_name||""; $("editPatientDob").value=isoToDateVi(p.date_of_birth); $("editPatientPhone").value=p.phone||""; $("editPatientAddress").value=p.address||"";
   $("editPatientPara").value=p.para||""; $("editPatientHistory").value=p.medical_history||""; $("editPatientDueDate").value=isoToDateVi(p.due_date||"");
   $("editPatientButton").hidden=false;
   const { data, error } = await db.from("fetal_weight_records").select("scan_date,follow_up_date,ga_weeks,ga_days,efw_grams,note").eq("patient_user_id", selectedPatient).order("scan_date", { ascending:false });
@@ -211,8 +211,8 @@ $("editPatientDueDate").addEventListener("input",()=>{const iso=dueDateIso($("ed
 $("editPatientForm").addEventListener("submit",async e=>{
  e.preventDefault();fail("editPatientMessage","");
  if(user?.app_metadata?.role!=="admin"||!selectedPatient){fail("editPatientMessage","Vui lòng chọn hồ sơ bệnh nhân.");return;}
- const display_name=$("editPatientName").value.trim().toLocaleUpperCase("vi-VN"),date_of_birth=$("editPatientDob").value||null,phone=$("editPatientPhone").value.trim(),address=$("editPatientAddress").value.trim().toLocaleUpperCase("vi-VN"),para=$("editPatientPara").value.trim(),medical_history=$("editPatientHistory").value.trim(),due_date=dueDateIso($("editPatientDueDate").value);
- if(!display_name){fail("editPatientMessage","Vui lòng nhập họ tên.");return;} if(date_of_birth&&date_of_birth>todayLocal()){fail("editPatientMessage","Ngày sinh không thể ở tương lai.");return;}
+ const display_name=$("editPatientName").value.trim().toLocaleUpperCase("vi-VN"),dobRaw=$("editPatientDob").value.trim(),date_of_birth=dobRaw?dueDateIso(dobRaw):null,phone=$("editPatientPhone").value.trim(),address=$("editPatientAddress").value.trim().toLocaleUpperCase("vi-VN"),para=$("editPatientPara").value.trim(),medical_history=$("editPatientHistory").value.trim(),due_date=dueDateIso($("editPatientDueDate").value);
+ if(!display_name){fail("editPatientMessage","Vui lòng nhập họ tên.");return;} if(dobRaw&&!date_of_birth){fail("editPatientMessage","Ngày sinh không hợp lệ. Vui lòng nhập theo dd/mm/yyyy.");return;} if(date_of_birth&&date_of_birth>todayLocal()){fail("editPatientMessage","Ngày sinh không thể ở tương lai.");return;}
  if(para&&!/^\d{4}$/.test(para)){fail("editPatientMessage","PARA phải gồm đúng 4 chữ số hoặc để trống.");return;}
  const g=gestationAt(due_date,todayLocal());if(!due_date||!g||g.invalid){fail("editPatientMessage","Ngày dự sinh không hợp lệ hoặc tuổi thai ngoài khoảng 0–42 tuần.");return;}
  const {error}=await db.from("profiles").update({display_name,date_of_birth,phone:phone||null,address:address||null,para:para||null,medical_history:medical_history||null,due_date}).eq("user_id",selectedPatient);
@@ -280,6 +280,7 @@ function initDateCalendar(inputId){
  render();
 }
 document.addEventListener("click",e=>{if(!e.target.closest(".dateControl")&&!e.target.closest(".dateCalendar"))document.querySelectorAll(".dateCalendar").forEach(el=>el.hidden=true);});
+["newPatientDob","editPatientDob"].forEach(initDateCalendar);
 function refreshNewPatientGestation(){
  const raw=$("newPatientDueDate").value.trim(),d=dueDateIso(raw),g=gestationAt(d,todayLocal());
  $("newPatientGestation").textContent=!raw?"Nhập ngày dự sinh theo dạng ngày/tháng/năm (dd/mm/yyyy) để tự tính tuổi thai.":!d?"Nhập ngày hợp lệ theo dạng dd/mm/yyyy, ví dụ 25/04/2027.":"Tuổi thai hôm nay: "+gestationText(g);
@@ -304,11 +305,12 @@ initDateCalendar("newPatientDueDate"); initDateCalendar("scanDate"); initDateCal
 $("createPatientForm").addEventListener("submit", async e => {
   e.preventDefault(); fail("createMessage", "");
   if (user?.app_metadata?.role !== "admin") { fail("createMessage", "Tài khoản không có quyền quản trị."); return; }
-  const display_name = $("newPatientName").value.trim().toLocaleUpperCase("vi-VN"), username = $("newUsername").value.trim().toLowerCase(), password = $("newPassword").value, date_of_birth=$("newPatientDob").value;
+  const display_name = $("newPatientName").value.trim().toLocaleUpperCase("vi-VN"), username = $("newUsername").value.trim().toLowerCase(), password = $("newPassword").value, dobRaw=$("newPatientDob").value.trim(), date_of_birth=dobRaw?dueDateIso(dobRaw):null;
   const phone = $("newPatientPhone").value.trim(), address = $("newPatientAddress").value.trim().toLocaleUpperCase("vi-VN");
   const para=$("newPatientPara").value.trim(), medical_history=$("newPatientHistory").value.trim(), due_date=dueDateIso($("newPatientDueDate").value);
   const newGa=gestationAt(due_date,todayLocal());
   if(!due_date||!newGa||newGa.invalid){fail("createMessage","Ngày dự sinh không hợp lệ. Nhập đúng dạng dd/mm/yyyy (ví dụ 25/04/2027) và kiểm tra tuổi thai trong khoảng 0–42 tuần.");return;}
+  if(dobRaw&&!date_of_birth){fail("createMessage","Ngày sinh không hợp lệ. Vui lòng nhập theo dd/mm/yyyy.");return;} if(date_of_birth&&date_of_birth>todayLocal()){fail("createMessage","Ngày sinh không thể ở tương lai.");return;}
   if (!/^[a-z0-9._-]{4,32}$/.test(username) || password.length < 8) { fail("createMessage", "Tên đăng nhập hoặc mật khẩu chưa đáp ứng yêu cầu."); return; }
   const existing = await db.from("profiles").select("user_id").eq("username", username).maybeSingle();
   if (existing.error) { fail("createMessage", "Chưa kiểm tra được tên đăng nhập. Vui lòng thử lại."); return; }
