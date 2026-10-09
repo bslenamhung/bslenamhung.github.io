@@ -346,9 +346,11 @@ $("testForm").addEventListener("submit", async e => {
 });
 function drawChart(data) {
   const canvas = $("weightChart"), ctx = canvas.getContext("2d"), empty = $("chartEmpty");
-  ctx.clearRect(0,0,canvas.width,canvas.height); empty.hidden = data.length > 0;
-  if (!data.length) return;
-  const pts = [...data].sort((a,b) => (a.ga_weeks*7+a.ga_days)-(b.ga_weeks*7+b.ga_days));
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const pts = [...data].filter(p=>p.efw_grams!==null&&p.efw_grams!==undefined&&Number.isFinite(Number(p.efw_grams))).sort((a,b) => (a.ga_weeks*7+a.ga_days)-(b.ga_weeks*7+b.ga_days));
+  empty.hidden = pts.length > 0;
+  if (!pts.length) { empty.textContent=data.length ? "Chưa có cân nặng ước tính để vẽ biểu đồ." : "Chưa có lần khám nào được cập nhật."; return; }
+  empty.textContent="Chưa có lần khám nào được cập nhật.";
   const x0=75, x1=960, y0=35, y1=350, minX=Math.min(...pts.map(p=>p.ga_weeks+p.ga_days/7)), maxX=Math.max(minX+1,...pts.map(p=>p.ga_weeks+p.ga_days/7));
   const maxY=Math.max(1000,Math.ceil(Math.max(...pts.map(p=>p.efw_grams))*1.15/500)*500);
   ctx.font="16px Arial"; ctx.strokeStyle="#eadfe5"; ctx.fillStyle="#756a75"; ctx.lineWidth=1;
