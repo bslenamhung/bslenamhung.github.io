@@ -205,14 +205,14 @@ async function loadSelectedPatient() {
 }
 $("editPatientButton").addEventListener("click",()=>{if(!selectedPatient)return;$("editPatientForm").hidden=false;$("editPatientMessage").textContent="";});
 $("cancelEditPatient").addEventListener("click",()=>{$("editPatientForm").hidden=true;$("editPatientMessage").textContent="";});
-$("editPatientPara").addEventListener("input",()=>{const v=$("editPatientPara").value;if(v&&!/^\\d{0,4}$/.test(v)){$("editPatientPara").value=v.replace(/\\D/g,"").slice(0,4);}});
+$("editPatientPara").addEventListener("input",()=>{const v=$("editPatientPara").value;if(v&&!/^\d{0,4}$/.test(v)){$("editPatientPara").value=v.replace(/\D/g,"").slice(0,4);}});
 $("editPatientDueDate").addEventListener("input",()=>{const iso=dueDateIso($("editPatientDueDate").value);const g=gestationAt(iso,todayLocal());$("editPatientGestation").textContent=iso?"Tuổi thai hôm nay: "+gestationText(g):"Nhập ngày dự sinh theo dd/mm/yyyy.";});
 $("editPatientForm").addEventListener("submit",async e=>{
  e.preventDefault();fail("editPatientMessage","");
  if(user?.app_metadata?.role!=="admin"||!selectedPatient){fail("editPatientMessage","Vui lòng chọn hồ sơ bệnh nhân.");return;}
  const display_name=$("editPatientName").value.trim().toLocaleUpperCase("vi-VN"),phone=$("editPatientPhone").value.trim(),address=$("editPatientAddress").value.trim().toLocaleUpperCase("vi-VN"),para=$("editPatientPara").value.trim(),medical_history=$("editPatientHistory").value.trim(),due_date=dueDateIso($("editPatientDueDate").value);
  if(!display_name){fail("editPatientMessage","Vui lòng nhập họ tên.");return;}
- if(para&&!/^\\d{4}$/.test(para)){fail("editPatientMessage","PARA phải gồm đúng 4 chữ số hoặc để trống.");return;}
+ if(para&&!/^\d{4}$/.test(para)){fail("editPatientMessage","PARA phải gồm đúng 4 chữ số hoặc để trống.");return;}
  const g=gestationAt(due_date,todayLocal());if(!due_date||!g||g.invalid){fail("editPatientMessage","Ngày dự sinh không hợp lệ hoặc tuổi thai ngoài khoảng 0–42 tuần.");return;}
  const {error}=await db.from("profiles").update({display_name,phone:phone||null,address:address||null,para:para||null,medical_history:medical_history||null,due_date}).eq("user_id",selectedPatient);
  if(error){fail("editPatientMessage","Không cập nhật được hồ sơ: "+error.message);return;}
