@@ -1539,3 +1539,79 @@ body{font-size:16px}
     padding: 4px !important;
   }
 }
+
+
+/* V85 — final: gallery thumbnails match the “Về BS Lê Nam Hùng” card treatment.
+   The thumbnail fills a clean rounded frame; clicking opens the full original image. */
+#clinicGallery.clinic-gallery {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  align-items: start !important;
+  align-content: start !important;
+  gap: 14px !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+#clinicGallery.clinic-gallery > a.clinic-photo-link,
+#clinicGallery.clinic-gallery > a.clinic-photo-link[data-orientation="portrait"],
+#clinicGallery.clinic-gallery > a.clinic-photo-link[data-orientation="landscape"] {
+  display: block !important;
+  position: relative !important;
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 4 / 3 !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 5px !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  border: 1px solid #e6ecee !important;
+  border-radius: 12px !important;
+  background: #f4f7f8 !important;
+  box-shadow: none !important;
+  line-height: 0 !important;
+  cursor: zoom-in !important;
+}
+#clinicGallery.clinic-gallery > a.clinic-photo-link > img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  aspect-ratio: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  background: #f4f7f8 !important;
+  transform: none !important;
+}
+#clinicGallery.clinic-gallery > a.clinic-photo-link:hover > img {
+  transform: scale(1.025) !important;
+  transition: transform .2s ease !important;
+}
+@media(max-width:900px) {
+  #clinicGallery.clinic-gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+}
+@media(max-width:520px) {
+  #clinicGallery.clinic-gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+  #clinicGallery.clinic-gallery > a.clinic-photo-link,
+  #clinicGallery.clinic-gallery > a.clinic-photo-link[data-orientation="portrait"],
+  #clinicGallery.clinic-gallery > a.clinic-photo-link[data-orientation="landscape"] {
+    aspect-ratio: 4 / 3 !important;
+    padding: 4px !important;
+    border-radius: 11px !important;
+  }
+}
