@@ -111,11 +111,11 @@ async function loadPatient() {
   $("patientTestsEmpty").hidden = testFiles.length > 0;
 }
 function normalizePatientSearch(value) {
- return String(value||"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").replace(/đ/g,"d").replace(/Đ/g,"D").toLowerCase().trim();
+ return String(value||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/đ/g,"d").replace(/Đ/g,"D").toLowerCase().trim();
 }
 function renderPatientOptions() {
  const select=$("patientSelect"), query=normalizePatientSearch($("patientSearch").value);
- const terms=query.split(/\\s+/).filter(Boolean);
+ const terms=query.split(/\s+/).filter(Boolean);
  const filtered=patientDirectory.filter(p=>{
   const haystack=normalizePatientSearch([p.display_name,p.username,p.phone].filter(Boolean).join(" "));
   return terms.every(term=>haystack.includes(term));
