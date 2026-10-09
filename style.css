@@ -1711,3 +1711,44 @@ body{font-size:16px}
     border-radius: 11px !important;
   }
 }
+
+
+/* Article images: use the full available content width and preserve the entire image. */
+.article-card img {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+  aspect-ratio: auto !important;
+  margin: 0 0 12px !important;
+  padding: 5px !important;
+  box-sizing: border-box !important;
+  border: 1px solid #e2e8ec !important;
+  border-radius: 12px !important;
+  background: #f5f7f8 !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+}
+.article-page-cover,
+.article-full img,
+.article-full figure img,
+.article-full picture img,
+.article-modal-content img {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+.article-full figure,
+.article-full picture {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
