@@ -1639,44 +1639,73 @@ body{font-size:16px}
 }
 
 
-/* Clinic gallery: show each original photo completely, without cropping */
+/* Clinic gallery: balanced thumbnails; click opens the complete original photo */
+#clinicGallery.clinic-gallery {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  align-items: start !important;
+  gap: 14px !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin-bottom: 26px !important;
+}
 #clinicGallery.clinic-gallery > a.clinic-photo-link,
 #clinicGallery.clinic-gallery > a.clinic-photo-link[data-orientation="portrait"],
 #clinicGallery.clinic-gallery > a.clinic-photo-link[data-orientation="landscape"] {
+  display: block !important;
+  position: relative !important;
+  width: 100% !important;
+  height: auto !important;
   aspect-ratio: 4 / 3 !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  margin: 0 !important;
   padding: 5px !important;
-  background: #fff !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
   border: 1px solid #e2e8ec !important;
   border-radius: 13px !important;
-  overflow: hidden !important;
-  box-shadow: 0 3px 12px rgba(35, 53, 64, .06) !important;
+  background: #f5f7f8 !important;
+  box-shadow: 0 4px 14px rgba(35, 53, 64, .07) !important;
+  line-height: 0 !important;
+  cursor: zoom-in !important;
 }
 #clinicGallery.clinic-gallery > a.clinic-photo-link > img {
+  display: block !important;
   width: 100% !important;
   height: 100% !important;
-  object-fit: contain !important;
-  object-position: center center !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
   border-radius: 8px !important;
+  object-fit: cover !important;
+  object-position: center center !important;
   background: #f5f7f8 !important;
+  transform: none !important;
+  transition: transform .2s ease !important;
 }
 #clinicGallery.clinic-gallery > a.clinic-photo-link:hover > img {
-  transform: none !important;
+  transform: scale(1.025) !important;
 }
 @media(max-width:900px) {
-  #clinicGallery.clinic-gallery { gap: 10px !important; }
-  #clinicGallery.clinic-gallery > a.clinic-photo-link,
-  #clinicGallery.clinic-gallery > a.clinic-photo-link[data-orientation="portrait"],
-  #clinicGallery.clinic-gallery > a.clinic-photo-link[data-orientation="landscape"] {
-    aspect-ratio: 4 / 3 !important;
-    padding: 4px !important;
+  #clinicGallery.clinic-gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
   }
 }
 @media(max-width:520px) {
-  #clinicGallery.clinic-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px !important; }
+  #clinicGallery.clinic-gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
   #clinicGallery.clinic-gallery > a.clinic-photo-link,
   #clinicGallery.clinic-gallery > a.clinic-photo-link[data-orientation="portrait"],
   #clinicGallery.clinic-gallery > a.clinic-photo-link[data-orientation="landscape"] {
-    aspect-ratio: 4 / 3 !important;
     padding: 4px !important;
     border-radius: 11px !important;
   }
