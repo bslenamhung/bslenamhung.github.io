@@ -150,7 +150,23 @@ async function loadSelectedPatient() {
 }
 $("patientSelect").addEventListener("change", async()=>{await loadSelectedPatient();await refreshRecordGestation();});
 
-function refreshNewPatientGestation(){const d=$("newPatientDueDate").value;const g=gestationAt(d,todayLocal());$("newPatientGestation").textContent=!d?"Nhập ngày dự sinh để tự tính tuổi thai.":"Tuổi thai hôm nay: "+gestationText(g);}
+function dueDateIso(value){
+ const m=/^(\\d{2})\\/(\\d{2})\\/(\\d{4})$/.exec((value||"").trim());
+ if(!m)return null;
+ const day=Number(m[1]),month=Number(m[2]),year=Number(m[3]);
+ const d=new Date(Date.UTC(year,month-1,day));
+ if(d.getUTCFullYear()!==year||d.getUTCMonth()!==month-1||d.getUTCDate()!==day)return null;
+ return year+"-"+String(month).padStart(2,"0")+"-"+String(day).padStart(2,"0");
+}
+function formatDueDateInput(){
+ const el=$("newPatientDueDate");
+ const digits=el.value.replace(/\\D/g,"").slice(0,8);
+ el.value=digits.length>4?digits.slice(0,2)+"/"+digits.slice(2,4)+"/"+digits.slice(4):digits.length>2?digits.slice(0,2)+"/"+digits.slice(2):digits;
+}
+function refreshNewPatientGestation(){
+ const raw=$("newPatientDueDate").value.trim(),d=dueDateIso(raw),g=gestationAt(d,todayLocal());
+ $("newPatientGestation").textContent=!raw?"Nhập ngày dự sinh theo dạng ngày/tháng/năm (dd/mm/yyyy) để tự tính tuổi thai.":!d?"Nhập ngày hợp lệ theo dạng dd/mm/yyyy, ví dụ 25/04/2027.":"Tuổi thai hôm nay: "+gestationText(g);
+}
 async function refreshRecordGestation(){
  const date=$("scanDate").value||todayLocal();
  if(!selectedPatient){$("gaWeeks").value="";$("gaDays").value="";$("recordGestationHint").textContent="Chọn bệnh nhân có ngày dự sinh để tự tính tuổi thai theo ngày khám.";return;}
@@ -159,7 +175,7 @@ async function refreshRecordGestation(){
  const g=gestationAt(p.due_date,date);$("gaWeeks").value=g&&!g.invalid?g.weeks:"";$("gaDays").value=g&&!g.invalid?g.days:"";
  $("recordGestationHint").textContent="Tuổi thai ngày "+dateVi(date)+": "+gestationText(g)+". Ngày dự sinh: "+dateVi(p.due_date)+".";
 }
-$("newPatientDueDate").addEventListener("input",refreshNewPatientGestation);
+$("newPatientDueDate").addEventListener("input",()=>{formatDueDateInput();refreshNewPatientGestation();});
 $("scanDate").addEventListener("change",refreshRecordGestation);
 
 $("createPatientForm").addEventListener("submit", async e => {
@@ -167,9 +183,9 @@ $("createPatientForm").addEventListener("submit", async e => {
   if (user?.app_metadata?.role !== "admin") { fail("createMessage", "Tài khoản không có quyền quản trị."); return; }
   const display_name = $("newPatientName").value.trim(), username = $("newUsername").value.trim().toLowerCase(), password = $("newPassword").value;
   const phone = $("newPatientPhone").value.trim(), address = $("newPatientAddress").value.trim();
-  const para=$("newPatientPara").value.trim(), medical_history=$("newPatientHistory").value.trim(), due_date=$("newPatientDueDate").value;
+  const para=$("newPatientPara").value.trim(), medical_history=$("newPatientHistory").value.trim(), due_date=dueDateIso($("newPatientDueDate").value);
   const newGa=gestationAt(due_date,todayLocal());
-  if(!due_date||!newGa||newGa.invalid){fail("createMessage","Ngày dự sinh chưa hợp lệ hoặc tuổi thai nằm ngoài khoảng 0–42 tuần.");return;}
+  if(!due_date||!newGa||newGa.invalid){fail("createMessage","Ngày dự sinh không hợp lệ. Nhập đúng dạng dd/mm/yyyy (ví dụ 25/04/2027) và kiểm tra tuổi thai trong khoảng 0–42 tuần.");return;}
   if (!/^[a-z0-9._-]{4,32}$/.test(username) || password.length < 10) { fail("createMessage", "Tên đăng nhập hoặc mật khẩu chưa đáp ứng yêu cầu."); return; }
   const { data: { session } } = await db.auth.getSession();
   const { data, error } = await db.functions.invoke("admin-create-patient", { body: { display_name, username, password, phone, address, para, medical_history, due_date }, headers: { Authorization: "Bearer " + session.access_token } });
