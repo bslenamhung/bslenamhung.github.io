@@ -63,9 +63,13 @@ function renderPatientFiles(rows, files) {
     });
   });
 }
+const rememberedLoginKey="bsHungRememberedLogin";
+try{const remembered=localStorage.getItem(rememberedLoginKey);if(remembered){$("username").value=remembered;$("rememberLogin").checked=true;}}catch(_){}
+$("rememberLogin").addEventListener("change",()=>{if(!$("rememberLogin").checked){try{localStorage.removeItem(rememberedLoginKey);}catch(_){}}});
 $("loginForm").addEventListener("submit", async e => {
   e.preventDefault(); fail("loginError", "");
   const raw = $("username").value.trim();
+  try{if($("rememberLogin").checked)localStorage.setItem(rememberedLoginKey,raw);else localStorage.removeItem(rememberedLoginKey);}catch(_){}
   const email = raw.includes("@") ? raw : emailFor(raw);
   const { data, error } = await db.auth.signInWithPassword({ email, password: $("password").value });
   if (error) { fail("loginError", "Đăng nhập không thành công. Vui lòng kiểm tra thông tin hoặc liên hệ phòng khám."); return; }
