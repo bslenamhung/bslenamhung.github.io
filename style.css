@@ -351,3 +351,29 @@ body{font-size:16px}
 /* Google review link in clinic hours */
 .clinic-review-link{display:inline-block;color:#1a73e8;font-weight:700;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
 .clinic-review-link:hover{color:#1558b0}
+
+
+/* Clinic photo gallery: smaller cards and show each full image without cropping */
+.clinic-gallery-section{margin-top:0}
+.clinic-gallery{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.clinic-gallery img{
+  display:block;
+  width:100%;
+  height:170px!important;
+  object-fit:contain!important;
+  object-position:center;
+  background:#f7f8f8;
+  border-radius:14px;
+  box-shadow:none;
+}
+@media(max-width:900px){
+  .clinic-gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .clinic-gallery img{height:145px!important;border-radius:12px}
+}
+@media(max-width:520px){
+  .clinic-gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .clinic-gallery img{height:125px!important;border-radius:10px}
+  .clinic-subhead{gap:12px;align-items:flex-end}
+  .clinic-subhead h3{font-size:22px;line-height:1.3}
+  .clinic-subhead small{font-size:11px;line-height:1.4}
+}
