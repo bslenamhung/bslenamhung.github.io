@@ -3,32 +3,56 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kiểm tra chỉ số BMI online | BS Lê Nam Hùng – Sản Phụ khoa Quảng Trị</title>
-<meta name="description" content="Công cụ kiểm tra chỉ số BMI online miễn phí. Nhập chiều cao và cân nặng để tính BMI, phân loại tình trạng dinh dưỡng ở người trưởng thành.">
+<title>Tính BMI Online Miễn Phí – Chỉ Số BMI Chuẩn | BS Hùng</title>
+<meta name="description" content="Tính chỉ số BMI online miễn phí từ chiều cao và cân nặng. Xem cách phân loại BMI người trưởng thành, ý nghĩa và lưu ý sức khỏe từ BS Lê Nam Hùng.">
 <meta name="robots" content="index,follow,max-image-preview:large">
 <link rel="canonical" href="https://bslenamhung.github.io/bmi.html">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="vi_VN">
-<meta property="og:title" content="Kiểm tra chỉ số BMI online | BS Lê Nam Hùng">
-<meta property="og:description" content="Tính BMI nhanh từ chiều cao và cân nặng, kèm phân loại và lưu ý sức khỏe.">
+<meta property="og:title" content="Tính BMI Online Miễn Phí – Chỉ Số BMI Chuẩn | BS Hùng">
+<meta property="og:description" content="Tính chỉ số BMI miễn phí từ chiều cao và cân nặng, xem phân loại BMI và lưu ý sức khỏe cho người trưởng thành.">
 <meta property="og:url" content="https://bslenamhung.github.io/bmi.html">
 <meta property="og:image" content="https://bslenamhung.github.io/clinic-logo.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Kiểm tra chỉ số BMI online | BS Lê Nam Hùng">
-<meta name="twitter:description" content="Tính BMI nhanh từ chiều cao và cân nặng.">
+<meta name="twitter:title" content="Tính BMI Online Miễn Phí – Chỉ Số BMI Chuẩn | BS Hùng">
+<meta name="twitter:description" content="Tính BMI miễn phí, xem phân loại BMI và lưu ý sức khỏe cho người trưởng thành.">
 <meta name="twitter:image" content="https://bslenamhung.github.io/clinic-logo.png">
 <script type="application/ld+json">
 {
  "@context":"https://schema.org",
- "@type":"MedicalWebPage",
- "@id":"https://bslenamhung.github.io/bmi.html",
- "url":"https://bslenamhung.github.io/bmi.html",
- "name":"Kiểm tra chỉ số BMI online",
- "description":"Công cụ tính chỉ số BMI cho người trưởng thành.",
- "inLanguage":"vi-VN",
- "isPartOf":{"@type":"WebSite","@id":"https://bslenamhung.github.io/#website"},
- "about":{"@type":"MedicalClinic","@id":"https://bslenamhung.github.io/#clinic","name":"Phòng khám chuyên khoa Phụ sản BS Hùng"},
- "author":{"@type":"Person","@id":"https://bslenamhung.github.io/#doctor","name":"ThS.BSNT Lê Nam Hùng","sameAs":["https://www.facebook.com/DrLeNamHung/"]}
+ "@graph":[
+  {
+   "@type":"MedicalWebPage",
+   "@id":"https://bslenamhung.github.io/bmi.html#webpage",
+   "url":"https://bslenamhung.github.io/bmi.html",
+   "name":"Tính BMI Online Miễn Phí – Chỉ Số BMI Chuẩn",
+   "description":"Công cụ tính BMI cho người trưởng thành từ chiều cao và cân nặng, kèm phân loại và lưu ý sức khỏe.",
+   "inLanguage":"vi-VN",
+   "dateModified":"2026-10-09",
+   "isPartOf":{"@type":"WebSite","@id":"https://bslenamhung.github.io/#website","url":"https://bslenamhung.github.io/","name":"BS Lê Nam Hùng – Sản Phụ khoa"},
+   "about":{"@type":"MedicalCondition","name":"Chỉ số khối cơ thể (BMI)"},
+   "author":{"@type":"Person","@id":"https://bslenamhung.github.io/#doctor","name":"ThS.BSNT Lê Nam Hùng","sameAs":["https://www.facebook.com/DrLeNamHung/"]},
+   "publisher":{"@type":"MedicalClinic","@id":"https://bslenamhung.github.io/#clinic","name":"Phòng khám chuyên khoa Phụ sản BS Hùng","url":"https://bslenamhung.github.io/"}
+  },
+  {
+   "@type":"WebApplication",
+   "@id":"https://bslenamhung.github.io/bmi.html#calculator",
+   "name":"Công cụ tính BMI online",
+   "url":"https://bslenamhung.github.io/bmi.html",
+   "applicationCategory":"HealthApplication",
+   "operatingSystem":"Any",
+   "inLanguage":"vi-VN",
+   "isAccessibleForFree":true,
+   "description":"Công cụ tính BMI miễn phí cho người trưởng thành không mang thai."
+  },
+  {
+   "@type":"BreadcrumbList",
+   "itemListElement":[
+    {"@type":"ListItem","position":1,"name":"Trang chủ","item":"https://bslenamhung.github.io/"},
+    {"@type":"ListItem","position":2,"name":"Tính BMI online","item":"https://bslenamhung.github.io/bmi.html"}
+   ]
+  }
+ ]
 }
 </script>
 <link rel="stylesheet" href="style.css?v=69">
@@ -75,7 +99,7 @@
  .sex-options{gap:10px}.sex-option label{min-height:58px}
  .result .bmi-value{font-size:48px}.bmi-table{font-size:13px}
 }
-.bmi-related{margin:26px 0 0;padding:26px;border:1px solid #e4eaed;border-radius:20px;background:#fff}.bmi-related h2{margin:0 0 8px;color:#20323f;font-size:24px}.bmi-related>p{color:#68747c}.bmi-related-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.bmi-related-grid a{display:flex;flex-direction:column;gap:10px;padding:18px;border:1px solid #e4eaed;border-radius:14px;color:#9a7252;text-decoration:none;font-weight:700}.bmi-related-grid a strong{color:#20323f}.bmi-related-grid a span{color:#68747c;font-size:14px;font-weight:400;line-height:1.6}.bmi-related-note{font-size:14px;background:#fffaf7;border-radius:12px;padding:14px}@media(max-width:640px){.bmi-related{padding:18px}.bmi-related-grid{grid-template-columns:1fr}}</style>
+.bmi-related{margin:26px 0 0;padding:26px;border:1px solid #e4eaed;border-radius:20px;background:#fff}.bmi-related h2{margin:0 0 8px;color:#20323f;font-size:24px}.bmi-related>p{color:#68747c}.bmi-related-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.bmi-related-grid a{display:flex;flex-direction:column;gap:10px;padding:18px;border:1px solid #e4eaed;border-radius:14px;color:#9a7252;text-decoration:none;font-weight:700}.bmi-related-grid a strong{color:#20323f}.bmi-related-grid a span{color:#68747c;font-size:14px;font-weight:400;line-height:1.6}.bmi-related-note{font-size:14px;background:#fffaf7;border-radius:12px;padding:14px}@media(max-width:640px){.bmi-related{padding:18px}.bmi-related-grid{grid-template-columns:1fr}}.bmi-faq h3{font-size:17px;color:#20323f;margin:20px 0 6px}.bmi-faq p{margin:0;color:#68747c;line-height:1.7}</style>
 </head>
 <body>
 <header class="site-header">
@@ -138,7 +162,7 @@
   </div>
  </div>
 </section>
-<section class="bmi-related" aria-labelledby="bmiRelatedTitle"><h2 id="bmiRelatedTitle">Bài viết sức khỏe liên quan</h2><p>Đọc thêm các hướng dẫn của BS Hùng để hiểu rõ hơn về cân nặng và dinh dưỡng.</p><div class="bmi-related-grid"><a href="bai-viet/tang-can-trong-thai-ky.html"><strong>Tăng cân trong thai kỳ bao nhiêu là hợp lý</strong><span>Khuyến nghị tăng cân khi mang thai và vai trò của BMI trước mang thai.</span>Đọc bài viết →</a><a href="bai-viet/dinh-duong-trong-thai-ky.html"><strong>Dinh dưỡng trong thai kỳ</strong><span>Nguyên tắc dinh dưỡng giúp mẹ và thai nhi khỏe mạnh.</span>Đọc bài viết →</a><a href="bai-viet/om-nghen-khi-mang-thai.html"><strong>Ốm nghén khi mang thai</strong><span>Thông tin về triệu chứng thường gặp và cách chăm sóc.</span>Đọc bài viết →</a></div><p class="bmi-related-note">Lưu ý: Công cụ BMI này dành cho người trưởng thành không mang thai. Khi đánh giá tăng cân thai kỳ, cần dựa vào BMI trước mang thai và theo dõi cân nặng theo tuổi thai.</p></section></main>
+<section class="bmi-related" aria-labelledby="bmiFaqTitle"><h2 id="bmiFaqTitle">Câu hỏi thường gặp về chỉ số BMI</h2><div class="bmi-faq"><h3>Cách tính chỉ số BMI như thế nào?</h3><p>BMI được tính bằng cân nặng (kg) chia cho bình phương chiều cao (m). Ví dụ, người nặng 65 kg và cao 1,70 m có BMI khoảng 22,5.</p><h3>BMI bao nhiêu là bình thường ở người trưởng thành?</h3><p>Theo ngưỡng phân loại thường dùng cho người trưởng thành, BMI từ 18,5 đến 24,9 thuộc nhóm bình thường. BMI chỉ là công cụ sàng lọc, không đánh giá đầy đủ thành phần cơ thể hay tình trạng sức khỏe.</p><h3>Phụ nữ mang thai có dùng công cụ BMI này để đánh giá cân nặng hiện tại không?</h3><p>Không nên dùng bảng BMI người trưởng thành để phân loại cân nặng hiện tại trong thai kỳ. Đánh giá tăng cân thai kỳ thường dựa vào BMI trước mang thai và theo dõi mức tăng cân theo tuổi thai.</p><h3>Trẻ em có dùng bảng BMI này được không?</h3><p>Không. Trẻ em và thanh thiếu niên cần được đánh giá BMI theo tuổi và giới, theo biểu đồ tăng trưởng phù hợp.</p></div></section><section class="bmi-related" aria-labelledby="bmiRelatedTitle"><h2 id="bmiRelatedTitle">Bài viết sức khỏe liên quan</h2><p>Đọc thêm các hướng dẫn của BS Hùng để hiểu rõ hơn về cân nặng và dinh dưỡng.</p><div class="bmi-related-grid"><a href="bai-viet/tang-can-trong-thai-ky.html"><strong>Tăng cân trong thai kỳ bao nhiêu là hợp lý</strong><span>Khuyến nghị tăng cân khi mang thai và vai trò của BMI trước mang thai.</span>Đọc bài viết →</a><a href="bai-viet/dinh-duong-trong-thai-ky.html"><strong>Dinh dưỡng trong thai kỳ</strong><span>Nguyên tắc dinh dưỡng giúp mẹ và thai nhi khỏe mạnh.</span>Đọc bài viết →</a><a href="bai-viet/om-nghen-khi-mang-thai.html"><strong>Ốm nghén khi mang thai</strong><span>Thông tin về triệu chứng thường gặp và cách chăm sóc.</span>Đọc bài viết →</a></div><p class="bmi-related-note">Lưu ý: Công cụ BMI này dành cho người trưởng thành không mang thai. Khi đánh giá tăng cân thai kỳ, cần dựa vào BMI trước mang thai và theo dõi cân nặng theo tuổi thai.</p></section></main>
 <footer class="site-footer"><div class="container footer-wrap"><div><strong>BS Lê Nam Hùng</strong><br><span>Sản Phụ khoa</span></div><div>© <span id="year"></span> • Nội dung cung cấp thông tin, không thay thế thăm khám trực tiếp.</div></div></footer>
 <script>
 const nav=document.getElementById('mainNav'),navBtn=document.getElementById('navToggle');
