@@ -46,3 +46,5 @@ Publish two newly added articles: cay-que-tranh-thai and dat-vong-tranh-thai 202
 Fix all uploaded images to show complete aspect ratio across articles and gallery. 2026-10-09T19:45+07:00
 
 Refresh homepage article snapshot cache after new article publish. 2026-10-09T20:00+07:00
+
+Regenerate all article pages with image display standard v72 and refresh homepage CSS cache 2026-10-09.
