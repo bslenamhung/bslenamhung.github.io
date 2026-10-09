@@ -22,3 +22,5 @@
 .weeklyPatientSchedule .head{align-items:center;gap:12px}.weeklyPatientSchedule .head p{margin:5px 0 0}.clinicHoursLive{white-space:pre-line;line-height:1.65;color:var(--text);background:#fff7fa;border-radius:10px;padding:12px 14px}.patientScheduleImageLink{display:block;margin-top:14px;text-align:center}.patientScheduleImageLink img{display:block;max-width:100%;height:auto;max-height:760px;object-fit:contain;margin:0 auto;border-radius:10px}.patientScheduleWebsiteLink{display:inline-block;margin-top:12px;font-weight:700;color:var(--accent)}.weeklyPatientSchedule .note{margin-top:10px}
 
 .patientScheduleImageLink[hidden],#patientScheduleEmpty[hidden]{display:none!important}
+
+.patientGoogleReviewLink{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;box-sizing:border-box;margin:12px 0 16px;padding:15px 16px;border-radius:12px;background:#b84e79;color:#fff;text-decoration:none;text-align:center;font-weight:800;font-size:16px;line-height:1.4;box-shadow:0 3px 10px #b84e792b}.patientGoogleReviewLink:hover,.patientGoogleReviewLink:focus-visible{background:#96385f;outline:3px solid #f2cadb;outline-offset:2px}
