@@ -705,3 +705,112 @@ body{font-size:16px}
     max-height:none!important;
   }
 }
+
+
+/* IMAGE DISPLAY STANDARD v72 — never crop user-uploaded photographs */
+.article-card img,
+.article-page-cover,
+.article-full img,
+.article-full figure img,
+.article-full picture img,
+.article-modal-content img,
+.clinic-gallery img,
+.weekly-schedule img,
+#about .about-card-media img,
+.hero-profile-image,
+#clinicLogo {
+  object-fit: contain !important;
+  object-position: center center !important;
+}
+
+/* Article cover and body images retain their original aspect ratio. */
+.article-page-cover {
+  display: block !important;
+  width: auto !important;
+  max-width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+  margin: 18px auto 24px !important;
+  border-radius: 14px !important;
+}
+.article-full img,
+.article-full figure img,
+.article-full picture img {
+  display: block !important;
+  width: auto !important;
+  max-width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+  margin: 20px auto !important;
+  border-radius: 12px !important;
+}
+.article-full figure,
+.article-full picture {
+  width: auto !important;
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+/* Article preview cards: complete image visible, no stretched/cropped thumbnail. */
+.article-card img {
+  width: 100% !important;
+  height: 190px !important;
+  max-height: 190px !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  background: #f4f6f7 !important;
+}
+@media (max-width: 520px) {
+  .article-card img { height: 155px !important; max-height: 155px !important; }
+}
+
+/* Clinic gallery: show each photograph at its natural ratio so portrait photos
+   are not reduced to thin strips inside short landscape frames. */
+#clinicGallery {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  align-items: start !important;
+  gap: 12px !important;
+}
+#clinicGallery .clinic-photo-link {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  align-self: start !important;
+  overflow: visible !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+}
+#clinicGallery .clinic-photo-link img {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  aspect-ratio: auto !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  background: #f4f6f7 !important;
+  border: 1px solid #e5eaed !important;
+  border-radius: 12px !important;
+}
+@media (max-width: 520px) {
+  #clinicGallery {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 12px !important;
+  }
+}
+
+/* The weekly schedule and clinic logo also remain fully visible. */
+.weekly-schedule img {
+  display: block !important;
+  width: auto !important;
+  max-width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+  margin: 0 auto !important;
+}
