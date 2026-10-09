@@ -397,3 +397,18 @@ body{font-size:16px}
   .about-card-label{font-size:13px;line-height:1.3}
   .about-arrow{right:8px;bottom:5px;font-size:20px}
 }
+
+
+/* Clinic gallery final mobile fix: attractive compact thumbnails; tap to open full image */
+.clinic-photo-link{display:block;min-width:0;overflow:hidden;border-radius:14px;background:#f4f6f7;border:1px solid #e5eaed}
+.clinic-gallery .clinic-photo-link img{display:block;width:100%;height:170px!important;object-fit:cover!important;object-position:center;border:0;border-radius:0;box-shadow:none;background:#f4f6f7;transition:transform .2s ease}
+.clinic-photo-link:active img{transform:scale(.98)}
+@media(max-width:900px){
+  .clinic-gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .clinic-gallery .clinic-photo-link img{height:150px!important}
+}
+@media(max-width:520px){
+  .clinic-gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .clinic-gallery .clinic-photo-link{border-radius:10px}
+  .clinic-gallery .clinic-photo-link img{height:145px!important}
+}
