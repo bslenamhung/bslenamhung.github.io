@@ -10,3 +10,5 @@
 .formGrid label,.stack label{position:relative}.dateCalendar{left:0;top:calc(100% - 8px)}
 
 .patientSearchCount{margin:-7px 0 12px;color:var(--muted);font-size:12px}.patientSearchCount:empty{display:none}#patientSearch{border-color:#d8b4c5}#patientSelect{max-width:100%}
+
+#patientSearch+*{margin-top:0}.patientSearchCount{display:block;clear:both;margin:4px 0 12px;line-height:1.5;min-height:0;position:static;font-weight:400}#patientSearch{display:block;margin-bottom:0}#patientSearchCount+label{margin-top:0}
