@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Cổng theo dõi thai kỳ và kết quả xét nghiệm của Phòng khám chuyên khoa Phụ sản BS Hùng">
-<title>Theo dõi thai kỳ | BS Hùng</title><link rel="stylesheet" href="style.css?v=20261009schedule4">
+<title>Theo dõi thai kỳ | BS Hùng</title><link rel="stylesheet" href="style.css?v=20261009followup1">
 </head>
 <body>
 <header><div class="logo" aria-hidden="true">♡</div><div><strong>PHÒNG KHÁM CHUYÊN KHOA PHỤ SẢN BS HÙNG</strong><small>Đồng hành cùng mẹ trong thai kỳ</small></div></header>
@@ -17,8 +17,7 @@
 
  <div class="head"><div><span class="eyebrow">HỒ SƠ CÁ NHÂN</span><h1>Xin chào, <span id="patientName"></span></h1><p class="muted">Kiểm tra thông tin cá nhân và các lần khám được phòng khám cập nhật.</p></div><button class="secondary logout">Đăng xuất</button></div>
  <section class="panel"><h2>Thông tin hồ sơ của tôi</h2><div class="profileGrid"><div><small>Họ và tên</small><strong id="patientProfileName">—</strong></div><div><small>Tên đăng nhập</small><strong id="patientProfileUsername">—</strong></div><div><small>Số điện thoại</small><strong id="patientProfilePhone">Chưa cập nhật</strong></div><div><small>Địa chỉ</small><strong id="patientProfileAddress">Chưa cập nhật</strong></div><div><small>PARA</small><strong id="patientProfilePara">Chưa cập nhật</strong></div><div><small>Tiền sử bệnh</small><strong id="patientProfileHistory">Chưa cập nhật</strong></div><div><small>Ngày dự sinh</small><strong id="patientProfileDueDate">Chưa cập nhật</strong></div><div><small>Tuổi thai hôm nay</small><strong id="patientProfileGestation">Chưa cập nhật</strong></div></div><p class="note">Nếu số điện thoại hoặc địa chỉ chưa đúng, vui lòng liên hệ phòng khám để được cập nhật.</p></section>
-</section>
- <div class="stats"><article><small>Lần khám gần nhất</small><strong id="lastVisit">—</strong><small id="lastGa">Chưa có dữ liệu</small></article><article class="pink"><small>EFW gần nhất</small><strong id="lastWeight">—</strong><small>Cân nặng ước tính (gam)</small></article><article><small>Số lần khám</small><strong id="visitCount">0</strong></article></div>
+<div class="stats"><article><small>Lần khám gần nhất</small><strong id="lastVisit">—</strong><small id="lastGa">Chưa có dữ liệu</small></article><article class="pink"><small>EFW gần nhất</small><strong id="lastWeight">—</strong><small>Cân nặng ước tính (gam)</small></article><article><small>Số lần khám</small><strong id="visitCount">0</strong></article></div>
  <section class="panel"><div class="head"><div><h2>Biểu đồ cân nặng thai nhi</h2><small class="muted">Tuổi thai (tuần) · Cân nặng ước tính (g)</small></div><button id="downloadCsv" class="secondary" type="button">Xuất CSV</button></div><div class="chart"><canvas id="weightChart" width="1000" height="420"></canvas><div id="chartEmpty" class="empty">Chưa có lần khám nào được cập nhật.</div></div><p class="note">Đường nối thể hiện các số đo đã ghi nhận, không phải đường bách phân vị hay kết luận chẩn đoán.</p></section>
  <section class="panel"><h2>Lịch sử khám và cân nặng thai nhi</h2><div class="scroll"><table><thead><tr><th>Ngày khám</th><th>Ngày hẹn tái khám</th><th>Tuổi thai</th><th>EFW</th><th>Ghi chú</th></tr></thead><tbody id="patientRows"></tbody></table></div></section>
  <section class="panel"><h2>Phiếu xét nghiệm</h2><p class="muted">Ảnh phiếu xét nghiệm sẽ hiển thị trực tiếp bên dưới.</p><div id="patientTestGallery" class="testGallery"></div><p id="patientTestsEmpty" class="emptyInline">Chưa có phiếu xét nghiệm được cập nhật.</p><p class="note">Tệp được lưu riêng tư; chỉ bệnh nhân thuộc hồ sơ đó và bác sĩ quản trị được quyền xem.</p></section>
@@ -33,4 +32,4 @@
 </section>
 <div id="globalMessage" class="toast" hidden role="status"></div>
 </main><footer><strong>Phòng khám chuyên khoa Phụ sản BS Hùng</strong><span>Điều trị bằng tri thức, chăm sóc từ trái tim</span><small>Thông tin hỗ trợ theo dõi, không thay thế đánh giá của bác sĩ.</small></footer>
-<script type="module" src="app.js?v=20261009schedule4"></script></body></html>
+<script type="module" src="app.js?v=20261009followup1"></script></body></html>
