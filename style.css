@@ -1094,3 +1094,25 @@ body{font-size:16px}
     max-height: 220px !important;
   }
 }
+
+
+/* v77 — show the entire clinic photo inside each frame, without cropping */
+#clinicGallery.clinic-gallery > a.clinic-photo-link {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  background: #f4f6f7 !important;
+}
+#clinicGallery.clinic-gallery > a.clinic-photo-link > img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  background: #f4f6f7 !important;
+}
