@@ -187,9 +187,19 @@ $("createPatientForm").addEventListener("submit", async e => {
   const newGa=gestationAt(due_date,todayLocal());
   if(!due_date||!newGa||newGa.invalid){fail("createMessage","Ngày dự sinh không hợp lệ. Nhập đúng dạng dd/mm/yyyy (ví dụ 25/04/2027) và kiểm tra tuổi thai trong khoảng 0–42 tuần.");return;}
   if (!/^[a-z0-9._-]{4,32}$/.test(username) || password.length < 10) { fail("createMessage", "Tên đăng nhập hoặc mật khẩu chưa đáp ứng yêu cầu."); return; }
+  const existing = await db.from("profiles").select("user_id").eq("username", username).maybeSingle();
+  if (existing.error) { fail("createMessage", "Chưa kiểm tra được tên đăng nhập. Vui lòng thử lại."); return; }
+  if (existing.data) { fail("createMessage", "Tên đăng nhập \"" + username + "\" đã tồn tại. Vui lòng chọn tên khác."); $("newUsername").focus(); return; }
   const { data: { session } } = await db.auth.getSession();
   const { data, error } = await db.functions.invoke("admin-create-patient", { body: { display_name, username, password, phone, address, para, medical_history, due_date }, headers: { Authorization: "Bearer " + session.access_token } });
-  if (error || data?.error) { fail("createMessage", "Không tạo được tài khoản: " + (data?.error || error.message)); return; }
+  const serverMessage = data?.error || error?.message || "";
+  if (error || data?.error) {
+    if (/tên đăng nhập đã tồn tại|already registered|already been registered|user already exists|duplicate key/i.test(serverMessage)) {
+      fail("createMessage", "Tên đăng nhập \"" + username + "\" đã tồn tại. Vui lòng chọn tên khác.");
+      $("newUsername").focus();
+    } else fail("createMessage", "Không tạo được tài khoản: " + serverMessage);
+    return;
+  }
   fail("createMessage", "Đã tạo tài khoản " + username + ". Tuổi thai hôm nay: " + gestationText(newGa) + ". Hãy trao mật khẩu riêng cho bệnh nhân.");
   $("createPatientForm").reset(); $("newPatientGestation").textContent="Nhập ngày dự sinh để tự tính tuổi thai."; await loadPatients();
 });
