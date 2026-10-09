@@ -28,3 +28,5 @@
 .editPatientForm{margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#fffafd}.editPatientForm h3{margin:0 0 4px}.editPatientActions{display:flex;gap:10px;flex-wrap:wrap}.editPatientActions button{flex:1;min-width:150px}
 
 .adminHistoryChart{min-height:220px;margin:10px 0 14px}.adminHistoryChart canvas{display:block;width:100%;height:auto}.adminTestGallery .adminTestFileLine{border-bottom:1px solid var(--line);padding:12px 0!important}.adminTestPdfPreview{display:block;width:100%;max-width:560px;height:440px;border:1px solid var(--line);border-radius:8px;margin:10px 0}.adminTestThumb{max-width:100%;width:auto;max-height:500px;object-fit:contain}@media(max-width:720px){.adminTestPdfPreview{height:420px}}
+
+.followUpPanel{border-left:4px solid #c85b86}.nextFollowUpValue{font-size:1.15rem;font-weight:750;margin:8px 0}.nextFollowUpValue.hasFollowUp{color:#9b315d}
