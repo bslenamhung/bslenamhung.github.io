@@ -219,7 +219,16 @@ function initDateCalendar(inputId){
   foot.append(clear,today);popup.append(foot);
  }
  document.querySelector('[data-calendar="'+inputId+'"]').addEventListener("click",()=>{popup.hidden=!popup.hidden;if(!popup.hidden){const iso=dueDateIso(input.value);if(iso)shown=new Date(Number(iso.slice(0,4)),Number(iso.slice(5,7))-1,1);else{const now=new Date();shown=new Date(now.getFullYear(),now.getMonth(),1);}render();}});
- input.addEventListener("input",()=>{formatDateInput(input);if(inputId==="newPatientDueDate")refreshNewPatientGestation();else refreshRecordGestation();});
+ input.addEventListener("input",()=>{
+  formatDateInput(input);
+  if(inputId==="newPatientDueDate"){
+   if(input.value.length===10&&!dueDateIso(input.value)){input.value="";refreshNewPatientGestation();toast("Ngày dự sinh không hợp lệ. Vui lòng nhập lại theo dd/mm/yyyy.");return;}
+   refreshNewPatientGestation();
+  }else refreshRecordGestation();
+ });
+ input.addEventListener("blur",()=>{
+  if(inputId==="newPatientDueDate"&&input.value&&!dueDateIso(input.value)){input.value="";refreshNewPatientGestation();toast("Ngày dự sinh không hợp lệ. Vui lòng nhập lại theo dd/mm/yyyy.");}
+ });
  input.addEventListener("change",()=>{if(inputId==="scanDate")refreshRecordGestation();});
  render();
 }
@@ -237,6 +246,11 @@ async function refreshRecordGestation(){
  $("recordGestationHint").textContent="Tuổi thai ngày "+dateVi(date)+": "+gestationText(g)+". Ngày dự sinh: "+dateVi(p.due_date)+".";
 }
 
+$("newPatientPara").addEventListener("input",()=>{
+ const value=$("newPatientPara").value;
+ if(value && !/^[0-9]*$/.test(value)){ $("newPatientPara").value=""; toast("PARA chỉ được nhập 4 chữ số. Vui lòng nhập lại."); return; }
+ if(value.length>4){ $("newPatientPara").value=""; toast("PARA chỉ được nhập đúng 4 chữ số. Vui lòng nhập lại."); }
+});
 initDateCalendar("newPatientDueDate"); initDateCalendar("scanDate"); $("scanDate").value=isoToDateVi(todayLocal()); $("scanDate").addEventListener("change",refreshRecordGestation);
 
 $("createPatientForm").addEventListener("submit", async e => {
