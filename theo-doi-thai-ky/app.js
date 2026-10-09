@@ -121,12 +121,12 @@ async function loadPatient() {
   const latest = [...records].sort((a,b) => b.scan_date.localeCompare(a.scan_date))[0];
   $("lastVisit").textContent = latest ? dateVi(latest.scan_date) : "—";
   $("lastGa").textContent = latest ? ga(latest) : "Chưa có dữ liệu";
-  $("lastWeight").textContent = latest ? fmt(latest.efw_grams) + " g" : "—";
+  $("lastWeight").textContent = latest ? (latest.efw_grams==null?"Chưa nhập EFW":fmt(latest.efw_grams) + " g") : "—";
   $("visitCount").textContent = records.length;
   $("patientRows").replaceChildren();
   [...records].sort((a,b) => b.scan_date.localeCompare(a.scan_date)).forEach(r => {
     const tr = document.createElement("tr");
-    [dateVi(r.scan_date), r.follow_up_date ? dateVi(r.follow_up_date) : "—", ga(r), fmt(r.efw_grams) + " g", r.note || "—"].forEach(v => { const td = document.createElement("td"); td.textContent = v; tr.append(td); });
+    [dateVi(r.scan_date), r.follow_up_date ? dateVi(r.follow_up_date) : "—", ga(r), (r.efw_grams==null?"Chưa nhập EFW":fmt(r.efw_grams) + " g"), r.note || "—"].forEach(v => { const td = document.createElement("td"); td.textContent = v; tr.append(td); });
     $("patientRows").append(tr);
   });
   drawChart(records);
@@ -179,7 +179,7 @@ async function loadSelectedPatient() {
   });
   const { data, error } = await db.from("fetal_weight_records").select("scan_date,follow_up_date,ga_weeks,ga_days,efw_grams,note").eq("patient_user_id", selectedPatient).order("scan_date", { ascending:false });
   if (error) { toast("Không tải được lịch sử bệnh nhân."); return; }
-  (data || []).forEach(r => addHistoryLine($("adminPatientHistory"),dateVi(r.scan_date) + (r.follow_up_date ? " · Hẹn tái khám: " + dateVi(r.follow_up_date) : "") + " · " + ga(r) + " · " + fmt(r.efw_grams) + " g" + (r.note ? " · " + r.note : "")));
+  (data || []).forEach(r => addHistoryLine($("adminPatientHistory"),dateVi(r.scan_date) + (r.follow_up_date ? " · Hẹn tái khám: " + dateVi(r.follow_up_date) : "") + " · " + ga(r) + " · " + (r.efw_grams==null?"Chưa nhập EFW":fmt(r.efw_grams) + " g") + (r.note ? " · " + r.note : "")));
   if (!(data || []).length) addHistoryLine($("adminPatientHistory"),"Chưa có số đo được cập nhật.");
   const { data: tests, error: testError } = await db.from("patient_test_records").select("id,test_date,test_name").eq("patient_user_id", selectedPatient).order("test_date", {ascending:false});
   if (testError) { toast("Không tải được lịch sử xét nghiệm."); return; }
@@ -314,7 +314,7 @@ $("recordForm").addEventListener("submit", async e => {
   const scanDate=dueDateIso($("scanDate").value); const g=gestationAt(sp.due_date,scanDate);
   if(!g||g.invalid||g.weeks<1||g.weeks>42){fail("recordMessage","Không tính được tuổi thai hợp lệ. Vui lòng kiểm tra ngày dự sinh và ngày khám.");return;}
   $("gaWeeks").value=g.weeks;$("gaDays").value=g.days;
-  const followUpRaw=$("followUpDate").value.trim(); const followUpDate=followUpRaw ? dueDateIso(followUpRaw) : null; if(followUpRaw&&!followUpDate){fail("recordMessage","Ngày hẹn tái khám không hợp lệ. Vui lòng nhập theo dd/mm/yyyy.");$("followUpDate").value="";return;} const row = { patient_user_id:selectedPatient, created_by:user.id, scan_date:scanDate, follow_up_date:followUpDate, ga_weeks:g.weeks, ga_days:g.days, efw_grams:Number($("efw").value), note:$("recordNote").value.trim() || null };
+  const followUpRaw=$("followUpDate").value.trim(); const followUpDate=followUpRaw ? dueDateIso(followUpRaw) : null; if(followUpRaw&&!followUpDate){fail("recordMessage","Ngày hẹn tái khám không hợp lệ. Vui lòng nhập theo dd/mm/yyyy.");$("followUpDate").value="";return;} const efwRaw=$("efw").value.trim(); const efwValue=efwRaw===""?null:Number(efwRaw); if(efwValue!==null&&(!Number.isFinite(efwValue)||efwValue<100||efwValue>7000)){fail("recordMessage","Nếu nhập cân nặng, vui lòng nhập từ 100 đến 7000 gam.");return;} const row = { patient_user_id:selectedPatient, created_by:user.id, scan_date:scanDate, follow_up_date:followUpDate, ga_weeks:g.weeks, ga_days:g.days, efw_grams:efwValue, note:$("recordNote").value.trim() || null };
   const { error } = await db.from("fetal_weight_records").insert(row);
   if (error) { fail("recordMessage", "Không lưu được: " + error.message); return; }
   fail("recordMessage", "Đã lưu lần khám."); $("recordNote").value = ""; $("efw").value = ""; $("followUpDate").value=""; await loadSelectedPatient();
