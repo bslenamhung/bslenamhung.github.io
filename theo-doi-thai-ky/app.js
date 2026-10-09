@@ -117,9 +117,9 @@ function renderPatientOptions() {
  const select=$("patientSelect"), query=normalizePatientSearch($("patientSearch").value);
  const terms=query.split(/\s+/).filter(Boolean);
  const filtered=patientDirectory.filter(p=>{
-  const haystack=normalizePatientSearch([p.display_name,p.username,p.phone].filter(Boolean).join(" "));
+  const haystack=normalizePatientSearch([p.username,p.display_name,p.phone].filter(Boolean).join(" "));
   return terms.every(term=>haystack.includes(term));
- });
+ }).sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0));
  const selected=patientDirectory.find(p=>p.user_id===selectedPatient);
  select.replaceChildren();
  select.add(new Option("— Chọn bệnh nhân —",""));
@@ -130,12 +130,12 @@ function renderPatientOptions() {
  });
  select.value=selectedPatient||"";
  $("patientSearchCount").textContent=query
-  ? "Tìm thấy "+filtered.length+" / "+patientDirectory.length+" bệnh nhân. Chọn đúng họ tên và tên đăng nhập."
+  ? "Tìm thấy "+filtered.length+" / "+patientDirectory.length+" bệnh nhân. Tên đăng nhập phù hợp được tìm cả khi chỉ nhập một phần; kết quả xếp từ tài khoản tạo gần nhất."
   : "Có "+patientDirectory.length+" bệnh nhân. Gõ không dấu cũng tìm được.";
  if(query && filtered.length===0) $("patientSearchCount").textContent="Không tìm thấy bệnh nhân phù hợp. Thử họ tên không dấu, tên đăng nhập hoặc số điện thoại.";
 }
 async function loadPatients() {
- const { data, error } = await db.from("profiles").select("user_id,username,display_name,phone,address,para,medical_history,due_date").order("display_name");
+ const { data, error } = await db.from("profiles").select("user_id,username,display_name,phone,address,para,medical_history,due_date,created_at").order("created_at",{ascending:false});
  if (error) { toast("Không tải được danh sách hồ sơ."); return; }
  patientDirectory=(data||[]).filter(p=>p.user_id!==user.id);
  renderPatientOptions();
