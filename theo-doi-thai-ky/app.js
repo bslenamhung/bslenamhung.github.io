@@ -194,7 +194,7 @@ function initDateCalendar(inputId){
   today.addEventListener("click",()=>{const now=new Date(),iso=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0");input.value=isoToDateVi(iso);shown=new Date(now.getFullYear(),now.getMonth(),1);popup.hidden=true;input.dispatchEvent(new Event("input",{bubbles:true}));input.dispatchEvent(new Event("change",{bubbles:true}));});
   foot.append(clear,today);popup.append(foot);
  }
- document.querySelector('[data-calendar="'+inputId+'"]').addEventListener("click",()=>{popup.hidden=!popup.hidden;if(!popup.hidden){const iso=dueDateIso(input.value);if(iso)shown=new Date(Number(iso.slice(0,4)),Number(iso.slice(5,7))-1,1);else{const now=new Date();shown=new Date(now.getFullYear(),now.getMonth(),1);}render();});
+ document.querySelector('[data-calendar="'+inputId+'"]').addEventListener("click",()=>{popup.hidden=!popup.hidden;if(!popup.hidden){const iso=dueDateIso(input.value);if(iso)shown=new Date(Number(iso.slice(0,4)),Number(iso.slice(5,7))-1,1);else{const now=new Date();shown=new Date(now.getFullYear(),now.getMonth(),1);}render();}});
  input.addEventListener("input",()=>{formatDateInput(input);if(inputId==="newPatientDueDate")refreshNewPatientGestation();else refreshRecordGestation();});
  input.addEventListener("change",()=>{if(inputId==="scanDate")refreshRecordGestation();});
  render();
