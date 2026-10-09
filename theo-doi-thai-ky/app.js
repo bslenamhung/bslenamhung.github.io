@@ -212,7 +212,7 @@ async function refreshRecordGestation(){
  const g=gestationAt(p.due_date,date);$("gaWeeks").value=g&&!g.invalid?g.weeks:"";$("gaDays").value=g&&!g.invalid?g.days:"";
  $("recordGestationHint").textContent="Tuổi thai ngày "+dateVi(date)+": "+gestationText(g)+". Ngày dự sinh: "+dateVi(p.due_date)+".";
 }
-$("newPatientDueDate").addEventListener("input",()=>{formatDueDateInput();refreshNewPatientGestation();});
+
 initDateCalendar("newPatientDueDate"); initDateCalendar("scanDate"); $("scanDate").value=isoToDateVi(todayLocal()); $("scanDate").addEventListener("change",refreshRecordGestation);
 
 $("createPatientForm").addEventListener("submit", async e => {
