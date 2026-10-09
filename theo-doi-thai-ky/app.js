@@ -367,21 +367,69 @@ $("testForm").addEventListener("submit", async e => {
   $("testForm").reset(); await loadSelectedPatient();
   fail("testMessage", "Đã tải phiếu xét nghiệm lên thành công.");
 });
+function intergrowthEfwCentile(ga, percentile) {
+  // INTERGROWTH-21st EFW standard, Stirnemann et al., UOG 2017; GA 22–40 weeks.
+  const lambda = -4.257629 - 2162.234 * Math.pow(ga,-2) + 0.0002301829 * Math.pow(ga,3);
+  const mu = 4.956737 + 0.0005019687 * Math.pow(ga,3) - 0.0001227065 * Math.pow(ga,3) * Math.log(ga);
+  const sigma = 1e-4 * (-6.997171 + 0.057559 * Math.pow(ga,3) - 0.01493946 * Math.pow(ga,3) * Math.log(ga));
+  const zValues = {3:-1.880794,10:-1.281552,50:0,90:1.281552,97:1.880794};
+  const z=zValues[percentile];
+  const logWeight = Math.abs(lambda)<1e-8 ? mu + sigma*z : mu + Math.log(1 + lambda*sigma*z)/lambda;
+  return Math.exp(logWeight);
+}
 function drawChart(data, canvasId="weightChart", emptyId="chartEmpty") {
-  const canvas = $(canvasId), ctx = canvas.getContext("2d"), empty = $(emptyId);
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  const pts = [...data].filter(p=>p.efw_grams!==null&&p.efw_grams!==undefined&&Number.isFinite(Number(p.efw_grams))).sort((a,b) => (a.ga_weeks*7+a.ga_days)-(b.ga_weeks*7+b.ga_days));
-  empty.hidden = pts.length > 0;
-  if (!pts.length) { empty.textContent=data.length ? "Chưa có cân nặng ước tính để vẽ biểu đồ." : "Chưa có lần khám nào được cập nhật."; return; }
-  empty.textContent="Chưa có lần khám nào được cập nhật.";
-  const x0=75, x1=960, y0=35, y1=350, minX=Math.min(...pts.map(p=>p.ga_weeks+p.ga_days/7)), maxX=Math.max(minX+1,...pts.map(p=>p.ga_weeks+p.ga_days/7));
-  const maxY=Math.max(1000,Math.ceil(Math.max(...pts.map(p=>p.efw_grams))*1.15/500)*500);
-  ctx.font="16px Arial"; ctx.strokeStyle="#eadfe5"; ctx.fillStyle="#756a75"; ctx.lineWidth=1;
-  for(let i=0;i<=4;i++){const y=y1-(y1-y0)*i/4;ctx.beginPath();ctx.moveTo(x0,y);ctx.lineTo(x1,y);ctx.stroke();ctx.fillText(Math.round(maxY*i/4).toString(),8,y+5);}
-  const xp=p=>maxX===minX?(x0+x1)/2:x0+(p.ga_weeks+p.ga_days/7-minX)/(maxX-minX)*(x1-x0), yp=p=>y1-p.efw_grams/maxY*(y1-y0);
-  ctx.fillText("Tuổi thai (tuần)",x0,y1+48);ctx.fillText("EFW (g)",8,20);
-  ctx.strokeStyle="#b84e79";ctx.lineWidth=4;ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(xp(p),yp(p)):ctx.moveTo(xp(p),yp(p)));ctx.stroke();
-  pts.forEach(p=>{ctx.fillStyle="#843651";ctx.beginPath();ctx.arc(xp(p),yp(p),6,0,Math.PI*2);ctx.fill();ctx.fillStyle="#302630";ctx.fillText(String(p.ga_weeks),xp(p)-8,y1+25);});
+  const canvas=$(canvasId),ctx=canvas.getContext("2d"),empty=$(emptyId);
+  const pts=[...data].filter(p=>p.efw_grams!==null&&p.efw_grams!==undefined&&Number.isFinite(Number(p.efw_grams))&&Number(p.efw_grams)>=100&&Number(p.efw_grams)<=7000)
+    .map(p=>({...p,gaExact:Number(p.ga_weeks)+Number(p.ga_days||0)/7,efw:Number(p.efw_grams)}))
+    .sort((a,b)=>a.gaExact-b.gaExact);
+  const W=1000,H=520,x0=78,x1=900,y0=42,y1=420,minGA=22,maxGA=40,minW=300,maxW=4500;
+  canvas.width=W;canvas.height=H;ctx.clearRect(0,0,W,H);
+  // The reference curves remain visible even when no EFW values have been entered.
+  empty.hidden=true;
+  const xp=ga=>x0+(ga-minGA)/(maxGA-minGA)*(x1-x0);
+  const yp=weight=>y1-(weight-minW)/(maxW-minW)*(y1-y0);
+  ctx.font="15px Arial";ctx.lineWidth=1;ctx.strokeStyle="#eadfe5";ctx.fillStyle="#756a75";
+  for(let w=500;w<=4500;w+=500){
+    const y=yp(w);ctx.beginPath();ctx.moveTo(x0,y);ctx.lineTo(x1,y);ctx.stroke();
+    ctx.textAlign="right";ctx.fillText(w.toLocaleString("en-US"),x0-12,y+5);
+  }
+  for(let ga=22;ga<=40;ga+=2){
+    const x=xp(ga);ctx.beginPath();ctx.moveTo(x,y0);ctx.lineTo(x,y1);ctx.stroke();
+    ctx.textAlign="center";ctx.fillStyle="#756a75";ctx.fillText(String(ga),x,y1+24);
+  }
+  ctx.fillStyle="#302630";ctx.textAlign="left";ctx.font="bold 15px Arial";ctx.fillText("EFW (g)",x0,y0-16);
+  ctx.textAlign="center";ctx.fillText("Tuổi thai (tuần)",(x0+x1)/2,H-22);
+  const curves=[
+    {p:3,color:"#64748b",dash:[5,5],width:2},
+    {p:10,color:"#0f766e",dash:[7,4],width:2},
+    {p:50,color:"#b84e79",dash:[],width:3},
+    {p:90,color:"#c07826",dash:[7,4],width:2},
+    {p:97,color:"#9f3d46",dash:[5,5],width:2}
+  ];
+  for(const curve of curves){
+    ctx.beginPath();ctx.strokeStyle=curve.color;ctx.lineWidth=curve.width;ctx.setLineDash(curve.dash);
+    for(let day=22*7;day<=40*7;day++){
+      const ga=day/7,weight=intergrowthEfwCentile(ga,curve.p),x=xp(ga),y=yp(weight);
+      if(day===22*7)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+    }
+    ctx.stroke();ctx.setLineDash([]);
+    const endY=yp(intergrowthEfwCentile(39.65,curve.p));
+    ctx.fillStyle=curve.color;ctx.font="bold 13px Arial";ctx.textAlign="left";
+    ctx.fillText("P"+curve.p,x1+7,endY+4);
+  }
+  // Patient measurements are separate points, so missing EFW does not remove the visit or its follow-up date.
+  pts.filter(p=>p.gaExact>=minGA&&p.gaExact<=maxGA).forEach(p=>{
+    const x=xp(p.gaExact),y=yp(p.efw);
+    ctx.beginPath();ctx.fillStyle="#302630";ctx.strokeStyle="#fff";ctx.lineWidth=2;ctx.arc(x,y,6,0,Math.PI*2);ctx.fill();ctx.stroke();
+    ctx.fillStyle="#302630";ctx.font="bold 13px Arial";ctx.textAlign="left";
+    const label=p.efw.toLocaleString("vi-VN")+" g";
+    ctx.fillText(label,Math.min(x+9,x1-70),Math.max(y-9,y0+12));
+  });
+  const outside=pts.filter(p=>p.gaExact<minGA||p.gaExact>maxGA);
+  if(outside.length){
+    ctx.textAlign="left";ctx.font="13px Arial";ctx.fillStyle="#843651";
+    ctx.fillText(outside.length+" số đo ngoài khoảng chuẩn 22–40 tuần không hiển thị trên đồ thị.",x0,y1+49);
+  }
 }
 $("downloadCsv").addEventListener("click", () => {
   const rows = [["Ngày khám","Tuổi thai","EFW (g)","Ghi chú"], ...records.map(r=>[r.scan_date,ga(r),r.efw_grams,r.note||""])];
