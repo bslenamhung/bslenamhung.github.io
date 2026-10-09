@@ -48,3 +48,27 @@
   #khu-vuc .local-home-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
   #khu-vuc .local-home-card{padding:11px}
 }
+
+
+/* Homepage local links: compact and placed after latest articles */
+#khu-vuc.local-home-block{padding:16px 0 20px}
+#khu-vuc .section-head{display:block;margin:0 0 10px}
+#khu-vuc .section-head .eyebrow,
+#khu-vuc .section-note{display:none}
+#khu-vuc .section-head h2{font-size:clamp(18px,2vw,22px);line-height:1.25;margin:0}
+#khu-vuc .local-home-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+#khu-vuc .local-home-card{padding:10px;border-radius:10px;min-width:0;box-shadow:none}
+#khu-vuc .local-home-card strong{font-size:12px;line-height:1.35;margin:0}
+#khu-vuc .local-home-card span{display:none}
+#khu-vuc .local-home-card:hover{transform:none;box-shadow:none}
+@media(max-width:1000px){
+ #khu-vuc .local-home-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:600px){
+ #khu-vuc.local-home-block{padding:12px 0 16px}
+ #khu-vuc .section-head{margin-bottom:8px}
+ #khu-vuc .section-head h2{font-size:17px}
+ #khu-vuc .local-home-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+ #khu-vuc .local-home-card{padding:9px}
+ #khu-vuc .local-home-card strong{font-size:12px}
+}
