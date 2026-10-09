@@ -104,6 +104,42 @@ async function loadWeeklyClinicSchedule(){
   if(updated)updated.textContent="Không thể đồng bộ lúc này. Hãy thử nút Cập nhật lịch hoặc mở website phòng khám.";
  }
 }
+async function renderFollowUpReminder(patientRecords) {
+ const card=$("patientFollowUpReminder"), dateEl=$("followUpReminderDate"), messageEl=$("followUpReminderMessage"), button=$("acknowledgeFollowUpReminder");
+ if(!card||!dateEl||!messageEl||!button)return;
+ card.hidden=true;
+ const today=todayLocal();
+ const todayMs=Date.parse(today+"T00:00:00Z");
+ const candidates=[...new Set((patientRecords||[]).map(r=>r.follow_up_date).filter(d=>{
+  if(!d)return false;
+  const age=Math.round((todayMs-Date.parse(d+"T00:00:00Z"))/86400000);
+  return age>=0&&age<=7;
+ }))].sort((a,b)=>a.localeCompare(b));
+ if(!candidates.length)return;
+ const {data:acknowledged,error}=await db.from("patient_follow_up_reminder_acknowledgements")
+  .select("follow_up_date").eq("patient_user_id",user.id).in("follow_up_date",candidates);
+ if(error){console.error("Không tải được trạng thái nhắc tái khám:",error);return;}
+ const seen=new Set((acknowledged||[]).map(x=>x.follow_up_date));
+ const nextDate=candidates.find(d=>!seen.has(d));
+ if(!nextDate)return;
+ dateEl.textContent=dateVi(nextDate);
+ messageEl.textContent="Hôm nay là ngày hẹn hoặc đã qua ngày hẹn không quá 7 ngày. Vui lòng liên hệ phòng khám nếu bạn chưa tái khám hoặc cần đổi lịch.";
+ card.hidden=false;
+ button.onclick=async()=>{
+  button.disabled=true;
+  const oldText=button.textContent;
+  button.textContent="Đang lưu…";
+  const {error:saveError}=await db.from("patient_follow_up_reminder_acknowledgements")
+   .insert({patient_user_id:user.id,follow_up_date:nextDate});
+  if(saveError&&saveError.code!=="23505"){
+   console.error("Không lưu được xác nhận đã xem nhắc tái khám:",saveError);
+   button.disabled=false;button.textContent=oldText;
+   toast("Chưa lưu được trạng thái đã xem. Vui lòng thử lại.");
+   return;
+  }
+  await renderFollowUpReminder(patientRecords);
+ };
+}
 async function loadPatient() {
  await loadWeeklyClinicSchedule();
   $("patientName").textContent = profile.display_name || profile.username;
@@ -119,6 +155,7 @@ async function loadPatient() {
   const { data, error } = await db.from("fetal_weight_records").select("scan_date,follow_up_date,ga_weeks,ga_days,efw_grams,note").eq("patient_user_id", user.id).order("scan_date");
   if (error) { toast("Không tải được lịch sử khám."); return; }
   records = data || [];
+  await renderFollowUpReminder(records);
   const today=todayLocal(); const futureFollowUps=records.filter(r=>r.follow_up_date&&r.follow_up_date>=today).sort((a,b)=>a.follow_up_date.localeCompare(b.follow_up_date)); const nextFollowUp=futureFollowUps[0]; const followEl=$("patientNextFollowUp"); followEl.textContent=nextFollowUp?dateVi(nextFollowUp.follow_up_date)+(futureFollowUps.length>1?" (ngày hẹn gần nhất)":""):"Chưa có lịch hẹn tái khám được cập nhật."; followEl.classList.toggle("hasFollowUp",!!nextFollowUp);
   const latest = [...records].sort((a,b) => b.scan_date.localeCompare(a.scan_date))[0];
   $("lastVisit").textContent = latest ? dateVi(latest.scan_date) : "—";
