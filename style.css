@@ -520,3 +520,35 @@ body{font-size:16px}
 @media(max-width:520px){
   .hero-profile-image,.hero-profile-wrap .hero-avatar{width:170px!important;height:170px!important}
 }
+
+
+/* FIX mobile clinic gallery: portrait photos need full-width cards, not two narrow columns */
+@media(max-width:520px){
+  .clinic-gallery{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:12px!important;
+    align-items:start!important;
+  }
+  .clinic-gallery .clinic-photo-link{
+    display:block!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    overflow:visible!important;
+    background:transparent!important;
+    border:0!important;
+    border-radius:12px!important;
+  }
+  .clinic-gallery .clinic-photo-link img{
+    display:block!important;
+    width:100%!important;
+    height:auto!important;
+    max-height:none!important;
+    aspect-ratio:auto!important;
+    object-fit:contain!important;
+    object-position:center!important;
+    border-radius:12px!important;
+    background:#f5f7f8!important;
+  }
+}
