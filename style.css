@@ -497,3 +497,14 @@ body{font-size:16px}
   #clinicGallery .clinic-photo-link{height:165px!important;border-radius:10px!important}
   #clinicGallery .clinic-photo-link img{object-fit:contain!important}
 }
+
+
+/* FINAL: show all 4 clinic photos at their natural aspect ratio, no crop or narrow letterboxed strips */
+#clinicGallery{align-items:start!important}
+#clinicGallery .clinic-photo-link{display:block!important;height:auto!important;min-height:0!important;align-self:start!important;overflow:visible!important;background:transparent!important;border:0!important;border-radius:10px!important}
+#clinicGallery .clinic-photo-link img{display:block!important;width:100%!important;max-width:100%!important;height:auto!important;max-height:none!important;aspect-ratio:auto!important;object-fit:contain!important;object-position:center!important;background:transparent!important;border:1px solid #e5eaed!important;border-radius:10px!important}
+@media(max-width:520px){
+  #clinicGallery{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+  #clinicGallery .clinic-photo-link{height:auto!important}
+  #clinicGallery .clinic-photo-link img{height:auto!important;max-height:none!important}
+}
