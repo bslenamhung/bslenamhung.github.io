@@ -8,7 +8,7 @@ const emailFor = username => username.trim().toLowerCase() + "@patients.bs-hung.
 const fmt = n => new Intl.NumberFormat("vi-VN", { maximumFractionDigits: 0 }).format(n);
 const ga = r => r.ga_days ? r.ga_weeks + " tuần " + r.ga_days + " ngày" : r.ga_weeks + " tuần";
 const dateVi = s => s ? new Date(s + "T12:00:00").toLocaleDateString("vi-VN") : "—";
-const allowedTypes = ["application/pdf","image/jpeg","image/png","image/webp"];
+const allowedTypes = ["application/pdf","image/jpeg","image/png","image/webp","application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
 const maxFileBytes = 10 * 1024 * 1024;
 function view(id) { ["loginView","patientView","adminView"].forEach(k => $(k).hidden = k !== id); }
 function toast(msg) { $("globalMessage").textContent = msg; $("globalMessage").hidden = false; }
@@ -34,23 +34,25 @@ async function attachmentsFor(testIds) {
   }
   return out;
 }
-async function renderTests(rows, tbodyId, emptyId) {
-  const tbody=$(tbodyId); tbody.replaceChildren();
-  let files = [];
-  try { files = await attachmentsFor((rows || []).map(r=>r.id)); }
-  catch (e) { toast("Không tải được danh sách tệp xét nghiệm."); }
-  (rows || []).forEach(r=>{
-    const tr=document.createElement("tr");
-    [dateVi(r.test_date),r.test_name || "—",r.result || "—",r.unit || "—",r.reference_range || "—",r.note || "—"].forEach(v=>{
-      const td=document.createElement("td"); td.textContent=v; tr.append(td);
+function renderPatientFiles(rows, files) {
+  const gallery = $("patientTestGallery"); gallery.replaceChildren();
+  (rows || []).forEach(r => {
+    const related = (files || []).filter(f => f.test_record_id === r.id);
+    related.forEach(f => {
+      const card = document.createElement("article"); card.className = "testFileCard";
+      const heading = document.createElement("div"); heading.className = "testFileHeading";
+      heading.textContent = dateVi(r.test_date) + " · Phiếu xét nghiệm"; card.append(heading);
+      if (f.mime_type.startsWith("image/")) {
+        const img = document.createElement("img"); img.src = f.signedUrl; img.alt = "Ảnh phiếu xét nghiệm"; img.loading = "lazy"; img.className = "testPreviewImage"; card.append(img);
+      } else if (f.mime_type === "application/pdf") {
+        const frame = document.createElement("iframe"); frame.src = f.signedUrl; frame.title = "Phiếu xét nghiệm PDF"; frame.className = "testPdfPreview"; card.append(frame);
+        card.append(makeLink(f.signedUrl, "Mở hoặc tải PDF", f.mime_type));
+      } else {
+        card.append(makeLink(f.signedUrl, "Mở hoặc tải tệp Word: " + f.file_name, f.mime_type));
+      }
+      gallery.append(card);
     });
-    const td = document.createElement("td");
-    const related = files.filter(f=>f.test_record_id===r.id);
-    if (!related.length) td.textContent = "—";
-    related.forEach((f,i)=>{ if(i) td.append(document.createElement("br")); td.append(makeLink(f.signedUrl,f.file_name,f.mime_type)); });
-    tr.append(td); tbody.append(tr);
   });
-  if (emptyId) $(emptyId).hidden = !!(rows && rows.length);
 }
 $("loginForm").addEventListener("submit", async e => {
   e.preventDefault(); fail("loginError", "");
@@ -88,9 +90,12 @@ async function loadPatient() {
     $("patientRows").append(tr);
   });
   drawChart(records);
-  const { data: tests, error: testError } = await db.from("patient_test_records").select("id,test_date,test_name,result,unit,reference_range,note").eq("patient_user_id", user.id).order("test_date", {ascending:false});
-  if (testError) { toast("Không tải được kết quả xét nghiệm."); return; }
-  await renderTests(tests || [], "patientTestRows", "patientTestsEmpty");
+  const { data: tests, error: testError } = await db.from("patient_test_records").select("id,test_date").eq("patient_user_id", user.id).order("test_date", {ascending:false});
+  if (testError) { toast("Không tải được phiếu xét nghiệm."); return; }
+  let testFiles = [];
+  try { testFiles = await attachmentsFor((tests || []).map(t=>t.id)); } catch { toast("Không tải được tệp xét nghiệm."); }
+  renderPatientFiles(tests || [], testFiles);
+  $("patientTestsEmpty").hidden = testFiles.length > 0;
 }
 async function loadPatients() {
   const { data, error } = await db.from("profiles").select("user_id,username,display_name,phone,address").order("display_name");
@@ -112,18 +117,23 @@ async function loadSelectedPatient() {
   if (error) { toast("Không tải được lịch sử bệnh nhân."); return; }
   (data || []).forEach(r => addHistoryLine($("adminPatientHistory"),dateVi(r.scan_date) + " · " + ga(r) + " · " + fmt(r.efw_grams) + " g" + (r.note ? " · " + r.note : "")));
   if (!(data || []).length) addHistoryLine($("adminPatientHistory"),"Chưa có số đo được cập nhật.");
-  const { data: tests, error: testError } = await db.from("patient_test_records").select("id,test_date,test_name,result,unit,reference_range,note").eq("patient_user_id", selectedPatient).order("test_date", {ascending:false});
+  const { data: tests, error: testError } = await db.from("patient_test_records").select("id,test_date,test_name").eq("patient_user_id", selectedPatient).order("test_date", {ascending:false});
   if (testError) { toast("Không tải được lịch sử xét nghiệm."); return; }
   let files = [];
   try { files = await attachmentsFor((tests || []).map(t=>t.id)); } catch { toast("Không tải được danh sách tệp xét nghiệm."); }
   (tests || []).forEach(t => {
-    const line = document.createElement("div");
-    line.append(document.createTextNode(dateVi(t.test_date)+" · "+t.test_name+" · "+(t.result||"Chưa có kết quả")+(t.unit?" "+t.unit:"")+(t.note?" · "+t.note:"")));
+    const line = document.createElement("div"); line.className = "adminTestFileLine";
+    line.append(document.createTextNode(dateVi(t.test_date)+" · Phiếu xét nghiệm"));
     const related = files.filter(f=>f.test_record_id===t.id);
-    related.forEach(f=>{line.append(document.createElement("br"),makeLink(f.signedUrl,f.file_name,f.mime_type));});
+    related.forEach(f=>{
+      line.append(document.createElement("br"));
+      if (f.mime_type.startsWith("image/")) {
+        const img=document.createElement("img"); img.src=f.signedUrl; img.alt="Ảnh phiếu xét nghiệm"; img.loading="lazy"; img.className="adminTestThumb"; line.append(img);
+      } else line.append(makeLink(f.signedUrl,f.file_name,f.mime_type));
+    });
     $("adminTestHistory").append(line);
   });
-  if (!(tests || []).length) addHistoryLine($("adminTestHistory"),"Chưa có xét nghiệm được cập nhật.");
+  if (!(tests || []).length) addHistoryLine($("adminTestHistory"),"Chưa có phiếu xét nghiệm được cập nhật.");
 }
 $("patientSelect").addEventListener("change", loadSelectedPatient);
 $("createPatientForm").addEventListener("submit", async e => {
@@ -148,39 +158,28 @@ $("recordForm").addEventListener("submit", async e => {
 });
 $("testForm").addEventListener("submit", async e => {
   e.preventDefault(); fail("testMessage", "");
-  if (user?.app_metadata?.role !== "admin" || !selectedPatient) { fail("testMessage", "Hãy chọn bệnh nhân trước khi nhập xét nghiệm."); return; }
-  const files = Array.from($("testFiles").files || []);
-  if (files.length > 8) { fail("testMessage", "Mỗi lần nhập chỉ đính kèm tối đa 8 tệp."); return; }
-  for (const f of files) {
-    if (!allowedTypes.includes(f.type)) { fail("testMessage", "Tệp không đúng định dạng. Chỉ nhận PDF, JPG, PNG hoặc WEBP."); return; }
-    if (f.size < 1 || f.size > maxFileBytes) { fail("testMessage", "Mỗi tệp phải nhỏ hơn hoặc bằng 10 MB."); return; }
-  }
-  const row = {
-    patient_user_id:selectedPatient, created_by:user.id, test_date:$("testDate").value,
-    test_name:$("testName").value.trim(), result:$("testResult").value.trim() || null,
-    unit:$("testUnit").value.trim() || null, reference_range:$("testRange").value.trim() || null,
-    note:$("testNote").value.trim() || null
-  };
+  if (user?.app_metadata?.role !== "admin" || !selectedPatient) { fail("testMessage", "Hãy chọn bệnh nhân trước khi tải phiếu xét nghiệm."); return; }
+  const file = $("testFile").files?.[0];
+  if (!file) { fail("testMessage", "Vui lòng chọn một tệp."); return; }
+  if (!allowedTypes.includes(file.type)) { fail("testMessage", "Chỉ nhận ảnh JPG, PNG, WEBP, PDF, DOC hoặc DOCX."); return; }
+  if (file.size < 1 || file.size > maxFileBytes) { fail("testMessage", "Tệp phải nhỏ hơn hoặc bằng 10 MB."); return; }
+  const row = { patient_user_id:selectedPatient, created_by:user.id, test_date:new Date().toISOString().slice(0,10), test_name:"Phiếu xét nghiệm" };
   const { data: test, error } = await db.from("patient_test_records").insert(row).select("id").single();
-  if (error || !test) { fail("testMessage", "Không lưu được xét nghiệm: " + (error?.message || "Lỗi không xác định")); return; }
-  let uploaded = 0, errors = [];
-  for (const file of files) {
-    const safeName = file.name.normalize("NFKD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-zA-Z0-9._-]/g,"_").slice(-100) || "xet-nghiem";
-    const path = selectedPatient + "/" + test.id + "/" + crypto.randomUUID() + "_" + safeName;
-    const { error: uploadError } = await db.storage.from("patient-lab-files").upload(path, file, { contentType:file.type, upsert:false });
-    if (uploadError) { errors.push(file.name + ": " + uploadError.message); continue; }
-    const { error: metaError } = await db.from("patient_test_attachments").insert({
-      test_record_id:test.id, patient_user_id:selectedPatient, created_by:user.id,
-      storage_path:path, file_name:file.name, mime_type:file.type, size_bytes:file.size
-    });
-    if (metaError) {
-      await db.storage.from("patient-lab-files").remove([path]);
-      errors.push(file.name + ": không lưu được thông tin tệp.");
-    } else uploaded++;
+  if (error || !test) { fail("testMessage", "Không tạo được phiếu xét nghiệm: " + (error?.message || "Lỗi không xác định")); return; }
+  const safeName = file.name.normalize("NFKD").replace(/[\\u0300-\\u036f]/g,"").replace(/[^a-zA-Z0-9._-]/g,"_").slice(-100) || "phieu-xet-nghiem";
+  const path = selectedPatient + "/" + test.id + "/" + crypto.randomUUID() + "_" + safeName;
+  const { error: uploadError } = await db.storage.from("patient-lab-files").upload(path, file, { contentType:file.type, upsert:false });
+  if (uploadError) { fail("testMessage", "Không tải được tệp lên: " + uploadError.message); return; }
+  const { error: metaError } = await db.from("patient_test_attachments").insert({
+    test_record_id:test.id, patient_user_id:selectedPatient, created_by:user.id,
+    storage_path:path, file_name:file.name, mime_type:file.type, size_bytes:file.size
+  });
+  if (metaError) {
+    await db.storage.from("patient-lab-files").remove([path]);
+    fail("testMessage", "Tệp đã tải lên nhưng không lưu được thông tin. Vui lòng thử lại."); return;
   }
   $("testForm").reset(); await loadSelectedPatient();
-  if (errors.length) fail("testMessage", "Đã lưu kết quả xét nghiệm và " + uploaded + "/" + files.length + " tệp. Một số tệp lỗi: " + errors.join(" · "));
-  else fail("testMessage", "Đã lưu kết quả xét nghiệm" + (files.length ? " cùng " + uploaded + " tệp đính kèm." : "."));
+  fail("testMessage", "Đã tải phiếu xét nghiệm lên thành công.");
 });
 function drawChart(data) {
   const canvas = $("weightChart"), ctx = canvas.getContext("2d"), empty = $("chartEmpty");
