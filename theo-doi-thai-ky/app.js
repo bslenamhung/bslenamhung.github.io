@@ -119,6 +119,7 @@ async function loadPatient() {
   const { data, error } = await db.from("fetal_weight_records").select("scan_date,follow_up_date,ga_weeks,ga_days,efw_grams,note").eq("patient_user_id", user.id).order("scan_date");
   if (error) { toast("Không tải được lịch sử khám."); return; }
   records = data || [];
+  const today=todayLocal(); const futureFollowUps=records.filter(r=>r.follow_up_date&&r.follow_up_date>=today).sort((a,b)=>a.follow_up_date.localeCompare(b.follow_up_date)); const nextFollowUp=futureFollowUps[0]; const followEl=$("patientNextFollowUp"); followEl.textContent=nextFollowUp?dateVi(nextFollowUp.follow_up_date)+(futureFollowUps.length>1?" (ngày hẹn gần nhất)":""):"Chưa có lịch hẹn tái khám được cập nhật."; followEl.classList.toggle("hasFollowUp",!!nextFollowUp);
   const latest = [...records].sort((a,b) => b.scan_date.localeCompare(a.scan_date))[0];
   $("lastVisit").textContent = latest ? dateVi(latest.scan_date) : "—";
   $("lastGa").textContent = latest ? ga(latest) : "Chưa có dữ liệu";
