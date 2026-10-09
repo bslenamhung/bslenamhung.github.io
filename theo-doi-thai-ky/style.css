@@ -20,3 +20,5 @@
 .rememberLogin{display:flex;align-items:center;gap:9px;margin:2px 0 0;font-weight:600}.rememberLogin input{width:17px;height:17px;margin:0;accent-color:#b84d7d}.rememberHint{display:block;margin-top:-8px;margin-bottom:4px;line-height:1.5;color:var(--muted)}
 
 .weeklyPatientSchedule .head{align-items:center;gap:12px}.weeklyPatientSchedule .head p{margin:5px 0 0}.clinicHoursLive{white-space:pre-line;line-height:1.65;color:var(--text);background:#fff7fa;border-radius:10px;padding:12px 14px}.patientScheduleImageLink{display:block;margin-top:14px;text-align:center}.patientScheduleImageLink img{display:block;max-width:100%;height:auto;max-height:760px;object-fit:contain;margin:0 auto;border-radius:10px}.patientScheduleWebsiteLink{display:inline-block;margin-top:12px;font-weight:700;color:var(--accent)}.weeklyPatientSchedule .note{margin-top:10px}
+
+.patientScheduleImageLink[hidden],#patientScheduleEmpty[hidden]{display:none!important}
