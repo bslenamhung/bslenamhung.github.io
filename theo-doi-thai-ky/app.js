@@ -123,7 +123,7 @@ async function loadSelectedPatient() {
   if (!selectedPatient) return;
   const { data: p, error: pError } = await db.from("profiles").select("username,display_name,phone,address,para,medical_history,due_date").eq("user_id",selectedPatient).single();
   if (pError) { toast("Không tải được thông tin bệnh nhân."); return; }
-  [["Họ tên",p.display_name],["Tên đăng nhập",p.username],["Số điện thoại",p.phone],["Địa chỉ",p.address],["PARA",p.para],["Tiền sử bệnh",p.medical_history],["Ngày dự sinh",p.due_date?dateVi(p.due_date):null],["Tuổi thai theo ngày khám",p.due_date?gestationText(gestationAt(p.due_date,$("scanDate").value||todayLocal())):null]].forEach(([label,value])=>{
+  [["Họ tên",p.display_name],["Tên đăng nhập",p.username],["Số điện thoại",p.phone],["Địa chỉ",p.address],["PARA",p.para],["Tiền sử bệnh",p.medical_history],["Ngày dự sinh",p.due_date?dateVi(p.due_date):null],["Tuổi thai theo ngày khám",p.due_date?gestationText(gestationAt(p.due_date,dueDateIso($("scanDate").value)||todayLocal())):null]].forEach(([label,value])=>{
     const line=document.createElement("div"); const strong=document.createElement("strong"); strong.textContent=label+": "; line.append(strong,document.createTextNode(value || "Chưa cập nhật")); $("adminPatientProfile").append(line);
   });
   const { data, error } = await db.from("fetal_weight_records").select("scan_date,ga_weeks,ga_days,efw_grams,note").eq("patient_user_id", selectedPatient).order("scan_date", { ascending:false });
@@ -153,24 +153,59 @@ $("patientSelect").addEventListener("change", async()=>{await loadSelectedPatien
 function dueDateIso(value){
  const parts=(value||"").trim().split("/");
  if(parts.length!==3||parts[0].length!==2||parts[1].length!==2||parts[2].length!==4||parts.some(part=>part.split("").some(ch=>ch<"0"||ch>"9")))return null;
- const m=[(value||"").trim(),parts[0],parts[1],parts[2]];
- if(!m)return null;
- const day=Number(m[1]),month=Number(m[2]),year=Number(m[3]);
+ const day=Number(parts[0]),month=Number(parts[1]),year=Number(parts[2]);
  const d=new Date(Date.UTC(year,month-1,day));
  if(d.getUTCFullYear()!==year||d.getUTCMonth()!==month-1||d.getUTCDate()!==day)return null;
  return year+"-"+String(month).padStart(2,"0")+"-"+String(day).padStart(2,"0");
 }
-function formatDueDateInput(){
- const el=$("newPatientDueDate");
+function formatDateInput(el){
  const digits=el.value.split("").filter(ch=>ch>="0"&&ch<="9").join("").slice(0,8);
  el.value=digits.length>4?digits.slice(0,2)+"/"+digits.slice(2,4)+"/"+digits.slice(4):digits.length>2?digits.slice(0,2)+"/"+digits.slice(2):digits;
 }
+function isoToDateVi(iso){return iso?iso.slice(8,10)+"/"+iso.slice(5,7)+"/"+iso.slice(0,4):"";}
+function initDateCalendar(inputId){
+ const input=$(inputId),popup=$("calendar-"+inputId);
+ let shown=new Date();
+ function render(){
+  popup.replaceChildren();
+  const head=document.createElement("div");head.className="dateCalendarHead";
+  const prev=document.createElement("button");prev.type="button";prev.textContent="‹";prev.setAttribute("aria-label","Tháng trước");
+  const label=document.createElement("strong");label.textContent=shown.toLocaleDateString("vi-VN",{month:"long",year:"numeric"});
+  const next=document.createElement("button");next.type="button";next.textContent="›";next.setAttribute("aria-label","Tháng sau");
+  prev.addEventListener("click",()=>{shown=new Date(shown.getFullYear(),shown.getMonth()-1,1);render();});
+  next.addEventListener("click",()=>{shown=new Date(shown.getFullYear(),shown.getMonth()+1,1);render();});
+  head.append(prev,label,next);popup.append(head);
+  const grid=document.createElement("div");grid.className="dateCalendarGrid";
+  ["CN","T2","T3","T4","T5","T6","T7"].forEach(day=>{const el=document.createElement("span");el.className="dateCalendarWeekday";el.textContent=day;grid.append(el);});
+  const offset=new Date(shown.getFullYear(),shown.getMonth(),1).getDay(),count=new Date(shown.getFullYear(),shown.getMonth()+1,0).getDate();
+  for(let i=0;i<offset;i++)grid.append(document.createElement("span"));
+  for(let day=1;day<=count;day++){
+   const b=document.createElement("button");b.type="button";b.textContent=String(day);
+   const iso=shown.getFullYear()+"-"+String(shown.getMonth()+1).padStart(2,"0")+"-"+String(day).padStart(2,"0");
+   if(dueDateIso(input.value)===iso)b.classList.add("selected");
+   b.addEventListener("click",()=>{input.value=isoToDateVi(iso);popup.hidden=true;input.dispatchEvent(new Event("input",{bubbles:true}));input.dispatchEvent(new Event("change",{bubbles:true}));});
+   grid.append(b);
+  }
+  popup.append(grid);
+  const foot=document.createElement("div");foot.className="dateCalendarFoot";
+  const clear=document.createElement("button");clear.type="button";clear.textContent="Xóa";
+  clear.addEventListener("click",()=>{input.value="";popup.hidden=true;input.dispatchEvent(new Event("input",{bubbles:true}));input.dispatchEvent(new Event("change",{bubbles:true}));});
+  const today=document.createElement("button");today.type="button";today.textContent="Hôm nay";
+  today.addEventListener("click",()=>{const now=new Date(),iso=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0");input.value=isoToDateVi(iso);shown=new Date(now.getFullYear(),now.getMonth(),1);popup.hidden=true;input.dispatchEvent(new Event("input",{bubbles:true}));input.dispatchEvent(new Event("change",{bubbles:true}));});
+  foot.append(clear,today);popup.append(foot);
+ }
+ document.querySelector('[data-calendar="'+inputId+'"]').addEventListener("click",()=>{popup.hidden=!popup.hidden;if(!popup.hidden){const iso=dueDateIso(input.value);if(iso)shown=new Date(Number(iso.slice(0,4)),Number(iso.slice(5,7))-1,1);else{const now=new Date();shown=new Date(now.getFullYear(),now.getMonth(),1);}render();});
+ input.addEventListener("input",()=>{formatDateInput(input);if(inputId==="newPatientDueDate")refreshNewPatientGestation();else refreshRecordGestation();});
+ input.addEventListener("change",()=>{if(inputId==="scanDate")refreshRecordGestation();});
+ render();
+}
+document.addEventListener("click",e=>{if(!e.target.closest(".dateControl")&&!e.target.closest(".dateCalendar"))document.querySelectorAll(".dateCalendar").forEach(el=>el.hidden=true);});
 function refreshNewPatientGestation(){
  const raw=$("newPatientDueDate").value.trim(),d=dueDateIso(raw),g=gestationAt(d,todayLocal());
  $("newPatientGestation").textContent=!raw?"Nhập ngày dự sinh theo dạng ngày/tháng/năm (dd/mm/yyyy) để tự tính tuổi thai.":!d?"Nhập ngày hợp lệ theo dạng dd/mm/yyyy, ví dụ 25/04/2027.":"Tuổi thai hôm nay: "+gestationText(g);
 }
 async function refreshRecordGestation(){
- const date=$("scanDate").value||todayLocal();
+ const date=dueDateIso($("scanDate").value)||todayLocal();
  if(!selectedPatient){$("gaWeeks").value="";$("gaDays").value="";$("recordGestationHint").textContent="Chọn bệnh nhân có ngày dự sinh để tự tính tuổi thai theo ngày khám.";return;}
  const {data:p,error}=await db.from("profiles").select("due_date").eq("user_id",selectedPatient).single();
  if(error||!p?.due_date){$("gaWeeks").value="";$("gaDays").value="";$("recordGestationHint").textContent="Hồ sơ chưa có ngày dự sinh. Hãy bổ sung ngày dự sinh.";return;}
@@ -178,7 +213,7 @@ async function refreshRecordGestation(){
  $("recordGestationHint").textContent="Tuổi thai ngày "+dateVi(date)+": "+gestationText(g)+". Ngày dự sinh: "+dateVi(p.due_date)+".";
 }
 $("newPatientDueDate").addEventListener("input",()=>{formatDueDateInput();refreshNewPatientGestation();});
-$("scanDate").addEventListener("change",refreshRecordGestation);
+initDateCalendar("newPatientDueDate"); initDateCalendar("scanDate"); $("scanDate").value=isoToDateVi(todayLocal()); $("scanDate").addEventListener("change",refreshRecordGestation);
 
 $("createPatientForm").addEventListener("submit", async e => {
   e.preventDefault(); fail("createMessage", "");
@@ -210,10 +245,10 @@ $("recordForm").addEventListener("submit", async e => {
   if (user?.app_metadata?.role !== "admin" || !selectedPatient) { fail("recordMessage", "Hãy đăng nhập bằng tài khoản bác sĩ và chọn bệnh nhân."); return; }
   const {data: sp,error: spe}=await db.from("profiles").select("due_date").eq("user_id",selectedPatient).single();
   if(spe||!sp?.due_date){fail("recordMessage","Hồ sơ bệnh nhân chưa có ngày dự sinh. Hãy cập nhật trước.");return;}
-  const g=gestationAt(sp.due_date,$("scanDate").value);
+  const scanDate=dueDateIso($("scanDate").value); const g=gestationAt(sp.due_date,scanDate);
   if(!g||g.invalid||g.weeks<1||g.weeks>42){fail("recordMessage","Không tính được tuổi thai hợp lệ. Vui lòng kiểm tra ngày dự sinh và ngày khám.");return;}
   $("gaWeeks").value=g.weeks;$("gaDays").value=g.days;
-  const row = { patient_user_id:selectedPatient, created_by:user.id, scan_date:$("scanDate").value, ga_weeks:g.weeks, ga_days:g.days, efw_grams:Number($("efw").value), note:$("recordNote").value.trim() || null };
+  const row = { patient_user_id:selectedPatient, created_by:user.id, scan_date:scanDate, ga_weeks:g.weeks, ga_days:g.days, efw_grams:Number($("efw").value), note:$("recordNote").value.trim() || null };
   const { error } = await db.from("fetal_weight_records").insert(row);
   if (error) { fail("recordMessage", "Không lưu được: " + error.message); return; }
   fail("recordMessage", "Đã lưu lần khám."); $("recordNote").value = ""; $("efw").value = ""; await loadSelectedPatient();
