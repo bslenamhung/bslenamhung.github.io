@@ -552,3 +552,40 @@ body{font-size:16px}
     background:#f5f7f8!important;
   }
 }
+
+
+/* Match clinic gallery thumbnails to the complete-image treatment used by the four profile cards */
+.clinic-gallery{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:12px!important;
+  align-items:stretch!important;
+}
+.clinic-gallery .clinic-photo-link{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  height:180px!important;
+  min-width:0!important;
+  overflow:hidden!important;
+  background:#f4f6f7!important;
+  border:1px solid #e5eaed!important;
+  border-radius:14px!important;
+}
+.clinic-gallery .clinic-photo-link img{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  max-height:none!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  background:#f4f6f7!important;
+  border:0!important;
+  border-radius:0!important;
+}
+@media(max-width:520px){
+  .clinic-gallery{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+  .clinic-gallery .clinic-photo-link{height:150px!important;border-radius:10px!important}
+  .clinic-gallery .clinic-photo-link img{object-fit:contain!important}
+}
