@@ -168,8 +168,9 @@ async function loadMaternalWeightEntries() {
  if(error){console.error("Không tải được lịch sử cân nặng của mẹ:",error);fail("maternalWeightMessage","Chưa tải được lịch sử cân nặng. Vui lòng tải lại trang.");return;}
  const entries=data||[],today=todayLocal();
  const latest=entries[0];
- if(latest){$("maternalWeightKg").value=String(latest.weight_kg);$("maternalWeightDate").value=latest.measured_on;$("maternalPregnancyType").value=latest.pregnancy_type||"singleton";}
- else {$("maternalWeightKg").value="";$("maternalWeightDate").value=today;$("maternalPregnancyType").value="singleton";}
+ $("maternalWeightDate").value=today;
+ $("maternalWeightKg").value=latest&&latest.measured_on===today?String(latest.weight_kg):"";
+ $("maternalPregnancyType").value=latest?.pregnancy_type||"singleton";
  renderMaternalWeightAdvice(entries);
  const body=$("maternalWeightRows");body.replaceChildren();
  entries.forEach(entry=>{
