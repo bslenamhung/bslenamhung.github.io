@@ -374,6 +374,10 @@ $("createPatientForm").addEventListener("submit", async e => {
     } else fail("createMessage", "Không tạo được tài khoản: " + serverMessage);
     return;
   }
+  const { data: createdProfile, error: createdProfileLookupError } = await db.from("profiles").select("user_id").eq("username", username).single();
+  if (createdProfileLookupError || !createdProfile) { fail("createMessage", "Tài khoản đã tạo, nhưng chưa xác minh được hồ sơ để lưu các thông tin bổ sung. Hãy chọn bệnh nhân và cập nhật lại hồ sơ."); return; }
+  const { error: extraProfileError } = await db.from("profiles").update({ pre_pregnancy_weight_kg, height_cm, ultrasound_abnormalities: ultrasound_abnormalities || null }).eq("user_id", createdProfile.user_id);
+  if (extraProfileError) { fail("createMessage", "Tài khoản đã tạo, nhưng 3 thông tin bổ sung chưa lưu được. Hãy chọn bệnh nhân vừa tạo, nhập lại các trường này trong phần Sửa / cập nhật hồ sơ. Lỗi: " + extraProfileError.message); return; }
   fail("createMessage", "Đã tạo tài khoản " + username + ". Tuổi thai hôm nay: " + gestationText(newGa) + ". Hãy trao mật khẩu riêng cho bệnh nhân.");
   $("createPatientForm").reset(); $("newPatientGestation").textContent="Nhập ngày dự sinh để tự tính tuổi thai."; await loadPatients();
 });
