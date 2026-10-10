@@ -3,7 +3,7 @@ const SUPABASE_URL = "https://ckwhjyzomppsdplnkdeq.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_FmJK_HkQxhoQ04dIzI1mCg_eupXeR48";
 const db = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 const $ = id => document.getElementById(id);
-let user = null, profile = null, records = [], selectedPatient = null, patientDirectory = [];
+let user = null, profile = null, records = [], selectedPatient = null, patientDirectory = [], editingFetalRecordId = null;
 const emailFor = username => username.trim().toLowerCase() + "@patients.bs-hung.invalid";
 const fmt = n => new Intl.NumberFormat("vi-VN", { maximumFractionDigits: 0 }).format(n);
 function prePregnancyBmi(weightKg,heightCm) {
@@ -310,9 +310,16 @@ async function loadSelectedPatient() {
   $("editPatientName").value=p.display_name||""; $("editPatientDob").value=isoToDateVi(p.date_of_birth); $("editPatientPhone").value=p.phone||""; $("editPatientAddress").value=p.address||"";
   $("editPatientPara").value=p.para||""; $("editPatientHistory").value=p.medical_history||""; $("editPatientPreWeight").value=p.pre_pregnancy_weight_kg??""; $("editPatientHeight").value=p.height_cm??""; $("editPatientUltrasoundAbnormalities").value=p.ultrasound_abnormalities||""; $("editPatientDueDate").value=isoToDateVi(p.due_date||"");
   $("editPatientButton").hidden=false;
-  const { data, error } = await db.from("fetal_weight_records").select("scan_date,follow_up_date,ga_weeks,ga_days,efw_grams,note").eq("patient_user_id", selectedPatient).order("scan_date", { ascending:false });
+  const { data, error } = await db.from("fetal_weight_records").select("id,scan_date,follow_up_date,ga_weeks,ga_days,efw_grams,note").eq("patient_user_id", selectedPatient).order("scan_date", { ascending:false });
   if (error) { toast("Không tải được lịch sử bệnh nhân."); return; }
-  (data || []).forEach(r => addHistoryLine($("adminPatientHistory"),dateVi(r.scan_date) + (r.follow_up_date ? " · Hẹn tái khám: " + dateVi(r.follow_up_date) : "") + " · " + ga(r) + " · " + (r.efw_grams==null?"Chưa nhập EFW":fmt(r.efw_grams) + " g") + (r.note ? " · " + r.note : ""))); drawChart(data || [], "adminWeightChart", "adminWeightChartEmpty");
+  (data || []).forEach(r => {
+    const line=document.createElement("div"); line.className="editableFetalHistory";
+    const details=document.createElement("span");
+    details.textContent=dateVi(r.scan_date)+(r.follow_up_date?" · Hẹn tái khám: "+dateVi(r.follow_up_date):"")+" · "+ga(r)+" · "+(r.efw_grams==null?"Chưa nhập EFW":fmt(r.efw_grams)+" g")+(r.note?" · "+r.note:"");
+    const edit=document.createElement("button"); edit.type="button"; edit.className="secondary editFetalRecordButton"; edit.textContent="Sửa";
+    edit.addEventListener("click",()=>startEditFetalRecord(r));
+    line.append(details,edit); $("adminPatientHistory").append(line);
+  }); drawChart(data || [], "adminWeightChart", "adminWeightChartEmpty");
   if (!(data || []).length) addHistoryLine($("adminPatientHistory"),"Chưa có số đo được cập nhật.");
   const { data: tests, error: testError } = await db.from("patient_test_records").select("id,test_date,test_name").eq("patient_user_id", selectedPatient).order("test_date", {ascending:false});
   if (testError) { toast("Không tải được lịch sử xét nghiệm."); return; }
@@ -469,6 +476,31 @@ $("createPatientForm").addEventListener("submit", async e => {
   fail("createMessage", "Đã tạo tài khoản " + username + ". Tuổi thai hôm nay: " + gestationText(newGa) + ". Hãy trao mật khẩu riêng cho bệnh nhân.");
   $("createPatientForm").reset(); $("newPatientGestation").textContent="Nhập ngày dự sinh để tự tính tuổi thai."; await loadPatients();
 });
+function startEditFetalRecord(r) {
+  editingFetalRecordId=r.id;
+  $("scanDate").value=isoToDateVi(r.scan_date);
+  $("followUpDate").value=isoToDateVi(r.follow_up_date||"");
+  $("efw").value=r.efw_grams==null?"":String(r.efw_grams);
+  $("recordNote").value=r.note||"";
+  $("gaWeeks").value=r.ga_weeks??"";
+  $("gaDays").value=r.ga_days??"";
+  $("recordFormTitle").textContent="Sửa lần khám / cân nặng thai nhi";
+  $("saveRecordButton").textContent="Lưu chỉnh sửa";
+  $("cancelEditRecord").hidden=false;
+  fail("recordMessage","Đang sửa dữ liệu ngày "+dateVi(r.scan_date)+". Hãy kiểm tra lại rồi lưu.");
+  $("recordForm").scrollIntoView({behavior:"smooth",block:"center"});
+}
+function cancelEditFetalRecord(clearMessage=true) {
+  editingFetalRecordId=null;
+  $("recordForm").reset();
+  $("gaWeeks").value=""; $("gaDays").value="";
+  $("recordFormTitle").textContent="Nhập lần khám và cân nặng thai nhi";
+  $("saveRecordButton").textContent="Lưu lần khám";
+  $("cancelEditRecord").hidden=true;
+  if(clearMessage)fail("recordMessage","");
+  if(selectedPatient)refreshRecordGestation();
+}
+$("cancelEditRecord")?.addEventListener("click",()=>cancelEditFetalRecord());
 $("recordForm").addEventListener("submit", async e => {
   e.preventDefault(); fail("recordMessage", "");
   if (user?.app_metadata?.role !== "admin" || !selectedPatient) { fail("recordMessage", "Hãy đăng nhập bằng tài khoản bác sĩ và chọn bệnh nhân."); return; }
@@ -477,10 +509,20 @@ $("recordForm").addEventListener("submit", async e => {
   const scanDate=dueDateIso($("scanDate").value); const g=gestationAt(sp.due_date,scanDate);
   if(!g||g.invalid||g.weeks<1||g.weeks>42){fail("recordMessage","Không tính được tuổi thai hợp lệ. Vui lòng kiểm tra ngày dự sinh và ngày khám.");return;}
   $("gaWeeks").value=g.weeks;$("gaDays").value=g.days;
-  const followUpRaw=$("followUpDate").value.trim(); const followUpDate=followUpRaw ? dueDateIso(followUpRaw) : null; if(followUpRaw&&!followUpDate){fail("recordMessage","Ngày hẹn tái khám không hợp lệ. Vui lòng nhập theo dd/mm/yyyy.");$("followUpDate").value="";return;} const efwRaw=$("efw").value.trim(); const efwValue=efwRaw===""?null:Number(efwRaw); if(efwValue!==null&&(!Number.isFinite(efwValue)||efwValue<100||efwValue>7000)){fail("recordMessage","Nếu nhập cân nặng, vui lòng nhập từ 100 đến 7000 gam.");return;} const row = { patient_user_id:selectedPatient, created_by:user.id, scan_date:scanDate, follow_up_date:followUpDate, ga_weeks:g.weeks, ga_days:g.days, efw_grams:efwValue, note:$("recordNote").value.trim() || null };
-  const { error } = await db.from("fetal_weight_records").insert(row);
-  if (error) { fail("recordMessage", "Không lưu được: " + error.message); return; }
-  fail("recordMessage", "Đã lưu lần khám."); $("recordNote").value = ""; $("efw").value = ""; $("followUpDate").value=""; await loadSelectedPatient();
+  const followUpRaw=$("followUpDate").value.trim(); const followUpDate=followUpRaw ? dueDateIso(followUpRaw) : null; if(followUpRaw&&!followUpDate){fail("recordMessage","Ngày hẹn tái khám không hợp lệ. Vui lòng nhập theo dd/mm/yyyy.");$("followUpDate").value="";return;}
+  const efwRaw=$("efw").value.trim(); const efwValue=efwRaw===""?null:Number(efwRaw); if(efwValue!==null&&(!Number.isFinite(efwValue)||efwValue<100||efwValue>7000)){fail("recordMessage","Nếu nhập cân nặng, vui lòng nhập từ 100 đến 7000 gam.");return;}
+  const wasEditing=Boolean(editingFetalRecordId);
+  const row = { patient_user_id:selectedPatient, scan_date:scanDate, follow_up_date:followUpDate, ga_weeks:g.weeks, ga_days:g.days, efw_grams:efwValue, note:$("recordNote").value.trim() || null };
+  let error;
+  if(wasEditing){
+    ({error}=await db.from("fetal_weight_records").update(row).eq("id",editingFetalRecordId).eq("patient_user_id",selectedPatient));
+  }else{
+    ({error}=await db.from("fetal_weight_records").insert({...row,created_by:user.id}));
+  }
+  if (error) { fail("recordMessage", (wasEditing?"Không cập nhật được":"Không lưu được")+": " + error.message); return; }
+  cancelEditFetalRecord(false);
+  fail("recordMessage",wasEditing?"Đã cập nhật lần khám thành công.":"Đã lưu lần khám.");
+  await loadSelectedPatient();
 });
 $("testForm").addEventListener("submit", async e => {
   e.preventDefault(); fail("testMessage", "");
