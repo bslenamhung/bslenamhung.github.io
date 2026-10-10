@@ -340,6 +340,8 @@ $("newPatientName").addEventListener("input",()=>{const el=$("newPatientName");c
 $("refreshWeeklySchedule").addEventListener("click",loadWeeklyClinicSchedule);
 initDateCalendar("newPatientDueDate"); initDateCalendar("scanDate"); initDateCalendar("followUpDate"); initDateCalendar("editPatientDueDate"); $("scanDate").value=isoToDateVi(todayLocal()); $("scanDate").addEventListener("change",refreshRecordGestation);
 
+const newPasswordInput=$("newPassword"),toggleNewPassword=$("toggleNewPassword");
+if(newPasswordInput&&toggleNewPassword)toggleNewPassword.addEventListener("click",()=>{const showing=newPasswordInput.type==="text";newPasswordInput.type=showing?"password":"text";toggleNewPassword.textContent=showing?"Hiện":"Ẩn";toggleNewPassword.setAttribute("aria-label",showing?"Hiện mật khẩu khởi tạo":"Ẩn mật khẩu khởi tạo");$("newPasswordHint").textContent=showing?"Mật khẩu đang được ẩn. Bấm Hiện để kiểm tra nội dung.":"Mật khẩu đang hiển thị để kiểm tra trước khi tạo tài khoản.";});
 $("createPatientForm").addEventListener("submit", async e => {
   e.preventDefault(); fail("createMessage", "");
   if (user?.app_metadata?.role !== "admin") { fail("createMessage", "Tài khoản không có quyền quản trị."); return; }
