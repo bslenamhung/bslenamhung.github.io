@@ -598,7 +598,7 @@ async function renderPatientQaMessages(id){
  const tr=await db.from("patient_ai_conversations").select("id,subject").eq("id",id).single();if(tr.error||!tr.data)return;
  const res=await db.from("patient_ai_messages").select("id,sender_role,body,sources,created_at,is_read_by_patient").eq("conversation_id",id).order("created_at");if(res.error){toast("Chưa tải được nội dung hội thoại.");return;}
  $("patientQaSubject").textContent=tr.data.subject;$("patientQaMessages").replaceChildren();(res.data||[]).forEach(m=>qaAppendMessage($("patientQaMessages"),m,"Bạn"));
- const unread=(res.data||[]).filter(m=>m.sender_role!=="patient"&&!m.is_read_by_patient).map(m=>m.id);if(unread.length)await db.from("patient_ai_messages").update({is_read_by_patient:true}).in("id",unread);
+
  $("patientQaChat").hidden=false;$("patientQaMessages").scrollTop=$("patientQaMessages").scrollHeight;
 }
 async function openPatientQaConversation(id){activePatientQaConversation=id;await loadPatientQaThreads(false);await renderPatientQaMessages(id);}
