@@ -307,6 +307,7 @@ function initDateCalendar(inputId){
   for(let day=1;day<=count;day++){
    const b=document.createElement("button");b.type="button";b.textContent=String(day);
    const iso=shown.getFullYear()+"-"+String(shown.getMonth()+1).padStart(2,"0")+"-"+String(day).padStart(2,"0");
+   if(iso===todayLocal())b.classList.add("today");
    if(dueDateIso(input.value)===iso)b.classList.add("selected");
    b.addEventListener("click",()=>{input.value=isoToDateVi(iso);popup.hidden=true;input.dispatchEvent(new Event("input",{bubbles:true}));input.dispatchEvent(new Event("change",{bubbles:true}));});
    grid.append(b);
