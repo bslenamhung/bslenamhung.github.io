@@ -68,3 +68,21 @@
  .profileGrid>div:has(#patientProfileUltrasoundAbnormalities),
  .profileGrid>div:has(#patientProfileBMI){grid-column:1/-1}
 }
+
+/* Reduce vertical space in maternal weight tracking on mobile. */
+@media(max-width:650px){
+ .maternalWeightPanel{padding:13px 12px;margin:10px 0;border-radius:13px}
+ .maternalWeightPanel h2{font-size:17px;line-height:1.35;margin-bottom:7px}
+ .maternalWeightPanel>p.muted{font-size:12px;line-height:1.5;margin:6px 0 10px}
+ .maternalWeightForm{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:9px 0}
+ .maternalWeightForm label{font-size:12px;gap:4px;min-width:0}
+ .maternalWeightForm label:first-child{grid-column:span 1}
+ .maternalWeightForm input,.maternalWeightForm select{font-size:13px;padding:9px 8px;min-height:40px}
+ .maternalWeightForm button{grid-column:1/-1;padding:10px 12px;font-size:13px}
+ .maternalWeightAdvice{margin:10px 0;padding:11px;font-size:12px;line-height:1.5}
+ .maternalWeightAdvice h3{font-size:14px;margin:0 0 6px}
+ .maternalWeightAdvice p{margin:6px 0}
+ .maternalWeightPanel .maternalWeightArticleLink{font-size:12px;line-height:1.4}
+ .maternalWeightPanel>h3{font-size:14px;margin:12px 0 5px}
+ .maternalWeightPanel .note{font-size:10px;line-height:1.45}
+}
