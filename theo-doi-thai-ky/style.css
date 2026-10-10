@@ -64,9 +64,7 @@
  .profileGrid>div{min-width:0;padding:10px 9px;background:#fcf8fa;border:1px solid #f0e7ec;border-radius:10px}
  .profileGrid small{font-size:11px;line-height:1.35;margin-bottom:4px}
  .profileGrid strong{font-size:13px;line-height:1.45;overflow-wrap:anywhere;word-break:normal}
- .profileGrid>div:has(#patientProfileName),
- .profileGrid>div:has(#patientProfileAddress),
  .profileGrid>div:has(#patientProfileHistory),
- .profileGrid>div:has(#patientProfileUltrasoundAbnormalities){grid-column:1/-1}
+ .profileGrid>div:has(#patientProfileUltrasoundAbnormalities),
  .profileGrid>div:has(#patientProfileBMI){grid-column:1/-1}
 }
