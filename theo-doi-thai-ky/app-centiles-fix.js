@@ -178,9 +178,21 @@ async function loadMaternalWeightEntries() {
   const g=profile?.due_date?gestationAt(profile.due_date,entry.measured_on):null;
   const gain=Number(entry.weight_kg)-Number(profile?.pre_pregnancy_weight_kg);
   const vals=[dateVi(entry.measured_on),kgText(entry.weight_kg),Number.isFinite(gain)&&profile?.pre_pregnancy_weight_kg!=null?((gain>0?"+":"")+kgText(gain)):"Chưa đủ dữ liệu",entry.pregnancy_type==="multiple"?"Song thai / đa thai":"Đơn thai"];
-  vals.forEach(v=>{const td=document.createElement("td");td.textContent=v;tr.append(td);});body.append(tr);
+  vals.forEach(v=>{const td=document.createElement("td");td.textContent=v;tr.append(td);});
+  const actionCell=document.createElement("td");
+  const deleteButton=document.createElement("button");
+  deleteButton.type="button";deleteButton.className="dangerButton maternalWeightDeleteButton";deleteButton.textContent="Xóa";deleteButton.setAttribute("aria-label","Xóa cân nặng ngày "+dateVi(entry.measured_on));
+  deleteButton.addEventListener("click",async()=>{
+   if(!confirm("Bạn có chắc muốn xóa lần cân nặng ngày "+dateVi(entry.measured_on)+" ("+kgText(entry.weight_kg)+")? Dữ liệu đã xóa không thể khôi phục."))return;
+   deleteButton.disabled=true;deleteButton.textContent="Đang xóa…";
+   const {error}=await db.from("patient_weight_entries").delete().eq("id",entry.id).eq("patient_user_id",user.id);
+   if(error){console.error("Không xóa được lịch sử cân nặng:",error);deleteButton.disabled=false;deleteButton.textContent="Xóa";fail("maternalWeightMessage","Chưa xóa được lần cân này. Vui lòng thử lại.");return;}
+   fail("maternalWeightMessage","Đã xóa lần cân ngày "+dateVi(entry.measured_on)+".");
+   await loadMaternalWeightEntries();
+  });
+  actionCell.append(deleteButton);tr.append(actionCell);body.append(tr);
  });
- if(!entries.length){const tr=document.createElement("tr"),td=document.createElement("td");td.colSpan=4;td.textContent="Chưa có dữ liệu cân nặng của mẹ.";tr.append(td);body.append(tr);}
+ if(!entries.length){const tr=document.createElement("tr"),td=document.createElement("td");td.colSpan=5;td.textContent="Chưa có dữ liệu cân nặng của mẹ.";tr.append(td);body.append(tr);}
 }
 function renderMaternalWeightAdvice(entries=[]) {
  const box=$("maternalWeightAdvice");if(!box)return;
