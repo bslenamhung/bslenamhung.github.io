@@ -87,8 +87,8 @@ async function routeUser() {
   const { data, error } = await db.from("profiles").select("user_id,username,display_name,phone,address,para,medical_history,pre_pregnancy_weight_kg,height_cm,ultrasound_abnormalities,due_date,date_of_birth").eq("user_id", user.id).single();
   if (error || !data) { await db.auth.signOut(); view("loginView"); fail("loginError", "Không đọc được hồ sơ. Vui lòng liên hệ quản trị viên."); return; }
   profile = data;
-  if (user.app_metadata?.role === "admin") { view("adminView"); await loadPatients(); }
-  else { view("patientView"); await loadPatient(); }
+  if (user.app_metadata?.role === "admin") { view("adminView"); await loadPatients(); await loadAdminQaThreads(false); }
+  else { view("patientView"); await loadPatient(); await loadPatientQaThreads(false); }
 }
 async function loadWeeklyClinicSchedule(){
  const hours=$("patientClinicHours"),img=$("patientWeeklyScheduleImage"),imgLink=$("patientScheduleImageLink"),empty=$("patientScheduleEmpty"),updated=$("patientScheduleUpdated");
@@ -264,6 +264,7 @@ async function loadPatient() {
   try { testFiles = await attachmentsFor((tests || []).map(t=>t.id)); } catch { toast("Không tải được tệp xét nghiệm."); }
   renderPatientFiles(tests || [], testFiles);
   $("patientTestsEmpty").hidden = testFiles.length > 0;
+  await loadPatientQaThreads(true);
 }
 function normalizePatientSearch(value) {
  return String(value||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/đ/g,"d").replace(/Đ/g,"D").toLowerCase().trim();
@@ -575,5 +576,69 @@ $("downloadCsv").addEventListener("click", () => {
   const csv = "\uFEFF" + rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n");
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8;"}));a.download="lich-su-can-nang-thai-nhi.csv";a.click();URL.revokeObjectURL(a.href);
 });
+
+let activePatientQaConversation=null,activeAdminQaConversation=null,adminQaBusy=false;
+function qaDate(v){return v?new Date(v).toLocaleString("vi-VN",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"}):"";}
+function qaAppendMessage(box,m,patientName){
+ const item=document.createElement("article");item.className="qaMessage qaMessage-"+m.sender_role;
+ const meta=document.createElement("div");meta.className="qaMessageMeta";meta.textContent=(m.sender_role==="patient"?(patientName||"Bạn"):m.sender_role==="doctor"?"BS Hùng":"Trợ lý AI")+" · "+qaDate(m.created_at);
+ const body=document.createElement("div");body.className="qaMessageBody";body.textContent=m.body||"";item.append(meta,body);
+ if(Array.isArray(m.sources)&&m.sources.length){const list=document.createElement("div");list.className="qaSources";const label=document.createElement("strong");label.textContent="Bài viết tham khảo: ";list.append(label);m.sources.forEach((s,i)=>{if(!s||typeof s.url!=="string"||!s.url.startsWith("https://bslenamhung.github.io/"))return;if(i)list.append(document.createTextNode(" · "));const a=document.createElement("a");a.href=s.url;a.target="_blank";a.rel="noopener noreferrer";a.textContent=s.title||"Bài viết phòng khám";list.append(a);});item.append(list);}
+ box.append(item);
+}
+async function loadPatientQaThreads(keep=true){
+ const box=$("patientQaThreads");if(!box||!user)return;
+ const {data:threads,error}=await db.from("patient_ai_conversations").select("id,subject,status,last_message_at").eq("patient_user_id",user.id).order("last_message_at",{ascending:false});
+ if(error){box.textContent="Chưa tải được hội thoại. Vui lòng tải lại trang.";return;}
+ box.replaceChildren();if(!threads?.length){const p=document.createElement("p");p.className="muted";p.textContent="Bạn chưa có câu hỏi nào. Bấm “Đặt câu hỏi mới” để bắt đầu." ;box.append(p);if(!activePatientQaConversation)$("patientQaChat").hidden=true;return;}
+ threads.forEach(t=>{const b=document.createElement("button");b.type="button";b.className="qaThreadButton"+(t.id===activePatientQaConversation?" selected":"");const title=document.createElement("strong");title.textContent=t.subject;const small=document.createElement("small");small.textContent=(t.status==="answered"?"Đã có phản hồi":t.status==="closed"?"Đã đóng":"Đang chờ phản hồi")+" · "+qaDate(t.last_message_at);b.append(title,small);b.addEventListener("click",()=>openPatientQaConversation(t.id));box.append(b);});
+ if(keep&&activePatientQaConversation&&threads.some(t=>t.id===activePatientQaConversation))await renderPatientQaMessages(activePatientQaConversation);
+}
+async function renderPatientQaMessages(id){
+ const tr=await db.from("patient_ai_conversations").select("id,subject").eq("id",id).single();if(tr.error||!tr.data)return;
+ const res=await db.from("patient_ai_messages").select("id,sender_role,body,sources,created_at,is_read_by_patient").eq("conversation_id",id).order("created_at");if(res.error){toast("Chưa tải được nội dung hội thoại.");return;}
+ $("patientQaSubject").textContent=tr.data.subject;$("patientQaMessages").replaceChildren();(res.data||[]).forEach(m=>qaAppendMessage($("patientQaMessages"),m,"Bạn"));
+ const unread=(res.data||[]).filter(m=>m.sender_role!=="patient"&&!m.is_read_by_patient).map(m=>m.id);if(unread.length)await db.from("patient_ai_messages").update({is_read_by_patient:true}).in("id",unread);
+ $("patientQaChat").hidden=false;$("patientQaMessages").scrollTop=$("patientQaMessages").scrollHeight;
+}
+async function openPatientQaConversation(id){activePatientQaConversation=id;await loadPatientQaThreads(false);await renderPatientQaMessages(id);}
+$("newQaConversation")?.addEventListener("click",()=>{activePatientQaConversation=null;$("patientQaSubject").textContent="Câu hỏi mới";$("patientQaMessages").replaceChildren();$("patientQaChat").hidden=false;$("patientQaInput").value="";$("patientQaStatus").textContent="";$("patientQaInput").focus();});
+$("patientQaForm")?.addEventListener("submit",async e=>{
+ e.preventDefault();const input=$("patientQaInput"),body=input.value.trim();if(!body||body.length>6000)return;const btn=$("patientQaSend");btn.disabled=true;btn.textContent="Đang gửi…";$("patientQaStatus").textContent="";
+ try{
+  let id=activePatientQaConversation;
+  if(!id){const c=await db.from("patient_ai_conversations").insert({patient_user_id:user.id,subject:body.replace(/\s+/g," ").slice(0,76)||"Câu hỏi tư vấn"}).select("id").single();if(c.error||!c.data)throw c.error||new Error("Không tạo được hội thoại");id=c.data.id;activePatientQaConversation=id;}
+  const m=await db.from("patient_ai_messages").insert({conversation_id:id,patient_user_id:user.id,sender_role:"patient",body}).select("id").single();if(m.error||!m.data)throw m.error||new Error("Không lưu được câu hỏi");
+  input.value="";$("patientQaStatus").textContent="Đã lưu câu hỏi. Đang tìm thông tin trong bài viết phòng khám…";await renderPatientQaMessages(id);await loadPatientQaThreads(false);
+  const sess=await db.auth.getSession();const result=await db.functions.invoke("patient-ai-answer",{body:{conversation_id:id,message_id:m.data.id},headers:{Authorization:"Bearer "+sess.data.session.access_token}});
+  $("patientQaStatus").textContent=result.error||result.data?.error?(result.data?.error||"Câu hỏi đã được lưu để bác sĩ xem. Trợ lý AI chưa trả lời được."): "Đã có phản hồi tự động. Bác sĩ cũng có thể xem và trả lời câu hỏi này.";
+  await renderPatientQaMessages(id);await loadPatientQaThreads(false);
+ }catch(err){console.error("Patient Q&A send failed",err);$("patientQaStatus").textContent="Chưa gửi được câu hỏi. Vui lòng thử lại.";}
+ finally{btn.disabled=false;btn.textContent="Gửi câu hỏi";}
+});
+async function loadAdminQaThreads(keep=true){
+ if(adminQaBusy||user?.app_metadata?.role!=="admin")return;adminQaBusy=true;const box=$("adminQaThreads");if(!box){adminQaBusy=false;return;}
+ try{
+  const r=await db.from("patient_ai_conversations").select("id,patient_user_id,subject,status,last_message_at").order("last_message_at",{ascending:false}).limit(100);if(r.error)throw r.error;
+  const ids=[...new Set((r.data||[]).map(t=>t.patient_user_id))];let prof=[];if(ids.length){const p=await db.from("profiles").select("user_id,display_name,username,phone").in("user_id",ids);if(p.error)throw p.error;prof=p.data||[];}const pm=new Map(prof.map(p=>[p.user_id,p]));
+  const tids=(r.data||[]).map(t=>t.id);let unread=new Map();if(tids.length){const u=await db.from("patient_ai_messages").select("conversation_id,id").in("conversation_id",tids).eq("sender_role","patient").eq("is_read_by_admin",false);if(!u.error)(u.data||[]).forEach(m=>unread.set(m.conversation_id,(unread.get(m.conversation_id)||0)+1));}
+  box.replaceChildren();if(!r.data?.length){const p=document.createElement("p");p.className="muted";p.textContent="Chưa có câu hỏi nào từ bệnh nhân.";box.append(p);}
+  (r.data||[]).forEach(t=>{const p=pm.get(t.patient_user_id)||{};const b=document.createElement("button");b.type="button";b.className="qaThreadButton"+(t.id===activeAdminQaConversation?" selected":"")+(unread.get(t.id)?" unread":"");const title=document.createElement("strong");title.textContent=(p.display_name||p.username||"Bệnh nhân")+" · "+t.subject;const small=document.createElement("small");small.textContent=(unread.get(t.id)?"MỚI: "+unread.get(t.id)+" câu hỏi chưa đọc · ":"")+(t.status==="answered"?"Đã trả lời":t.status==="closed"?"Đã đóng":"Đang chờ")+" · "+qaDate(t.last_message_at)+" · "+(p.username||"");b.append(title,small);b.addEventListener("click",()=>openAdminQaConversation(t.id));box.append(b);});
+  const n=[...unread.values()].reduce((a,b)=>a+b,0);$("adminQaStatus").textContent=n?"Có "+n+" câu hỏi chưa đọc.":"Danh sách đã cập nhật.";
+  if(keep&&activeAdminQaConversation&&r.data.some(t=>t.id===activeAdminQaConversation))await renderAdminQaMessages(activeAdminQaConversation);
+ }catch(err){console.error("Admin Q&A load failed",err);box.textContent="Chưa tải được hộp thư. Bấm Làm mới để thử lại.";}finally{adminQaBusy=false;}
+}
+async function renderAdminQaMessages(id){
+ const tr=await db.from("patient_ai_conversations").select("id,patient_user_id,subject,status").eq("id",id).single();if(tr.error||!tr.data)return;const t=tr.data;
+ const pair=await Promise.all([db.from("patient_ai_messages").select("id,sender_role,body,sources,created_at,is_read_by_admin").eq("conversation_id",id).order("created_at"),db.from("profiles").select("display_name,username,phone").eq("user_id",t.patient_user_id).single()]);
+ if(pair[0].error)return;const p=pair[1].data||{};$("adminQaSubject").textContent=t.subject;$("adminQaPatientMeta").textContent="Bệnh nhân: "+(p.display_name||"Chưa có họ tên")+" · Tên đăng nhập: "+(p.username||"—")+(p.phone?" · SĐT: "+p.phone:"")+" · "+(t.status==="answered"?"Đã trả lời":t.status==="closed"?"Đã đóng":"Đang chờ");
+ $("adminQaMessages").replaceChildren();(pair[0].data||[]).forEach(m=>qaAppendMessage($("adminQaMessages"),m,p.display_name||p.username||"Bệnh nhân"));const ids=(pair[0].data||[]).filter(m=>m.sender_role==="patient"&&!m.is_read_by_admin).map(m=>m.id);if(ids.length)await db.from("patient_ai_messages").update({is_read_by_admin:true}).in("id",ids);$("adminQaChat").hidden=false;$("adminQaMessages").scrollTop=$("adminQaMessages").scrollHeight;
+}
+async function openAdminQaConversation(id){activeAdminQaConversation=id;await renderAdminQaMessages(id);await loadAdminQaThreads(false);}
+$("refreshAdminQa")?.addEventListener("click",()=>loadAdminQaThreads(true));
+$("adminQaForm")?.addEventListener("submit",async e=>{e.preventDefault();if(user?.app_metadata?.role!=="admin"||!activeAdminQaConversation){$("adminQaReplyStatus").textContent="Chọn một cuộc trò chuyện trước.";return;}const body=$("adminQaInput").value.trim();if(!body||body.length>6000)return;const c=await db.from("patient_ai_conversations").select("patient_user_id").eq("id",activeAdminQaConversation).single();if(c.error||!c.data){$("adminQaReplyStatus").textContent="Không tìm thấy hội thoại.";return;}const btn=$("adminQaSend");btn.disabled=true;btn.textContent="Đang gửi…";const r=await db.from("patient_ai_messages").insert({conversation_id:activeAdminQaConversation,patient_user_id:c.data.patient_user_id,sender_role:"doctor",body});btn.disabled=false;btn.textContent="Gửi trả lời";if(r.error){$("adminQaReplyStatus").textContent="Chưa gửi được câu trả lời. Vui lòng thử lại.";return;}$("adminQaInput").value="";$("adminQaReplyStatus").textContent="Đã gửi câu trả lời cho bệnh nhân.";await renderAdminQaMessages(activeAdminQaConversation);await loadAdminQaThreads(false);});
+$("refreshAdminQa")?.addEventListener("click",()=>loadAdminQaThreads(true));
+
 document.querySelectorAll(".logout").forEach(b=>b.addEventListener("click", async()=>{await db.auth.signOut();user=null;profile=null;records=[];selectedPatient=null;view("loginView");$("password").value="";}));
 (async()=>{const {data}=await db.auth.getSession();if(data.session){user=data.session.user;await routeUser();}})();
+setInterval(()=>{if(user?.app_metadata?.role==="admin"&&!$("adminView").hidden)loadAdminQaThreads(true);},30000);
