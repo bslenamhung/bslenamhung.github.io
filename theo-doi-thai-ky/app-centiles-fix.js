@@ -148,6 +148,80 @@ async function renderFollowUpReminder(patientRecords) {
   await renderFollowUpReminder(patientRecords);
  };
 }
+
+function pregnancyWeightGainGuidance(bmi,gaWeeks) {
+ if(!bmi||!Number.isFinite(gaWeeks)||gaWeeks<1||gaWeeks>42)return null;
+ let category, total, weekly;
+ if(bmi.value<18.5){category="thiếu cân";total=[12.5,18];weekly=[0.44,0.58];}
+ else if(bmi.value<25){category="BMI bình thường theo ngưỡng dùng cho khuyến cáo tăng cân";total=[11.5,16];weekly=[0.40,0.50];}
+ else if(bmi.value<30){category="thừa cân";total=[7,11.5];weekly=[0.23,0.33];}
+ else {category="béo phì";total=[5,9];weekly=[0.17,0.27];}
+ const elapsed=Math.max(0,gaWeeks-13);
+ const current=[0.5+weekly[0]*elapsed,2+weekly[1]*elapsed];
+ return {category,total,weekly,current,gaWeeks};
+}
+const kgText=n=>Number(n).toLocaleString("vi-VN",{minimumFractionDigits:1,maximumFractionDigits:1})+" kg";
+async function loadMaternalWeightEntries() {
+ const dateInput=$("maternalWeightDate"),typeInput=$("maternalPregnancyType");
+ if(dateInput&&!dateInput.value)dateInput.value=todayLocal();
+ const {data,error}=await db.from("patient_weight_entries").select("id,measured_on,weight_kg,pregnancy_type").eq("patient_user_id",user.id).order("measured_on",{ascending:false});
+ if(error){console.error("Không tải được lịch sử cân nặng của mẹ:",error);fail("maternalWeightMessage","Chưa tải được lịch sử cân nặng. Vui lòng tải lại trang.");return;}
+ const entries=data||[],today=todayLocal();
+ const latest=entries[0];
+ if(latest){$("maternalWeightKg").value=String(latest.weight_kg);$("maternalWeightDate").value=latest.measured_on;$("maternalPregnancyType").value=latest.pregnancy_type||"singleton";}
+ else {$("maternalWeightKg").value="";$("maternalWeightDate").value=today;$("maternalPregnancyType").value="singleton";}
+ renderMaternalWeightAdvice(entries);
+ const body=$("maternalWeightRows");body.replaceChildren();
+ entries.forEach(entry=>{
+  const tr=document.createElement("tr");
+  const g=profile?.due_date?gestationAt(profile.due_date,entry.measured_on):null;
+  const gain=Number(entry.weight_kg)-Number(profile?.pre_pregnancy_weight_kg);
+  const vals=[dateVi(entry.measured_on),kgText(entry.weight_kg),Number.isFinite(gain)&&profile?.pre_pregnancy_weight_kg!=null?((gain>0?"+":"")+kgText(gain)):"Chưa đủ dữ liệu",entry.pregnancy_type==="multiple"?"Song thai / đa thai":"Đơn thai"];
+  vals.forEach(v=>{const td=document.createElement("td");td.textContent=v;tr.append(td);});body.append(tr);
+ });
+ if(!entries.length){const tr=document.createElement("tr"),td=document.createElement("td");td.colSpan=4;td.textContent="Chưa có dữ liệu cân nặng của mẹ.";tr.append(td);body.append(tr);}
+}
+function renderMaternalWeightAdvice(entries=[]) {
+ const box=$("maternalWeightAdvice");if(!box)return;
+ box.replaceChildren();
+ const heading=document.createElement("h3");heading.textContent="Tư vấn tăng cân";box.append(heading);
+ const weight=Number($("maternalWeightKg").value),date=$("maternalWeightDate").value||todayLocal(),type=$("maternalPregnancyType").value;
+ const prep=Number(profile?.pre_pregnancy_weight_kg),bmi=prePregnancyBmi(profile?.pre_pregnancy_weight_kg,profile?.height_cm);
+ const g=profile?.due_date?gestationAt(profile.due_date,date):null;
+ const p=text=>{const el=document.createElement("p");el.textContent=text;box.append(el);return el;};
+ if(!Number.isFinite(weight)||weight<20||weight>300){p("Nhập cân nặng hiện tại từ 20 đến 300 kg để xem tư vấn.");return;}
+ if(profile?.pre_pregnancy_weight_kg==null||profile?.height_cm==null||!bmi){p("Hồ sơ chưa có đủ cân nặng trước mang thai và chiều cao. Hãy liên hệ phòng khám để cập nhật BMI ban đầu; cân nặng đã nhập vẫn có thể được lưu.");return;}
+ if(!g||g.invalid){p("Chưa tính được tuổi thai cho ngày cân này. Vui lòng kiểm tra ngày dự sinh trong hồ sơ với phòng khám.");return;}
+ const gained=weight-prep;
+ const line=document.createElement("p");line.innerHTML="BMI trước mang thai: <strong>"+bmi.value.toLocaleString("vi-VN",{minimumFractionDigits:1,maximumFractionDigits:1})+"</strong> · Tăng cân từ đầu thai kỳ: <strong>"+(gained>=0?"+":"")+kgText(gained)+"</strong>.";box.append(line);
+ p("Tuổi thai tại ngày cân: "+g.weeks+" tuần "+g.days+" ngày.");
+ if(type==="multiple"){p("Bạn chọn song thai/đa thai. Không áp dụng mức tăng cân đơn thai bên dưới; mục tiêu tăng cân cần được bác sĩ xác định riêng theo loại thai và tình trạng mẹ, thai.");return;}
+ const guidance=pregnancyWeightGainGuidance(bmi,g.weeks);
+ p("Nhóm BMI dùng cho khuyến cáo tăng cân: "+guidance.category+".");
+ p("Mục tiêu tham khảo cho cả thai kỳ đơn thai: tăng khoảng "+kgText(guidance.total[0])+"–"+kgText(guidance.total[1])+".");
+ const min=guidance.current[0],max=guidance.current[1];
+ p("Ước tính tăng cân tích lũy tham khảo đến "+g.weeks+" tuần: khoảng "+kgText(min)+"–"+kgText(max)+". Đây là khoảng ước tính theo tốc độ trung bình từ tam cá nguyệt II, không phải ngưỡng chẩn đoán.");
+ if(gained<min-0.5)p("Nhận xét tham khảo: mức tăng hiện tại thấp hơn khoảng ước tính. Hãy trao đổi với bác sĩ khi khám; không tự ép tăng cân hoặc thay đổi chế độ ăn quá mức.");
+ else if(gained>max+0.5)p("Nhận xét tham khảo: mức tăng hiện tại cao hơn khoảng ước tính. Cân nhắc trao đổi với bác sĩ để đánh giá xu hướng cân nặng và phù, không tự ăn kiêng khi mang thai.");
+ else p("Nhận xét tham khảo: mức tăng hiện tại nằm trong khoảng ước tính. Tiếp tục theo dõi xu hướng cân nặng và khám thai định kỳ.");
+ p("Khuyến cáo này áp dụng cho thai kỳ đơn thai và là công cụ tham khảo; cần cá thể hóa theo tình trạng sức khỏe và đánh giá lâm sàng.");
+}
+$("maternalWeightKg")?.addEventListener("input",()=>renderMaternalWeightAdvice());
+$("maternalWeightDate")?.addEventListener("change",()=>renderMaternalWeightAdvice());
+$("maternalPregnancyType")?.addEventListener("change",()=>renderMaternalWeightAdvice());
+$("maternalWeightForm")?.addEventListener("submit",async e=>{
+ e.preventDefault();fail("maternalWeightMessage","");
+ const weight=Number($("maternalWeightKg").value),measured_on=$("maternalWeightDate").value||todayLocal(),pregnancy_type=$("maternalPregnancyType").value;
+ if(!Number.isFinite(weight)||weight<20||weight>300){fail("maternalWeightMessage","Cân nặng phải từ 20 đến 300 kg.");return;}
+ if(measured_on>todayLocal()){fail("maternalWeightMessage","Ngày cân không thể ở tương lai.");return;}
+ const button=$("saveMaternalWeight");button.disabled=true;const old=button.textContent;button.textContent="Đang lưu…";
+ const {error}=await db.from("patient_weight_entries").upsert({patient_user_id:user.id,measured_on,weight_kg:weight,pregnancy_type,updated_at:new Date().toISOString()},{onConflict:"patient_user_id,measured_on"});
+ button.disabled=false;button.textContent=old;
+ if(error){console.error("Không lưu được cân nặng:",error);fail("maternalWeightMessage","Chưa lưu được cân nặng. Vui lòng thử lại.");return;}
+ fail("maternalWeightMessage","Đã lưu cân nặng ngày "+dateVi(measured_on)+". Tư vấn đã được cập nhật.");
+ await loadMaternalWeightEntries();
+});
+
 async function loadPatient() {
  await loadWeeklyClinicSchedule();
   $("patientName").textContent = profile.display_name || profile.username;
@@ -169,6 +243,7 @@ async function loadPatient() {
   if (error) { toast("Không tải được lịch sử khám."); return; }
   records = data || [];
   await renderFollowUpReminder(records);
+  await loadMaternalWeightEntries();
   const today=todayLocal(); const futureFollowUps=records.filter(r=>r.follow_up_date&&r.follow_up_date>=today).sort((a,b)=>a.follow_up_date.localeCompare(b.follow_up_date)); const nextFollowUp=futureFollowUps[0]; const followEl=$("patientNextFollowUp"); followEl.textContent=nextFollowUp?dateVi(nextFollowUp.follow_up_date)+(futureFollowUps.length>1?" (ngày hẹn gần nhất)":""):"Chưa có lịch hẹn tái khám được cập nhật."; followEl.classList.toggle("hasFollowUp",!!nextFollowUp);
   const latest = [...records].sort((a,b) => b.scan_date.localeCompare(a.scan_date))[0];
   $("lastVisit").textContent = latest ? dateVi(latest.scan_date) : "—";
