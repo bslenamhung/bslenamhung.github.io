@@ -637,7 +637,7 @@ async function renderAdminQaMessages(id){
 async function openAdminQaConversation(id){activeAdminQaConversation=id;await renderAdminQaMessages(id);await loadAdminQaThreads(false);}
 $("refreshAdminQa")?.addEventListener("click",()=>loadAdminQaThreads(true));
 $("adminQaForm")?.addEventListener("submit",async e=>{e.preventDefault();if(user?.app_metadata?.role!=="admin"||!activeAdminQaConversation){$("adminQaReplyStatus").textContent="Chọn một cuộc trò chuyện trước.";return;}const body=$("adminQaInput").value.trim();if(!body||body.length>6000)return;const c=await db.from("patient_ai_conversations").select("patient_user_id").eq("id",activeAdminQaConversation).single();if(c.error||!c.data){$("adminQaReplyStatus").textContent="Không tìm thấy hội thoại.";return;}const btn=$("adminQaSend");btn.disabled=true;btn.textContent="Đang gửi…";const r=await db.from("patient_ai_messages").insert({conversation_id:activeAdminQaConversation,patient_user_id:c.data.patient_user_id,sender_role:"doctor",body});btn.disabled=false;btn.textContent="Gửi trả lời";if(r.error){$("adminQaReplyStatus").textContent="Chưa gửi được câu trả lời. Vui lòng thử lại.";return;}$("adminQaInput").value="";$("adminQaReplyStatus").textContent="Đã gửi câu trả lời cho bệnh nhân.";await renderAdminQaMessages(activeAdminQaConversation);await loadAdminQaThreads(false);});
-$("refreshAdminQa")?.addEventListener("click",()=>loadAdminQaThreads(true));
+
 
 document.querySelectorAll(".logout").forEach(b=>b.addEventListener("click", async()=>{await db.auth.signOut();user=null;profile=null;records=[];selectedPatient=null;view("loginView");$("password").value="";}));
 (async()=>{const {data}=await db.auth.getSession();if(data.session){user=data.session.user;await routeUser();}})();
