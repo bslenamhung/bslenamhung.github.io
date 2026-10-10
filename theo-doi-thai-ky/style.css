@@ -57,3 +57,16 @@
 /* Patient can remove an incorrectly entered maternal-weight history row. */
 .maternalWeightDeleteButton{white-space:nowrap;padding:7px 11px!important;min-width:58px;border-radius:8px;font-size:13px;font-weight:700;}
 .maternalWeightPanel #maternalWeightRows td:last-child{width:1%;white-space:nowrap;}
+
+/* Compact patient profile: retain a readable two-column layout on phones. */
+@media(max-width:720px){
+ .profileGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .profileGrid>div{min-width:0;padding:10px 9px;background:#fcf8fa;border:1px solid #f0e7ec;border-radius:10px}
+ .profileGrid small{font-size:11px;line-height:1.35;margin-bottom:4px}
+ .profileGrid strong{font-size:13px;line-height:1.45;overflow-wrap:anywhere;word-break:normal}
+ .profileGrid>div:has(#patientProfileName),
+ .profileGrid>div:has(#patientProfileAddress),
+ .profileGrid>div:has(#patientProfileHistory),
+ .profileGrid>div:has(#patientProfileUltrasoundAbnormalities){grid-column:1/-1}
+ .profileGrid>div:has(#patientProfileBMI){grid-column:1/-1}
+}
