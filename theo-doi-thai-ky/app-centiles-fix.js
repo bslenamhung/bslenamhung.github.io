@@ -326,16 +326,45 @@ async function loadSelectedPatient() {
   let files = [];
   try { files = await attachmentsFor((tests || []).map(t=>t.id)); } catch { toast("Không tải được danh sách tệp xét nghiệm."); }
   (tests || []).forEach(t => {
-    const line = document.createElement("div"); line.className = "adminTestFileLine";
-    line.append(document.createTextNode(dateVi(t.test_date)+" · Phiếu xét nghiệm"));
+    const line = document.createElement("div"); line.className = "adminTestFileLine editableTestHistory";
+    const details=document.createElement("div"); details.className="adminTestDetails";
+    const heading=document.createElement("strong"); heading.textContent=dateVi(t.test_date)+" · "+(t.test_name||"Phiếu xét nghiệm"); details.append(heading);
     const related = files.filter(f=>f.test_record_id===t.id);
     related.forEach(f=>{
-      line.append(document.createElement("br"));
-      if (f.mime_type.startsWith("image/")) {
-        const img=document.createElement("img"); img.src=f.signedUrl; img.alt="Ảnh phiếu xét nghiệm"; img.loading="lazy"; img.className="adminTestThumb"; line.append(img);
-      } else if (f.mime_type === "application/pdf") { const frame=document.createElement("iframe"); frame.src=f.signedUrl; frame.title="Phiếu xét nghiệm PDF"; frame.className="adminTestPdfPreview"; line.append(frame); line.append(makeLink(f.signedUrl,f.file_name,f.mime_type)); } else line.append(makeLink(f.signedUrl,f.file_name,f.mime_type));
+      if (f.mime_type.startsWith("image/")) { const img=document.createElement("img"); img.src=f.signedUrl; img.alt="Ảnh phiếu xét nghiệm"; img.loading="lazy"; img.className="adminTestThumb"; details.append(img); }
+      if (f.mime_type === "application/pdf") { const frame=document.createElement("iframe"); frame.src=f.signedUrl; frame.title="Phiếu xét nghiệm PDF"; frame.className="adminTestPdfPreview"; details.append(frame); }
+      details.append(makeLink(f.signedUrl,f.file_name,f.mime_type));
     });
-    $("adminTestHistory").append(line);
+    const actions=document.createElement("div");actions.className="adminTestActions";
+    const edit=document.createElement("button");edit.type="button";edit.className="secondary";edit.textContent="Sửa thông tin";
+    edit.addEventListener("click",async()=>{
+      const dateText=window.prompt("Sửa ngày xét nghiệm (dd/mm/yyyy):",isoToDateVi(t.test_date));
+      if(dateText===null)return;
+      const testDate=dueDateIso(dateText.trim());
+      if(!testDate){toast("Ngày xét nghiệm không hợp lệ. Hãy nhập dd/mm/yyyy.");return;}
+      const testName=window.prompt("Sửa tên xét nghiệm:",t.test_name||"Phiếu xét nghiệm");
+      if(testName===null)return;
+      if(!testName.trim()){toast("Tên xét nghiệm không được để trống.");return;}
+      const {error}=await db.from("patient_test_records").update({test_date:testDate,test_name:testName.trim().slice(0,160)}).eq("id",t.id).eq("patient_user_id",selectedPatient);
+      if(error){toast("Không sửa được xét nghiệm: "+error.message);return;}
+      await loadSelectedPatient();toast("Đã cập nhật thông tin xét nghiệm.");
+    });
+    const del=document.createElement("button");del.type="button";del.className="dangerButton";del.textContent="Xóa";
+    del.addEventListener("click",async()=>{
+      if(!window.confirm("Bạn có chắc muốn xóa xét nghiệm ngày "+dateVi(t.test_date)+" và toàn bộ tệp đính kèm của lần này? Thao tác không thể hoàn tác."))return;
+      del.disabled=true;del.textContent="Đang xóa…";
+      try{
+        const {data:att,error:attErr}=await db.from("patient_test_attachments").select("id,storage_path").eq("test_record_id",t.id).eq("patient_user_id",selectedPatient);
+        if(attErr)throw attErr;
+        const paths=(att||[]).map(a=>a.storage_path);
+        if(paths.length){const {error:storageErr}=await db.storage.from("patient-lab-files").remove(paths);if(storageErr)throw storageErr;}
+        if((att||[]).length){const {error:metaErr}=await db.from("patient_test_attachments").delete().eq("test_record_id",t.id).eq("patient_user_id",selectedPatient);if(metaErr)throw metaErr;}
+        const {error:recordErr}=await db.from("patient_test_records").delete().eq("id",t.id).eq("patient_user_id",selectedPatient);
+        if(recordErr)throw recordErr;
+        await loadSelectedPatient();toast("Đã xóa xét nghiệm và các tệp đính kèm.");
+      }catch(err){console.error("Delete test record failed",err);toast("Chưa xóa hoàn toàn được xét nghiệm: "+(err?.message||"Lỗi không xác định")+". Vui lòng kiểm tra lại.");del.disabled=false;del.textContent="Xóa";}
+    });
+    actions.append(edit,del);line.append(details,actions);$("adminTestHistory").append(line);
   });
   if (!(tests || []).length) addHistoryLine($("adminTestHistory"),"Chưa có phiếu xét nghiệm được cập nhật.");
 }
