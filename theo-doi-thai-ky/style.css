@@ -116,3 +116,12 @@
  .stats article.pink strong{font-size:17px;line-height:1.35}
  .stats article small+strong+small{margin-top:3px}
 }
+
+/* Slightly stronger highlight for patient history and ultrasound notes. */
+@media(max-width:720px){
+ .profileGrid>div:has(#patientProfileHistory),
+ .profileGrid>div:has(#patientProfileUltrasoundAbnormalities){
+   background:#f5eaf0;
+   border-color:#e6cbd8;
+ }
+}
