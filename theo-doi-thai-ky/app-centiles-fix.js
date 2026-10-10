@@ -611,7 +611,7 @@ $("patientQaForm")?.addEventListener("submit",async e=>{
   const m=await db.from("patient_ai_messages").insert({conversation_id:id,patient_user_id:user.id,sender_role:"patient",body}).select("id").single();if(m.error||!m.data)throw m.error||new Error("Không lưu được câu hỏi");
   input.value="";$("patientQaStatus").textContent="Đã lưu câu hỏi. Đang tìm thông tin trong bài viết phòng khám…";await renderPatientQaMessages(id);await loadPatientQaThreads(false);
   const sess=await db.auth.getSession();const result=await db.functions.invoke("patient-ai-answer",{body:{conversation_id:id,message_id:m.data.id},headers:{Authorization:"Bearer "+sess.data.session.access_token}});
-  $("patientQaStatus").textContent=result.error||result.data?.error?(result.data?.error||"Câu hỏi đã được lưu để bác sĩ xem. Trợ lý AI chưa trả lời được."): "Đã có phản hồi tự động. Bác sĩ cũng có thể xem và trả lời câu hỏi này.";
+  $("patientQaStatus").textContent=(result.error||result.data?.error)?"Câu hỏi đã được lưu để bác sĩ xem. Trợ lý AI chưa trả lời được lúc này.":"Đã có phản hồi tự động. Bác sĩ cũng có thể xem và trả lời câu hỏi này.";
   await renderPatientQaMessages(id);await loadPatientQaThreads(false);
  }catch(err){console.error("Patient Q&A send failed",err);$("patientQaStatus").textContent="Chưa gửi được câu hỏi. Vui lòng thử lại.";}
  finally{btn.disabled=false;btn.textContent="Gửi câu hỏi";}
