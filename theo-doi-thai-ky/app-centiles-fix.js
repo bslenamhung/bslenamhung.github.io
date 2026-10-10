@@ -6,6 +6,14 @@ const $ = id => document.getElementById(id);
 let user = null, profile = null, records = [], selectedPatient = null, patientDirectory = [];
 const emailFor = username => username.trim().toLowerCase() + "@patients.bs-hung.invalid";
 const fmt = n => new Intl.NumberFormat("vi-VN", { maximumFractionDigits: 0 }).format(n);
+function prePregnancyBmi(weightKg,heightCm) {
+ const w=Number(weightKg),h=Number(heightCm);
+ if(weightKg===null||weightKg===undefined||weightKg===""||heightCm===null||heightCm===undefined||heightCm===""||!Number.isFinite(w)||!Number.isFinite(h)||w<=0||h<=0)return null;
+ const value=w/Math.pow(h/100,2);
+ if(!Number.isFinite(value))return null;
+ const category=value<18.5?"thiếu cân":value<23?"bình thường":value<25?"thừa cân":"béo phì";
+ return {value,category,text:value.toLocaleString("vi-VN",{minimumFractionDigits:1,maximumFractionDigits:1})+" kg/m² ("+category+" theo ngưỡng tham khảo châu Á)"};
+}
 const ga = r => r.ga_days ? r.ga_weeks + " tuần " + r.ga_days + " ngày" : r.ga_weeks + " tuần";
 const dateVi = s => s ? new Date(s + "T12:00:00").toLocaleDateString("vi-VN") : "—";
 function gestationAt(dueDate,onDate) {
@@ -152,6 +160,8 @@ async function loadPatient() {
   $("patientProfileHistory").textContent = profile.medical_history || "Chưa cập nhật";
   $("patientProfilePreWeight").textContent = profile.pre_pregnancy_weight_kg != null ? String(profile.pre_pregnancy_weight_kg).replace(".", ",") + " kg" : "Chưa cập nhật";
   $("patientProfileHeight").textContent = profile.height_cm != null ? String(profile.height_cm).replace(".", ",") + " cm" : "Chưa cập nhật";
+  const patientBmi=prePregnancyBmi(profile.pre_pregnancy_weight_kg,profile.height_cm);
+  $("patientProfileBMI").textContent=patientBmi?patientBmi.text:"Chưa đủ dữ liệu cân nặng và chiều cao trước mang thai";
   $("patientProfileUltrasoundAbnormalities").textContent = profile.ultrasound_abnormalities || "Chưa cập nhật";
   $("patientProfileDueDate").textContent = profile.due_date ? dateVi(profile.due_date) : "Chưa cập nhật";
   $("patientProfileGestation").textContent = profile.due_date ? gestationText(gestationAt(profile.due_date,todayLocal())) : "Chưa cập nhật";
@@ -217,7 +227,7 @@ async function loadSelectedPatient() {
   if (!selectedPatient) return;
   const { data: p, error: pError } = await db.from("profiles").select("username,display_name,phone,address,para,medical_history,pre_pregnancy_weight_kg,height_cm,ultrasound_abnormalities,due_date,date_of_birth").eq("user_id",selectedPatient).single();
   if (pError) { toast("Không tải được thông tin bệnh nhân."); return; }
-  [["Họ tên",p.display_name],["Ngày sinh",p.date_of_birth?dateVi(p.date_of_birth):null],["Tên đăng nhập",p.username],["Số điện thoại",p.phone],["Địa chỉ",p.address],["PARA",p.para],["Tiền sử bệnh",p.medical_history],["Cân nặng trước mang thai",p.pre_pregnancy_weight_kg!=null?String(p.pre_pregnancy_weight_kg).replace(".",",")+" kg":null],["Chiều cao",p.height_cm!=null?String(p.height_cm).replace(".",",")+" cm":null],["Bất thường trên siêu âm",p.ultrasound_abnormalities],["Ngày dự sinh",p.due_date?dateVi(p.due_date):null],["Tuổi thai theo ngày khám",p.due_date?gestationText(gestationAt(p.due_date,dueDateIso($("scanDate").value)||todayLocal())):null]].forEach(([label,value])=>{
+  [["Họ tên",p.display_name],["Ngày sinh",p.date_of_birth?dateVi(p.date_of_birth):null],["Tên đăng nhập",p.username],["Số điện thoại",p.phone],["Địa chỉ",p.address],["PARA",p.para],["Tiền sử bệnh",p.medical_history],["Cân nặng trước mang thai",p.pre_pregnancy_weight_kg!=null?String(p.pre_pregnancy_weight_kg).replace(".",",")+" kg":null],["Chiều cao",p.height_cm!=null?String(p.height_cm).replace(".",",")+" cm":null],["BMI trước mang thai",prePregnancyBmi(p.pre_pregnancy_weight_kg,p.height_cm)?.text||"Chưa đủ dữ liệu cân nặng và chiều cao trước mang thai"],["Bất thường trên siêu âm",p.ultrasound_abnormalities],["Ngày dự sinh",p.due_date?dateVi(p.due_date):null],["Tuổi thai theo ngày khám",p.due_date?gestationText(gestationAt(p.due_date,dueDateIso($("scanDate").value)||todayLocal())):null]].forEach(([label,value])=>{
     const line=document.createElement("div"); const strong=document.createElement("strong"); strong.textContent=label+": "; line.append(strong,document.createTextNode(value || "Chưa cập nhật")); $("adminPatientProfile").append(line);
   });
   $("editPatientName").value=p.display_name||""; $("editPatientDob").value=isoToDateVi(p.date_of_birth); $("editPatientPhone").value=p.phone||""; $("editPatientAddress").value=p.address||"";
