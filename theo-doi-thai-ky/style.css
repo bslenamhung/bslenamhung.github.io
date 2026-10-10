@@ -125,3 +125,17 @@
    border-color:#e6cbd8;
  }
 }
+
+/* Tighter patient dashboard spacing on phones. */
+@media(max-width:720px){
+ main{padding-top:12px;padding-bottom:22px}
+ #patientView>.head{margin:0 0 10px;gap:8px}
+ #patientView>.head h1{margin:4px 0 0;font-size:clamp(24px,6vw,32px);line-height:1.2}
+ #patientView>.head .eyebrow{font-size:10px}
+ #patientView>.panel{margin:9px 0;padding:13px 12px;border-radius:13px}
+ #patientView>.panel h2{font-size:17px;line-height:1.35;margin:0 0 9px}
+ #patientView .chart{margin-top:9px;min-height:150px}
+ #patientView .chart canvas{max-height:none}
+ #patientView .note{margin-top:7px;line-height:1.45}
+ #patientView .stats{margin:9px 0}
+}
