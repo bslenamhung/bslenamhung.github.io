@@ -91,25 +91,22 @@ async function routeUser() {
   else { view("patientView"); await loadPatient(); await loadPatientQaThreads(false); }
 }
 async function loadWeeklyClinicSchedule(){
- const hours=$("patientClinicHours"),img=$("patientWeeklyScheduleImage"),imgLink=$("patientScheduleImageLink"),empty=$("patientScheduleEmpty"),updated=$("patientScheduleUpdated");
- if(hours)hours.textContent="Đang tải thời gian khám…";
+ const panel=$("weeklyPatientSchedulePanel"),img=$("patientWeeklyScheduleImage"),imgLink=$("patientScheduleImageLink");
+ if(!panel||!img||!imgLink)return;
+ panel.hidden=true;imgLink.hidden=true;
  try{
   const response=await fetch("../data.json?refresh="+Date.now(),{cache:"no-store"});
-  if(!response.ok)throw new Error("Không tải được lịch phòng khám");
+  if(!response.ok)throw new Error("Không tải được ảnh lịch phòng khám");
   const data=await response.json(),clinic=data?.clinic||{};
-  if(hours)hours.textContent=clinic.hours||"Vui lòng liên hệ phòng khám để xác nhận thời gian khám.";
   const src=typeof clinic.weeklyScheduleImage==="string"?clinic.weeklyScheduleImage.trim():"";
-  if(src){
-   img.src=src+(src.includes("?")?"&":"?")+"refresh="+Date.now();
-   imgLink.href="https://bslenamhung.github.io/#weeklyScheduleWrap";
-   imgLink.hidden=false;empty.hidden=true;
-   img.onerror=()=>{imgLink.hidden=true;empty.hidden=false;};
-  }else{img.removeAttribute("src");imgLink.hidden=true;empty.hidden=false;}
-  if(updated)updated.textContent="Lịch được tải từ website phòng khám lúc "+new Date().toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit"})+".";
+  if(!src){img.removeAttribute("src");return;}
+  img.onerror=()=>{panel.hidden=true;imgLink.hidden=true;};
+  img.onload=()=>{panel.hidden=false;imgLink.hidden=false;};
+  img.src=src+(src.includes("?")?"&":"?")+"refresh="+Date.now();
+  imgLink.href="https://bslenamhung.github.io/#weeklyScheduleWrap";
  }catch(error){
-  if(hours)hours.textContent="Chưa tải được thời gian khám. Bác sĩ vui lòng mở website phòng khám để xem lịch mới nhất.";
-  imgLink.hidden=true;empty.hidden=false;
-  if(updated)updated.textContent="Không thể đồng bộ lúc này. Hãy thử nút Cập nhật lịch hoặc mở website phòng khám.";
+  panel.hidden=true;imgLink.hidden=true;
+  console.error("Không tải được ảnh lịch khám tuần này:",error);
  }
 }
 async function renderFollowUpReminder(patientRecords) {
@@ -466,7 +463,7 @@ $("newPatientName").addEventListener("input",()=>{const el=$("newPatientName");c
  if(value && !/^[0-9]*$/.test(value)){ $("newPatientPara").value=""; toast("PARA chỉ được nhập 4 chữ số. Vui lòng nhập lại."); return; }
  if(value.length>4){ $("newPatientPara").value=""; toast("PARA chỉ được nhập đúng 4 chữ số. Vui lòng nhập lại."); }
 });
-$("refreshWeeklySchedule").addEventListener("click",loadWeeklyClinicSchedule);
+const refreshScheduleButton=$("refreshWeeklySchedule");if(refreshScheduleButton)refreshScheduleButton.addEventListener("click",loadWeeklyClinicSchedule);
 initDateCalendar("newPatientDueDate"); initDateCalendar("scanDate"); initDateCalendar("followUpDate"); initDateCalendar("editPatientDueDate"); $("scanDate").value=isoToDateVi(todayLocal()); $("scanDate").addEventListener("change",refreshRecordGestation);
 
 const newPasswordInput=$("newPassword"),toggleNewPassword=$("toggleNewPassword");
