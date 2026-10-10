@@ -316,9 +316,9 @@ async function loadSelectedPatient() {
     const line=document.createElement("div"); line.className="editableFetalHistory";
     const details=document.createElement("span");
     details.textContent=dateVi(r.scan_date)+(r.follow_up_date?" · Hẹn tái khám: "+dateVi(r.follow_up_date):"")+" · "+ga(r)+" · "+(r.efw_grams==null?"Chưa nhập EFW":fmt(r.efw_grams)+" g")+(r.note?" · "+r.note:"");
-    const edit=document.createElement("button"); edit.type="button"; edit.className="secondary editFetalRecordButton"; edit.textContent="Sửa";
-    edit.addEventListener("click",()=>startEditFetalRecord(r));
-    line.append(details,edit); $("adminPatientHistory").append(line);
+    const del=document.createElement("button"); del.type="button"; del.className="secondary deleteFetalRecordButton"; del.textContent="Xóa";
+    del.addEventListener("click",()=>deleteFetalRecord(r));
+    line.append(details,del); $("adminPatientHistory").append(line);
   }); drawChart(data || [], "adminWeightChart", "adminWeightChartEmpty");
   if (!(data || []).length) addHistoryLine($("adminPatientHistory"),"Chưa có số đo được cập nhật.");
   const { data: tests, error: testError } = await db.from("patient_test_records").select("id,test_date,test_name").eq("patient_user_id", selectedPatient).order("test_date", {ascending:false});
@@ -505,6 +505,17 @@ $("createPatientForm").addEventListener("submit", async e => {
   fail("createMessage", "Đã tạo tài khoản " + username + ". Tuổi thai hôm nay: " + gestationText(newGa) + ". Hãy trao mật khẩu riêng cho bệnh nhân.");
   $("createPatientForm").reset(); $("newPatientGestation").textContent="Nhập ngày dự sinh để tự tính tuổi thai."; await loadPatients();
 });
+async function deleteFetalRecord(r) {
+  if (user?.app_metadata?.role !== "admin" || !selectedPatient || !r?.id) {
+    fail("recordMessage","Bạn cần đăng nhập bằng tài khoản bác sĩ và chọn đúng bệnh nhân."); return;
+  }
+  const ok=window.confirm("Xóa lần khám ngày "+dateVi(r.scan_date)+(r.efw_grams!=null?" · EFW "+fmt(r.efw_grams)+" g":"")+"? Dữ liệu này sẽ bị xóa khỏi lịch sử và biểu đồ của bệnh nhân. Không thể hoàn tác.");
+  if(!ok)return;
+  const {error}=await db.from("fetal_weight_records").delete().eq("id",r.id).eq("patient_user_id",selectedPatient);
+  if(error){fail("recordMessage","Không xóa được lần khám: "+error.message);return;}
+  fail("recordMessage","Đã xóa lần khám ngày "+dateVi(r.scan_date)+".");
+  await loadSelectedPatient();
+}
 function startEditFetalRecord(r) {
   editingFetalRecordId=r.id;
   $("scanDate").value=isoToDateVi(r.scan_date);
