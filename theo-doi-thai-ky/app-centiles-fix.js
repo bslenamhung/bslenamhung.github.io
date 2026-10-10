@@ -642,6 +642,13 @@ async function renderPatientQaMessages(id){
  $("patientQaChat").hidden=false;$("patientQaMessages").scrollTop=$("patientQaMessages").scrollHeight;
 }
 async function openPatientQaConversation(id){activePatientQaConversation=id;await loadPatientQaThreads(false);await renderPatientQaMessages(id);}
+$("floatingPatientQaButton")?.addEventListener("click",()=>{
+  const panel=$("patientQaPanel");
+  if(!panel)return;
+  panel.scrollIntoView({behavior:"smooth",block:"start"});
+  panel.setAttribute("tabindex","-1");
+  panel.focus({preventScroll:true});
+});
 $("newQaConversation")?.addEventListener("click",()=>{activePatientQaConversation=null;$("patientQaSubject").textContent="Câu hỏi mới";$("patientQaMessages").replaceChildren();$("patientQaChat").hidden=false;$("patientQaInput").value="";$("patientQaStatus").textContent="";$("patientQaInput").focus();});
 $("patientQaForm")?.addEventListener("submit",async e=>{
  e.preventDefault();const input=$("patientQaInput"),body=input.value.trim();if(!body||body.length>6000)return;const btn=$("patientQaSend");btn.disabled=true;btn.textContent="Đang gửi…";$("patientQaStatus").textContent="";
