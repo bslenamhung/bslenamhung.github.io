@@ -1066,10 +1066,19 @@ body:has(#patientView:not([hidden])) #loginView,
 body:has(#adminView:not([hidden])) #loginView{
   display:none!important;
 }
-body:has(#loginView[hidden]) #floatingPatientQaButton,
 body:has(#patientView:not([hidden])) #loginView .loginFooterReal,
 body:has(#adminView:not([hidden])) #loginView .loginFooterReal{
   display:none!important;
+}
+/* The AI launcher is hidden by its HTML [hidden] attribute on the login page,
+   then shown by view() after a successful patient/admin login. Do not hide it
+   merely because the login view itself is hidden. */
+body:has(#patientView:not([hidden])) #floatingPatientQaButton:not([hidden]),
+body:has(#adminView:not([hidden])) #floatingPatientQaButton:not([hidden]){
+  display:flex!important;
+  visibility:visible!important;
+  opacity:1!important;
+  pointer-events:auto!important;
 }
 
 
