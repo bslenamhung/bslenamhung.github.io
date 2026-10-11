@@ -1097,3 +1097,57 @@ body:has(#adminView:not([hidden])) #loginView .loginFooterReal{
     height:16px!important;
   }
 }
+
+
+/* Login button: match the user's reference image; keep this change scoped to the button only. */
+#loginView.loginExperience .loginSubmitReal{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:14px!important;
+  width:100%!important;
+  min-height:62px!important;
+  padding:12px 20px!important;
+  border:0!important;
+  border-radius:18px!important;
+  background:linear-gradient(105deg,#d73582 0%,#df3b87 100%)!important;
+  color:#fff!important;
+  font-family:'Be Vietnam Pro',Arial,sans-serif!important;
+  font-size:19px!important;
+  font-weight:800!important;
+  line-height:1.2!important;
+  box-shadow:0 5px 12px rgba(188,42,110,.12)!important;
+}
+#loginView.loginExperience .loginSubmitReal .loginSubmitIcon{
+  display:block!important;
+  flex:0 0 30px!important;
+  width:30px!important;
+  height:30px!important;
+  fill:none!important;
+  stroke:currentColor!important;
+  stroke-width:3.2!important;
+  stroke-linecap:round!important;
+  stroke-linejoin:round!important;
+}
+#loginView.loginExperience .loginSubmitReal .loginSubmitLabel{
+  font-size:19px!important;
+  font-weight:800!important;
+  line-height:1.2!important;
+}
+@media(max-width:650px){
+  #loginView.loginExperience .loginSubmitReal{
+    min-height:56px!important;
+    padding:11px 14px!important;
+    border-radius:16px!important;
+    gap:12px!important;
+    font-size:17px!important;
+  }
+  #loginView.loginExperience .loginSubmitReal .loginSubmitIcon{
+    flex-basis:28px!important;
+    width:28px!important;
+    height:28px!important;
+  }
+  #loginView.loginExperience .loginSubmitReal .loginSubmitLabel{
+    font-size:17px!important;
+  }
+}
