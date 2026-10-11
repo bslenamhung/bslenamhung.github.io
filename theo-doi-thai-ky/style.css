@@ -1451,3 +1451,41 @@ body:has(#adminView:not([hidden])) #loginView .loginFooterReal{
     mask-composite:intersect!important;
   }
 }
+
+
+/* Mother portrait framing v16: scale the full image down and shift it right,
+   so the face and the complete pregnancy belly remain visible while fading into the background. */
+#loginView.loginExperience .loginHeroMother{
+  right:-1%!important;
+  bottom:-1%!important;
+  width:45%!important;
+  height:103%!important;
+  object-fit:contain!important;
+  object-position:right bottom!important;
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0%, rgba(0,0,0,.12) 8%, rgba(0,0,0,.55) 23%, #000 43%, #000 100%),
+    linear-gradient(to bottom, transparent 0%, #000 12%, #000 90%, transparent 100%)!important;
+  -webkit-mask-composite:source-in!important;
+  mask-image:
+    linear-gradient(to right, transparent 0%, rgba(0,0,0,.12) 8%, rgba(0,0,0,.55) 23%, #000 43%, #000 100%),
+    linear-gradient(to bottom, transparent 0%, #000 12%, #000 90%, transparent 100%)!important;
+  mask-composite:intersect!important;
+}
+@media(max-width:650px){
+  #loginView.loginExperience .loginHeroMother{
+    right:-1%!important;
+    bottom:0!important;
+    width:48%!important;
+    height:100%!important;
+    object-fit:contain!important;
+    object-position:right bottom!important;
+    -webkit-mask-image:
+      linear-gradient(to right, transparent 0%, rgba(0,0,0,.12) 8%, rgba(0,0,0,.55) 23%, #000 43%, #000 100%),
+      linear-gradient(to bottom, transparent 0%, #000 10%, #000 90%, transparent 100%)!important;
+    -webkit-mask-composite:source-in!important;
+    mask-image:
+      linear-gradient(to right, transparent 0%, rgba(0,0,0,.12) 8%, rgba(0,0,0,.55) 23%, #000 43%, #000 100%),
+      linear-gradient(to bottom, transparent 0%, #000 10%, #000 90%, transparent 100%)!important;
+    mask-composite:intersect!important;
+  }
+}
