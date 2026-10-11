@@ -7,7 +7,7 @@
 <link rel="icon" type="image/jpeg" href="https://bslenamhung.github.io/clinic-logo.jpg?v=3">
 <link rel="shortcut icon" type="image/jpeg" href="https://bslenamhung.github.io/clinic-logo.jpg?v=3">
 <link rel="apple-touch-icon" href="https://bslenamhung.github.io/clinic-logo.jpg?v=3">
-<link rel="stylesheet" href="style.css?v=20261011followup-before-schedule">
+<link rel="stylesheet" href="style.css?v=20261011qa-after-schedule">
 </head>
 <body>
 <header><img class="logo" src="https://bslenamhung.github.io/clinic-logo.jpg?v=3" alt="Logo Phòng khám chuyên khoa Phụ sản BS Hùng"><div><strong>PHÒNG KHÁM CHUYÊN KHOA PHỤ SẢN BS HÙNG</strong><small>Đồng hành cùng mẹ trong thai kỳ</small></div></header>
@@ -40,7 +40,10 @@
  <section class="panel"><div class="head"><div><h2>Biểu đồ cân nặng thai nhi</h2><small class="muted">Chuẩn INTERGROWTH-21st · bách phân vị P3, P10, P50, P90, P97</small></div></div><div class="chart"><canvas id="weightChart" width="1000" height="420"></canvas><div id="chartEmpty" class="empty">Chưa có lần khám nào được cập nhật.</div></div><p class="note">Các đường P3, P10, P50, P90 và P97 là đường tham chiếu cân nặng ước tính theo tuổi thai của INTERGROWTH-21st (22–40 tuần); các chấm đậm là số đo của bệnh nhân. Đây là công cụ hỗ trợ theo dõi, không thay thế đánh giá lâm sàng.</p></section>
  <section class="panel"><h2>Lịch sử khám và cân nặng thai nhi</h2><div class="scroll"><table><thead><tr><th>Ngày khám</th><th>Ngày hẹn tái khám</th><th>Tuổi thai</th><th>EFW</th><th>Ghi chú</th></tr></thead><tbody id="patientRows"></tbody></table></div></section>
  <section class="panel"><h2>Phiếu xét nghiệm</h2><p class="muted">Ảnh phiếu xét nghiệm sẽ hiển thị trực tiếp bên dưới.</p><div id="patientTestGallery" class="testGallery"></div><p id="patientTestsEmpty" class="emptyInline">Chưa có phiếu xét nghiệm được cập nhật.</p><p class="note">Tệp được lưu riêng tư; chỉ bệnh nhân thuộc hồ sơ đó và bác sĩ quản trị được quyền xem.</p></section>
- <section id="patientQaPanel" class="panel qaPanel">
+ 
+ <section class="panel followUpPanel"><h2>Lịch hẹn tái khám</h2><p id="patientNextFollowUp" class="nextFollowUpValue">Chưa có lịch hẹn tái khám được cập nhật.</p><p class="muted">Ngày hẹn do phòng khám cập nhật sau mỗi lần khám.</p></section>
+<section class="panel weeklyPatientSchedule" id="weeklyPatientSchedulePanel" aria-label="Lịch khám tuần này"><a id="patientScheduleImageLink" href="https://bslenamhung.github.io/#weeklyScheduleWrap" target="_blank" rel="noopener noreferrer" class="patientScheduleImageLink"><img id="patientWeeklyScheduleImage" alt="Ảnh lịch khám hàng tuần của Phòng khám chuyên khoa Phụ sản BS Hùng" loading="lazy"></a></section>
+<section id="patientQaPanel" class="panel qaPanel">
   <div class="head"><div><h2>Hỏi đáp cùng trợ lý AI BS Hùng</h2><p class="muted">AI ưu tiên bài viết trên website phòng khám. Bác sĩ có thể đọc và trả lời câu hỏi của bạn trong cổng này.</p></div><button id="newQaConversation" type="button" class="primary">Đặt câu hỏi mới</button></div>
   <p class="note">Không dùng kênh này cho tình huống cấp cứu. AI chỉ hỗ trợ thông tin, không thay thế khám và tư vấn trực tiếp.</p>
   <div class="qaLayout"><div><h3>Cuộc trò chuyện của tôi</h3><div id="patientQaThreads" class="qaThreadList"><p class="muted">Đang tải hội thoại…</p></div></div>
@@ -48,8 +51,6 @@
    <form id="patientQaForm" class="qaComposer"><label for="patientQaInput">Câu hỏi của bạn</label><textarea id="patientQaInput" rows="3" maxlength="6000" required placeholder="Nhập câu hỏi về thai kỳ…"></textarea><button id="patientQaSend" type="submit" class="primary">Gửi câu hỏi</button><p id="patientQaStatus" class="message" role="status"></p></form>
   </div></div>
  </section>
- <section class="panel followUpPanel"><h2>Lịch hẹn tái khám</h2><p id="patientNextFollowUp" class="nextFollowUpValue">Chưa có lịch hẹn tái khám được cập nhật.</p><p class="muted">Ngày hẹn do phòng khám cập nhật sau mỗi lần khám.</p></section>
-<section class="panel weeklyPatientSchedule" id="weeklyPatientSchedulePanel" aria-label="Lịch khám tuần này"><a id="patientScheduleImageLink" href="https://bslenamhung.github.io/#weeklyScheduleWrap" target="_blank" rel="noopener noreferrer" class="patientScheduleImageLink"><img id="patientWeeklyScheduleImage" alt="Ảnh lịch khám hàng tuần của Phòng khám chuyên khoa Phụ sản BS Hùng" loading="lazy"></a></section>
 <nav class="patientQuickNav" aria-label="Liên kết phòng khám"><a href="https://bslenamhung.github.io/" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">⌂</span> Trang web phòng khám BS Hùng <span aria-hidden="true">↗</span></a></nav>
 </section>
  <button id="floatingPatientQaButton" type="button" class="floatingPatientQaButton" aria-label="Mở trợ lý hỏi đáp AI">
