@@ -645,3 +645,73 @@ body:has(#loginView:not([hidden])) main{
   .referencePosterForm .posterPassword{font-size:clamp(10px,2.7vw,13px)}
   .referencePosterForm .posterRemember input:checked::after{border-left-width:2px;border-bottom-width:2px}
 }
+
+
+/* Login clarity fix v8: keep the reference artwork but make real fields clean and legible. */
+body:has(#loginView:not([hidden])) #floatingPatientQaButton{
+  display:none!important;
+  visibility:hidden!important;
+  opacity:0!important;
+  pointer-events:none!important;
+}
+body:has(#loginView:not([hidden])) main,
+#loginView.exactReferenceLogin,
+.referencePosterFrame{
+  width:100%!important;
+  max-width:620px!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
+.referencePosterImage{
+  width:100%!important;
+  height:auto!important;
+  image-rendering:auto;
+  filter:contrast(1.025) saturate(1.015);
+}
+.referencePosterForm .posterUsername,
+.referencePosterForm .posterPassword{
+  left:20.1%!important;
+  width:62.7%!important;
+  height:2.9%!important;
+  padding:0 7px!important;
+  border:0!important;
+  border-radius:4px!important;
+  background:#fff!important;
+  box-shadow:none!important;
+  color:#51465b!important;
+  font-family:Arial,sans-serif!important;
+  font-size:clamp(11px,1.8vw,15px)!important;
+  line-height:1.2!important;
+  opacity:1!important;
+  -webkit-text-fill-color:#51465b!important;
+  caret-color:#a52d64!important;
+}
+.referencePosterForm .posterUsername{top:60.05%!important}
+.referencePosterForm .posterPassword{top:66.45%!important}
+.referencePosterForm .posterUsername::placeholder,
+.referencePosterForm .posterPassword::placeholder{
+  color:#8c8790!important;
+  opacity:1!important;
+  -webkit-text-fill-color:#8c8790!important;
+}
+.referencePosterForm .posterUsername:-webkit-autofill,
+.referencePosterForm .posterPassword:-webkit-autofill,
+.referencePosterForm .posterUsername:-webkit-autofill:hover,
+.referencePosterForm .posterPassword:-webkit-autofill:hover,
+.referencePosterForm .posterUsername:-webkit-autofill:focus,
+.referencePosterForm .posterPassword:-webkit-autofill:focus{
+  -webkit-box-shadow:0 0 0 1000px #fff inset!important;
+  -webkit-text-fill-color:#51465b!important;
+  caret-color:#a52d64!important;
+}
+@media(max-width:500px){
+  body:has(#loginView:not([hidden])) main,
+  #loginView.exactReferenceLogin,
+  .referencePosterFrame{max-width:100%!important}
+  .referencePosterForm .posterUsername,
+  .referencePosterForm .posterPassword{
+    font-size:clamp(11px,3.1vw,13px)!important;
+    padding-left:5px!important;
+    padding-right:5px!important;
+  }
+}
