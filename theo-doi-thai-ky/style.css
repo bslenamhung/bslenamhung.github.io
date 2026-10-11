@@ -1367,3 +1367,41 @@ body:has(#adminView:not([hidden])) #loginView .loginFooterReal{
     mask-image:radial-gradient(ellipse 66% 75% at 57% 50%,#000 18%,rgba(0,0,0,.9) 37%,rgba(0,0,0,.58) 57%,rgba(0,0,0,.24) 75%,transparent 100%)!important;
   }
 }
+
+
+/* Blend the maternity photo into the hero instead of showing a narrow rectangular cutout. */
+#loginView.loginExperience .loginHeroReal{
+  background:
+    radial-gradient(ellipse at 80% 48%, rgba(250,220,234,.72) 0%, rgba(255,244,249,.35) 40%, rgba(255,247,250,0) 72%);
+}
+#loginView.loginExperience .loginHeroMother{
+  position:absolute!important;
+  z-index:0!important;
+  right:-6%!important;
+  bottom:-8%!important;
+  width:53%!important;
+  height:120%!important;
+  object-fit:cover!important;
+  object-position:50% 35%!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  opacity:.98!important;
+  -webkit-mask-image:radial-gradient(ellipse 70% 74% at 61% 47%, #000 34%, rgba(0,0,0,.92) 48%, rgba(0,0,0,.62) 62%, rgba(0,0,0,.2) 77%, transparent 91%)!important;
+  mask-image:radial-gradient(ellipse 70% 74% at 61% 47%, #000 34%, rgba(0,0,0,.92) 48%, rgba(0,0,0,.62) 62%, rgba(0,0,0,.2) 77%, transparent 91%)!important;
+}
+@media(max-width:650px){
+  #loginView.loginExperience .loginHeroReal{
+    background:radial-gradient(ellipse at 83% 48%, rgba(250,220,234,.62) 0%, rgba(255,244,249,.25) 46%, rgba(255,247,250,0) 75%)!important;
+  }
+  #loginView.loginExperience .loginHeroMother{
+    right:-10%!important;
+    bottom:-4%!important;
+    width:56%!important;
+    height:112%!important;
+    object-position:50% 35%!important;
+    -webkit-mask-image:radial-gradient(ellipse 73% 76% at 60% 48%, #000 27%, rgba(0,0,0,.9) 44%, rgba(0,0,0,.58) 60%, rgba(0,0,0,.18) 76%, transparent 91%)!important;
+    mask-image:radial-gradient(ellipse 73% 76% at 60% 48%, #000 27%, rgba(0,0,0,.9) 44%, rgba(0,0,0,.58) 60%, rgba(0,0,0,.18) 76%, transparent 91%)!important;
+  }
+}
