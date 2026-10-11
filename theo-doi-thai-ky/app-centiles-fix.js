@@ -27,6 +27,18 @@ const todayLocal=()=>{const n=new Date();return new Date(n.getTime()-n.getTimezo
 const gestationText=g=>g&&!g.invalid?g.weeks+" tuần "+g.days+" ngày":"Không tính được tuổi thai (kiểm tra ngày dự sinh)";
 const allowedTypes = ["application/pdf","image/jpeg","image/png","image/webp","application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
 const maxFileBytes = 10 * 1024 * 1024;
+function effectiveTestMimeType(file) {
+  const known = new Map([
+    ["pdf","application/pdf"],["jpg","image/jpeg"],["jpeg","image/jpeg"],["png","image/png"],
+    ["webp","image/webp"],["doc","application/msword"],
+    ["docx","application/vnd.openxmlformats-officedocument.wordprocessingml.document"]
+  ]);
+  const ext = (file?.name || "").split(".").pop()?.toLowerCase() || "";
+  const fromExtension = known.get(ext);
+  if (file?.type && allowedTypes.includes(file.type)) return file.type;
+  if ((!file?.type || file.type === "application/octet-stream") && fromExtension) return fromExtension;
+  return "";
+}
 function view(id) { ["loginView","patientView","adminView"].forEach(k => $(k).hidden = k !== id); const qaButton=$("floatingPatientQaButton"); if(qaButton) qaButton.hidden = !["patientView","adminView"].includes(id); }
 function toast(msg) { $("globalMessage").textContent = msg; $("globalMessage").hidden = false; }
 function fail(el, msg) { $(el).textContent = msg; }
@@ -541,25 +553,42 @@ $("testForm").addEventListener("submit", async e => {
   if (user?.app_metadata?.role !== "admin" || !selectedPatient) { fail("testMessage", "Hãy chọn bệnh nhân trước khi tải phiếu xét nghiệm."); return; }
   const file = $("testFile").files?.[0];
   if (!file) { fail("testMessage", "Vui lòng chọn một tệp."); return; }
-  if (!allowedTypes.includes(file.type)) { fail("testMessage", "Chỉ nhận ảnh JPG, PNG, WEBP, PDF, DOC hoặc DOCX."); return; }
-  if (file.size < 1 || file.size > maxFileBytes) { fail("testMessage", "Tệp phải nhỏ hơn hoặc bằng 10 MB."); return; }
-  const row = { patient_user_id:selectedPatient, created_by:user.id, test_date:new Date().toISOString().slice(0,10), test_name:"Phiếu xét nghiệm" };
-  const { data: test, error } = await db.from("patient_test_records").insert(row).select("id").single();
-  if (error || !test) { fail("testMessage", "Không tạo được phiếu xét nghiệm: " + (error?.message || "Lỗi không xác định")); return; }
-  const safeName = file.name.normalize("NFKD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-zA-Z0-9._-]/g,"_").slice(-100) || "phieu-xet-nghiem";
-  const path = selectedPatient + "/" + test.id + "/" + crypto.randomUUID() + "_" + safeName;
-  const { error: uploadError } = await db.storage.from("patient-lab-files").upload(path, file, { contentType:file.type, upsert:false });
-  if (uploadError) { fail("testMessage", "Không tải được tệp lên: " + uploadError.message); return; }
-  const { error: metaError } = await db.from("patient_test_attachments").insert({
-    test_record_id:test.id, patient_user_id:selectedPatient, created_by:user.id,
-    storage_path:path, file_name:file.name, mime_type:file.type, size_bytes:file.size
-  });
-  if (metaError) {
-    await db.storage.from("patient-lab-files").remove([path]);
-    fail("testMessage", "Tệp đã tải lên nhưng không lưu được thông tin. Vui lòng thử lại."); return;
+  const mimeType = effectiveTestMimeType(file);
+  if (!mimeType) { fail("testMessage", "Không xác định được định dạng tệp. Vui lòng chọn JPG, PNG, WEBP, PDF, DOC hoặc DOCX."); return; }
+  if (file.size < 1 || file.size > maxFileBytes) { fail("testMessage", "Tệp phải lớn hơn 0 và không vượt quá 10 MB."); return; }
+  const submitButton = $("testForm").querySelector('button[type="submit"],button:not([type])');
+  if (submitButton) { submitButton.disabled = true; submitButton.textContent = "Đang tải lên…"; }
+  let testId = null, storagePath = null;
+  try {
+    const row = { patient_user_id:selectedPatient, created_by:user.id, test_date:new Date().toISOString().slice(0,10), test_name:"Phiếu xét nghiệm" };
+    const { data: test, error } = await db.from("patient_test_records").insert(row).select("id").single();
+    if (error || !test) throw new Error("Không tạo được phiếu xét nghiệm: " + (error?.message || "Lỗi không xác định"));
+    testId = test.id;
+    const safeName = file.name.normalize("NFKD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-zA-Z0-9._-]/g,"_").slice(-100) || "phieu-xet-nghiem";
+    storagePath = selectedPatient + "/" + test.id + "/" + crypto.randomUUID() + "_" + safeName;
+    const { error: uploadError } = await db.storage.from("patient-lab-files").upload(storagePath, file, { contentType:mimeType, upsert:false });
+    if (uploadError) throw new Error("Không tải được tệp lên: " + uploadError.message);
+    const { error: metaError } = await db.from("patient_test_attachments").insert({
+      test_record_id:test.id, patient_user_id:selectedPatient, created_by:user.id,
+      storage_path:storagePath, file_name:file.name, mime_type:mimeType, size_bytes:file.size
+    });
+    if (metaError) throw new Error("Không lưu được thông tin tệp: " + metaError.message);
+    $("testForm").reset(); await loadSelectedPatient();
+    fail("testMessage", "Đã tải phiếu xét nghiệm lên thành công.");
+  } catch (err) {
+    console.error("Upload phiếu xét nghiệm thất bại:", err);
+    if (storagePath) {
+      const { error: removeError } = await db.storage.from("patient-lab-files").remove([storagePath]);
+      if (removeError) console.error("Không dọn được tệp tải dở:", removeError);
+    }
+    if (testId !== null) {
+      const { error: cleanupError } = await db.from("patient_test_records").delete().eq("id",testId).eq("patient_user_id",selectedPatient);
+      if (cleanupError) console.error("Không dọn được bản ghi xét nghiệm trống:", cleanupError);
+    }
+    fail("testMessage", err?.message || "Tải tệp thất bại. Vui lòng thử lại.");
+  } finally {
+    if (submitButton) { submitButton.disabled = false; submitButton.textContent = "Tải phiếu xét nghiệm"; }
   }
-  $("testForm").reset(); await loadSelectedPatient();
-  fail("testMessage", "Đã tải phiếu xét nghiệm lên thành công.");
 });
 function intergrowthEfwCentile(ga, percentile) {
   // INTERGROWTH-21st EFW standard, Stirnemann et al., UOG 2017; GA 22–40 weeks.
