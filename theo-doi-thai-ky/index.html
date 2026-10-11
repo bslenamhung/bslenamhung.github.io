@@ -12,29 +12,18 @@
 <body>
 <header class="clinicHeader"><img class="logo" src="https://bslenamhung.github.io/theo-doi-thai-ky/clinic-logo-bs-hung.jpg?v=20261011-official-logo" alt="Logo Phòng khám chuyên khoa Phụ sản Ths.BSNT Lê Nam Hùng"><div><strong>PHÒNG KHÁM CHUYÊN KHOA PHỤ SẢN</strong><b>Ths.BSNT Lê Nam Hùng</b><small>Đồng hành cùng mẹ trong thai kỳ</small></div></header>
 <main>
-<section id="loginView" class="login loginRedesign exactPortal">
-  <div class="loginHero">
-    <div class="heroCopy">
-      <span class="eyebrow">CỔNG THÔNG TIN THAI KỲ</span>
-      <h1>Theo dõi hành trình<br class="desktopBreak"> lớn lên của con</h1>
-      <p>Lưu giữ từng cột mốc, đồng hành cùng mẹ<br class="desktopBreak"> cho một thai kỳ an toàn và khỏe mạnh.</p>
-    </div>
-    <div class="heroArt"><img class="motherReference" src="mother-reference-clean.webp?v=20261011" alt="" aria-hidden="true" loading="eager"></div>
+<section id="loginView" class="exactReferenceLogin">
+  <div class="referencePosterFrame">
+    <img class="referencePosterImage" src="portal-reference.webp?v=20261011-exact" alt="Giao diện cổng thông tin thai kỳ BS Hùng" fetchpriority="high">
+    <form id="loginForm" class="referencePosterForm" autocomplete="on">
+      <input id="username" class="posterUsername" type="text" required autocomplete="username" aria-label="Email bác sĩ hoặc tên đăng nhập bệnh nhân" placeholder="Email bác sĩ hoặc tên đăng nhập bệnh nhân">
+      <input id="password" class="posterPassword" type="password" required autocomplete="current-password" aria-label="Mật khẩu" placeholder="Mật khẩu">
+      <button id="togglePassword" class="posterTogglePassword" type="button" aria-label="Hiện hoặc ẩn mật khẩu"></button>
+      <label class="posterRemember" aria-label="Ghi nhớ tên đăng nhập trên thiết bị này"><input id="rememberLogin" type="checkbox" checked></label>
+      <button class="posterSubmit" type="submit" aria-label="Đăng nhập"></button>
+      <p id="loginError" class="posterLoginError" role="alert"></p>
+    </form>
   </div>
-  <div class="portalFeatureGrid" aria-label="Các tiện ích của cổng thông tin thai kỳ">
-    <div class="portalFeatureCard"><span class="portalFeatureIcon calendarIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 2v6M17 2v6M3 10h18M8 14h2M14 14h2M8 17h2"/></svg></span><strong>Thông tin<br>thai kỳ</strong></div>
-    <div class="portalFeatureCard"><span class="portalFeatureIcon babyIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-8-4.5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 6.5-8 11-8 11z"/><circle cx="12" cy="11" r="2.4"/></svg></span><strong>Kết quả<br>xét nghiệm</strong></div>
-    <div class="portalFeatureCard"><span class="portalFeatureIcon chartIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 20h18M5 17v-5h4v5M11 17V8h4v9M17 17V4h4v13M4 8l5-4 4 2 6-4"/></svg></span><strong>Theo dõi<br>tăng cân mẹ bầu</strong></div>
-    <div class="portalFeatureCard"><span class="portalFeatureIcon listIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><strong>Tài liệu<br>hữu ích</strong></div>
-  </div>
-  <form id="loginForm" class="panel loginPanel">
-    <h2>Đăng nhập</h2>
-    <label class="pixelField usernameField" for="username"><span class="fieldIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="7.5" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></svg></span><input id="username" required autocomplete="username" placeholder="Email bác sĩ hoặc tên đăng nhập bệnh nhân" aria-label="Email bác sĩ hoặc tên đăng nhập bệnh nhân"></label>
-    <label class="pixelField passwordField" for="password"><span class="fieldIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="12" rx="2"/><path d="M7 10V7a5 5 0 0 1 10 0v3M12 14v4"/></svg></span><input id="password" type="password" required autocomplete="current-password" placeholder="Mật khẩu" aria-label="Mật khẩu"><button id="togglePassword" class="togglePassword" type="button" aria-label="Hiện mật khẩu" title="Hiện/ẩn mật khẩu"><svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M3 21 21 3"/></svg></button></label>
-    <label class="rememberLogin"><input id="rememberLogin" type="checkbox" checked><span>Ghi nhớ tên đăng nhập trên thiết bị này</span></label>
-    <button class="primary loginSubmit" type="submit">Đăng nhập <span aria-hidden="true">⟶</span></button>
-    <p id="loginError" class="error" role="alert"></p>
-  </form>
 </section>
 <section id="patientView" hidden>
 
@@ -112,7 +101,7 @@
 </section>
 <div id="globalMessage" class="toast" hidden role="status"></div>
 </main><footer><strong>Phòng khám chuyên khoa phụ sản Ths.BSNT Lê Nam Hùng</strong><span>Điều trị bằng tri thức, chăm sóc từ trái tim</span><small>Thông tin hỗ trợ theo dõi, không thay thế đánh giá của bác sĩ.</small></footer>
-<script type="module" src="app-centiles-fix.js?v=20261011-exact-reference-v6"></script></body></html><div class="portalFeatureGrid" aria-label="Các tiện ích của cổng thông tin thai kỳ">
+<script type="module" src="app-centiles-fix.js?v=20261011-pixel-reference-v7"></script></body></html><div class="portalFeatureGrid" aria-label="Các tiện ích của cổng thông tin thai kỳ">
     <div class="portalFeatureCard"><span class="portalFeatureIcon calendarIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 2v6M17 2v6M3 10h18M8 14h2M14 14h2M8 17h2"/></svg></span><strong>Thông tin<br>thai kỳ</strong></div>
     <div class="portalFeatureCard"><span class="portalFeatureIcon babyIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-8-4.5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 6.5-8 11-8 11z"/><circle cx="12" cy="11" r="2.4"/></svg></span><strong>Kết quả<br>xét nghiệm</strong></div>
     <div class="portalFeatureCard"><span class="portalFeatureIcon chartIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 20h18M5 17v-5h4v5M11 17V8h4v9M17 17V4h4v13M4 8l5-4 4 2 6-4"/></svg></span><strong>Theo dõi<br>tăng cân mẹ bầu</strong></div>
