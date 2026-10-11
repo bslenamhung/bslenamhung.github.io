@@ -727,20 +727,18 @@ $("adminQaForm")?.addEventListener("submit",async e=>{e.preventDefault();if(user
 document.querySelectorAll(".logout").forEach(button=>button.addEventListener("click",async()=>{
  if(button.disabled)return;
  button.disabled=true;
- const originalText=button.textContent;
  button.textContent="Đang đăng xuất…";
- try{
+ try {
   const {error}=await db.auth.signOut({scope:"local"});
   if(error)console.error("Logout signOut error",error);
- }catch(error){console.error("Logout failed",error);}
- finally{
+ } catch(error) {
+  console.error("Logout failed",error);
+ } finally {
   user=null;profile=null;records=[];selectedPatient=null;patientDirectory=[];
-  document.querySelectorAll(".logout").forEach(b=>{b.disabled=false;b.textContent=originalText;});
-  view("loginView");
-  const password=$("password");if(password)password.value="";
-  const loginError=$("loginError");if(loginError)loginError.textContent="Bạn đã thoát khỏi phiên làm việc. Vui lòng đăng nhập lại khi cần.";
-  window.scrollTo({top:0,behavior:"auto"});
+  // Reloading the portal forces a fresh session check and prevents stale admin/patient views.
+  window.location.replace("index.html?refresh=logoutfix20261011");
  }
 }));
+
 (async()=>{const {data}=await db.auth.getSession();if(data.session){user=data.session.user;await routeUser();}})();
 setInterval(()=>{if(user?.app_metadata?.role==="admin"&&!$("adminView").hidden)loadAdminQaThreads(true);},30000);
