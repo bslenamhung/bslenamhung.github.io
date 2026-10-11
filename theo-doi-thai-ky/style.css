@@ -1181,3 +1181,62 @@ body:has(#adminView:not([hidden])) #loginView .loginFooterReal{
     padding-top:12px!important;
   }
 }
+
+
+/* Integrate the maternity illustration naturally; never crop its body or belly. */
+#loginView.loginExperience .loginHeroReal{
+  isolation:isolate!important;
+  overflow:hidden!important;
+}
+#loginView.loginExperience .loginHeroMother{
+  width:38%!important;
+  height:100%!important;
+  max-height:100%!important;
+  right:0!important;
+  top:0!important;
+  bottom:0!important;
+  object-fit:contain!important;
+  object-position:center bottom!important;
+  mix-blend-mode:multiply!important;
+  opacity:.98!important;
+  mask-image:linear-gradient(to right,transparent 0%,rgba(0,0,0,.22) 9%,rgba(0,0,0,.9) 24%,#000 38%)!important;
+  -webkit-mask-image:linear-gradient(to right,transparent 0%,rgba(0,0,0,.22) 9%,rgba(0,0,0,.9) 24%,#000 38%)!important;
+}
+@media(max-width:650px){
+  #loginView.loginExperience .loginHeroReal{
+    min-height:clamp(270px,72vw,315px)!important;
+    height:auto!important;
+    padding:18px 2px 20px!important;
+  }
+  #loginView.loginExperience .loginHeroCopy{
+    width:68%!important;
+    max-width:68%!important;
+  }
+  #loginView.loginExperience .loginHeroMother{
+    width:43%!important;
+    height:100%!important;
+    max-height:100%!important;
+    right:-1%!important;
+    top:0!important;
+    bottom:0!important;
+    object-fit:contain!important;
+    object-position:center bottom!important;
+    mix-blend-mode:multiply!important;
+    opacity:.98!important;
+    mask-image:linear-gradient(to right,transparent 0%,rgba(0,0,0,.28) 10%,rgba(0,0,0,.92) 27%,#000 42%)!important;
+    -webkit-mask-image:linear-gradient(to right,transparent 0%,rgba(0,0,0,.28) 10%,rgba(0,0,0,.92) 27%,#000 42%)!important;
+  }
+}
+@media(max-width:390px){
+  #loginView.loginExperience .loginHeroReal{
+    min-height:270px!important;
+  }
+  #loginView.loginExperience .loginHeroCopy{
+    width:70%!important;
+    max-width:70%!important;
+  }
+  #loginView.loginExperience .loginHeroMother{
+    width:42%!important;
+    right:-1%!important;
+  }
+}
