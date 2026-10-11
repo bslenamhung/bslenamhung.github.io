@@ -7,7 +7,7 @@
 <link rel="icon" type="image/jpeg" href="https://bslenamhung.github.io/theo-doi-thai-ky/clinic-logo-bs-hung.jpg?v=20261011-official-logo">
 <link rel="shortcut icon" type="image/jpeg" href="https://bslenamhung.github.io/theo-doi-thai-ky/clinic-logo-bs-hung.jpg?v=20261011-official-logo">
 <link rel="apple-touch-icon" href="https://bslenamhung.github.io/theo-doi-thai-ky/clinic-logo-bs-hung.jpg?v=20261011-official-logo">
-<link rel="stylesheet" href="style.css?v=20261011-admin-due-date-reminders-bottom-v1">
+<link rel="stylesheet" href="style.css?v=20261011-admin-due-date-four-groups-v1">
 </head>
 <body>
 <header class="clinicHeader"><img class="logo" src="https://bslenamhung.github.io/theo-doi-thai-ky/clinic-logo-bs-hung.jpg?v=20261011-official-logo" alt="Logo Phòng khám chuyên khoa Phụ sản Ths.BSNT Lê Nam Hùng"><div><strong>PHÒNG KHÁM CHUYÊN KHOA PHỤ SẢN</strong><b>Ths.BSNT Lê Nam Hùng</b><small>Đồng hành cùng mẹ trong thai kỳ</small></div></header>
@@ -150,9 +150,10 @@
  <section class="panel"><h2>Tải phiếu xét nghiệm lên</h2><p class="muted">Chọn bệnh nhân phía trên, sau đó chọn một ảnh hoặc tệp của phiếu xét nghiệm.</p><form id="testForm" class="stack"><label class="fileField">Chọn ảnh hoặc tệp xét nghiệm<input id="testFile" type="file" accept="image/jpeg,image/png,image/webp,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required><small>Hỗ trợ JPG, PNG, WEBP, PDF, DOC và DOCX; tối đa 10 MB mỗi tệp.</small></label><button class="primary">Tải phiếu xét nghiệm</button><p id="testMessage" class="message" role="status"></p></form></section>
  <section id="adminDueDatePanel" class="panel dueReminderPanel">
   <div class="head dueReminderHead"><div><span class="eyebrow">THEO DÕI SẢN KHOA</span><h2>Nhắc ngày dự sinh</h2><p class="muted">Danh sách được cập nhật khi mở trang quản trị hoặc bấm Làm mới.</p></div><button id="refreshDueDateReminders" type="button" class="secondary">Làm mới</button></div>
-  <div class="dueReminderSummary">
-   <div class="dueSummaryCard today"><span>Đến ngày dự sinh hôm nay</span><strong id="adminDueTodayCount">0</strong></div>
-   <div class="dueSummaryCard soon"><span>Dự sinh trong 3 ngày tới</span><strong id="adminDueSoonCount">0</strong></div>
+  <div class="dueReminderSummary dueReminderSummaryFour">
+   <div class="dueSummaryCard week3"><span>Còn 3 tuần đến ngày sinh</span><small>37 tuần – 37 tuần 6 ngày</small><strong id="adminDueWeek3Count">0</strong></div>
+   <div class="dueSummaryCard week2"><span>Còn 2 tuần đến ngày sinh</span><small>38 tuần – 38 tuần 6 ngày</small><strong id="adminDueWeek2Count">0</strong></div>
+   <div class="dueSummaryCard birthweek"><span>Tuần sinh</span><small>39 – 40 tuần</small><strong id="adminDueBirthWeekCount">0</strong></div>
    <div class="dueSummaryCard overdue"><span>Quá ngày, chưa xác nhận sinh</span><strong id="adminOverdueCount">0</strong></div>
   </div>
   <p id="adminDueDateReminderStatus" class="message" role="status">Đang kiểm tra ngày dự sinh…</p>
@@ -161,4 +162,4 @@
 </section>
 <div id="globalMessage" class="toast" hidden role="status"></div>
 </main><footer><strong>Phòng khám chuyên khoa phụ sản Ths.BSNT Lê Nam Hùng</strong><span>Điều trị bằng tri thức, chăm sóc từ trái tim</span><small>Thông tin hỗ trợ theo dõi, không thay thế đánh giá của bác sĩ.</small></footer>
-<script type="module" src="app-centiles-fix.js?v=20261011-admin-due-date-reminders-bottom-v1"></script></body></html>
+<script type="module" src="app-centiles-fix.js?v=20261011-admin-due-date-four-groups-v1"></script></body></html>
