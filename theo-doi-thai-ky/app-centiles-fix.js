@@ -768,49 +768,65 @@ async function loadDueDateReminders(){
  if(error){status.textContent="Chưa tải được trạng thái theo dõi ngày dự sinh. Vui lòng tải lại trang hoặc thử nút Làm mới.";return;}
  const saved=new Map((followups||[]).map(r=>[r.patient_user_id,r]));
  const today=todayLocal();
- const plus3=new Date(Date.parse(today+"T00:00:00Z")+3*86400000).toISOString().slice(0,10);
  const pending=(patientDirectory||[])
-  .filter(p=>p.due_date&&p.due_date<=plus3&&(saved.get(p.user_id)?.birth_status!=="delivered"))
-  .map(p=>({...p,followup:saved.get(p.user_id)||{birth_status:"pending"}}))
+  .filter(p=>p.due_date&&(saved.get(p.user_id)?.birth_status!=="delivered"))
+  .map(p=>{
+   const diff=Math.round((Date.parse(p.due_date+"T00:00:00Z")-Date.parse(today+"T00:00:00Z"))/86400000);
+   return {...p,dueDiff:diff,followup:saved.get(p.user_id)||{birth_status:"pending"}};
+  })
+  .filter(p=>p.dueDiff<0||(p.dueDiff>=0&&p.dueDiff<=21))
   .sort((a,b)=>a.due_date.localeCompare(b.due_date));
- const dueToday=pending.filter(p=>p.due_date===today).length;
- const upcoming=pending.filter(p=>p.due_date>today).length;
- const overdue=pending.filter(p=>p.due_date<today).length;
- $("adminDueTodayCount").textContent=String(dueToday);
- $("adminDueSoonCount").textContent=String(upcoming);
- $("adminOverdueCount").textContent=String(overdue);
+ const groups=[
+  {key:"week3",title:"Còn 3 tuần đến ngày sinh",subtitle:"Thai 37 tuần đến 37 tuần 6 ngày",countId:"adminDueWeek3Count",items:pending.filter(p=>p.dueDiff>=15&&p.dueDiff<=21)},
+  {key:"week2",title:"Còn 2 tuần đến ngày sinh",subtitle:"Thai 38 tuần đến 38 tuần 6 ngày",countId:"adminDueWeek2Count",items:pending.filter(p=>p.dueDiff>=8&&p.dueDiff<=14)},
+  {key:"birthweek",title:"Tuần sinh",subtitle:"Thai 39 đến 40 tuần",countId:"adminDueBirthWeekCount",items:pending.filter(p=>p.dueDiff>=0&&p.dueDiff<=7)},
+  {key:"overdue",title:"Quá ngày, chưa xác nhận sinh",subtitle:"Ngày dự sinh đã qua",countId:"adminOverdueCount",items:pending.filter(p=>p.dueDiff<0)}
+ ];
+ groups.forEach(g=>$(g.countId).textContent=String(g.items.length));
  if(!pending.length){
-  const empty=document.createElement("p");empty.className="muted";empty.textContent="Hiện không có bệnh nhân nào đến ngày dự sinh trong 3 ngày tới hoặc đã quá ngày dự sinh cần xác nhận.";
+  const empty=document.createElement("p");empty.className="muted";empty.textContent="Hiện chưa có bệnh nhân trong giai đoạn thai 37 tuần trở lên cần theo dõi ngày dự sinh.";
   list.append(empty);status.textContent="Đã cập nhật lúc "+new Date().toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit"});return;
  }
- pending.forEach(p=>{
-  const diff=Math.round((Date.parse(p.due_date+"T00:00:00Z")-Date.parse(today+"T00:00:00Z"))/86400000);
-  const card=document.createElement("article");card.className="dueReminderItem";
-  const details=document.createElement("div");details.className="dueReminderDetails";
-  const name=document.createElement("strong");name.textContent=p.display_name||p.username||"Bệnh nhân";
-  const meta=document.createElement("p");meta.className="muted";
-  meta.textContent="Ngày dự sinh: "+dateVi(p.due_date)+(p.phone?" · SĐT: "+p.phone:"");
-  const urgency=document.createElement("span");urgency.className="dueReminderBadge "+(diff<0?"overdue":diff===0?"today":"soon");
-  urgency.textContent=diff<0?"Quá ngày dự sinh "+Math.abs(diff)+" ngày":diff===0?"Đến ngày dự sinh hôm nay":"Còn "+diff+" ngày đến dự sinh";
-  details.append(name,meta,urgency);
-  const controls=document.createElement("div");controls.className="dueReminderControls";
-  const label=document.createElement("label");label.textContent="Kết quả liên hệ";
-  const select=document.createElement("select");select.className="dueReminderStatusSelect";
-  [["pending","Chưa xác nhận"],["not_yet","Đã liên hệ – chưa sinh"],["delivered","Đã xác nhận sinh"]].forEach(([value,text])=>{const opt=document.createElement("option");opt.value=value;opt.textContent=text;select.append(opt);});
-  select.value=p.followup.birth_status||"pending";label.append(select);
-  const save=document.createElement("button");save.type="button";save.className="primary dueReminderSave";save.textContent="Lưu trạng thái";
-  save.addEventListener("click",async()=>{
-   save.disabled=true;save.textContent="Đang lưu…";
-   const payload={patient_user_id:p.user_id,birth_status:select.value,updated_by:user.id,updated_at:new Date().toISOString()};
-   const {error:saveError}=await db.from("patient_due_date_followups").upsert(payload,{onConflict:"patient_user_id"});
-   save.disabled=false;save.textContent="Lưu trạng thái";
-   if(saveError){status.textContent="Không lưu được trạng thái của "+(p.display_name||p.username)+". Vui lòng thử lại.";return;}
-   status.textContent="Đã lưu trạng thái của "+(p.display_name||p.username)+".";
-   await loadDueDateReminders();
+ groups.forEach(g=>{
+  const section=document.createElement("section");section.className="dueReminderGroup "+g.key;
+  const heading=document.createElement("div");heading.className="dueReminderGroupHead";
+  const title=document.createElement("h3");title.textContent=g.title;
+  const subtitle=document.createElement("p");subtitle.className="muted";subtitle.textContent=g.subtitle;
+  const count=document.createElement("span");count.className="dueReminderGroupCount";count.textContent=String(g.items.length);
+  heading.append(document.createElement("div"));heading.firstChild.append(title,subtitle);heading.append(count);section.append(heading);
+  if(!g.items.length){
+   const empty=document.createElement("p");empty.className="muted dueGroupEmpty";empty.textContent="Chưa có bệnh nhân trong nhóm này.";section.append(empty);
+  }
+  g.items.forEach(p=>{
+   const diff=p.dueDiff;
+   const card=document.createElement("article");card.className="dueReminderItem";
+   const details=document.createElement("div");details.className="dueReminderDetails";
+   const name=document.createElement("strong");name.textContent=p.display_name||p.username||"Bệnh nhân";
+   const meta=document.createElement("p");meta.className="muted";
+   meta.textContent="Ngày dự sinh: "+dateVi(p.due_date)+(p.phone?" · SĐT: "+p.phone:"");
+   const urgency=document.createElement("span");urgency.className="dueReminderBadge "+(diff<0?"overdue":diff<=7?"today":"soon");
+   urgency.textContent=diff<0?"Quá ngày dự sinh "+Math.abs(diff)+" ngày":diff===0?"Đến ngày dự sinh hôm nay":"Còn "+diff+" ngày đến dự sinh";
+   details.append(name,meta,urgency);
+   const controls=document.createElement("div");controls.className="dueReminderControls";
+   const label=document.createElement("label");label.textContent="Kết quả liên hệ";
+   const select=document.createElement("select");select.className="dueReminderStatusSelect";
+   [["pending","Chưa xác nhận"],["not_yet","Đã liên hệ – chưa sinh"],["delivered","Đã xác nhận sinh"]].forEach(([value,text])=>{const opt=document.createElement("option");opt.value=value;opt.textContent=text;select.append(opt);});
+   select.value=p.followup.birth_status||"pending";label.append(select);
+   const save=document.createElement("button");save.type="button";save.className="primary dueReminderSave";save.textContent="Lưu trạng thái";
+   save.addEventListener("click",async()=>{
+    save.disabled=true;save.textContent="Đang lưu…";
+    const payload={patient_user_id:p.user_id,birth_status:select.value,updated_by:user.id,updated_at:new Date().toISOString()};
+    const {error:saveError}=await db.from("patient_due_date_followups").upsert(payload,{onConflict:"patient_user_id"});
+    save.disabled=false;save.textContent="Lưu trạng thái";
+    if(saveError){status.textContent="Không lưu được trạng thái của "+(p.display_name||p.username)+". Vui lòng thử lại.";return;}
+    status.textContent="Đã lưu trạng thái của "+(p.display_name||p.username)+".";
+    await loadDueDateReminders();
+   });
+   controls.append(label,save);card.append(details,controls);section.append(card);
   });
-  controls.append(label,save);card.append(details,controls);list.append(card);
+  list.append(section);
  });
- status.textContent="Đã cập nhật lúc "+new Date().toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit"})+". Bệnh nhân đã xác nhận sinh sẽ không còn trong danh sách nhắc.";
+ status.textContent="Đã cập nhật lúc "+new Date().toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit"})+". Danh sách gồm thai 37 tuần trở lên; bệnh nhân đã xác nhận sinh sẽ không còn trong danh sách nhắc.";
 }
 
 $("refreshDueDateReminders")?.addEventListener("click",async()=>{await loadPatients();});
