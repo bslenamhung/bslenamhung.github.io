@@ -1489,3 +1489,41 @@ body:has(#adminView:not([hidden])) #loginView .loginFooterReal{
     mask-composite:intersect!important;
   }
 }
+
+
+/* Restore the previously approved mother image framing from the supplied mobile reference. */
+#loginView.loginExperience .loginHeroMother{
+  right:-6%!important;
+  bottom:-8%!important;
+  width:53%!important;
+  height:120%!important;
+  object-fit:cover!important;
+  object-position:50% 35%!important;
+  opacity:1!important;
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0%, rgba(0,0,0,.08) 5%, rgba(0,0,0,.55) 17%, #000 34%, #000 100%),
+    linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%)!important;
+  -webkit-mask-composite:source-in!important;
+  mask-image:
+    linear-gradient(to right, transparent 0%, rgba(0,0,0,.08) 5%, rgba(0,0,0,.55) 17%, #000 34%, #000 100%),
+    linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%)!important;
+  mask-composite:intersect!important;
+}
+@media(max-width:650px){
+  #loginView.loginExperience .loginHeroMother{
+    right:-10%!important;
+    bottom:-4%!important;
+    width:56%!important;
+    height:112%!important;
+    object-fit:cover!important;
+    object-position:50% 35%!important;
+    -webkit-mask-image:
+      linear-gradient(to right, transparent 0%, rgba(0,0,0,.08) 5%, rgba(0,0,0,.55) 17%, #000 34%, #000 100%),
+      linear-gradient(to bottom, transparent 0%, #000 12%, #000 86%, transparent 100%)!important;
+    -webkit-mask-composite:source-in!important;
+    mask-image:
+      linear-gradient(to right, transparent 0%, rgba(0,0,0,.08) 5%, rgba(0,0,0,.55) 17%, #000 34%, #000 100%),
+      linear-gradient(to bottom, transparent 0%, #000 12%, #000 86%, transparent 100%)!important;
+    mask-composite:intersect!important;
+  }
+}
