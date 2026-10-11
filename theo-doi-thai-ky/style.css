@@ -906,3 +906,145 @@ body:has(#loginView:not([hidden])) #loginView .loginFooterReal{display:flex!impo
     max-height:none!important;
   }
 }
+
+
+/* Login layout synchronization v11: consistent full-width desktop layout and balanced mobile layout. */
+body:has(#loginView:not([hidden])){
+  min-width:0!important;
+  width:100%!important;
+  overflow-x:hidden!important;
+  background:#fff7fa!important;
+}
+body:has(#loginView:not([hidden])) header.clinicHeader,
+body:has(#loginView:not([hidden])) > footer{
+  display:none!important;
+}
+body:has(#loginView:not([hidden])) main{
+  display:block!important;
+  width:100%!important;
+  max-width:1120px!important;
+  min-width:0!important;
+  margin:0 auto!important;
+  padding:0 28px!important;
+  box-sizing:border-box!important;
+}
+#loginView.loginExperience{
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  margin:0 auto!important;
+  padding:28px 0 0!important;
+  box-sizing:border-box!important;
+}
+.loginBrand{
+  width:100%!important;
+  max-width:100%!important;
+  justify-content:flex-start!important;
+  gap:20px!important;
+  margin:0 0 14px!important;
+  padding:0 12px!important;
+  box-sizing:border-box!important;
+}
+.loginBrandLogo{
+  width:clamp(88px,10vw,124px)!important;
+  height:clamp(88px,10vw,124px)!important;
+  flex:0 0 clamp(88px,10vw,124px)!important;
+}
+.loginBrandText strong,.loginBrandText b{
+  font-size:clamp(16px,1.8vw,23px)!important;
+  line-height:1.3!important;
+}
+.loginBrandText span{
+  font-size:clamp(13px,1.25vw,16px)!important;
+}
+.loginHeroReal{
+  width:100%!important;
+  min-height:clamp(300px,34vw,390px)!important;
+  padding:28px 12px 32px!important;
+  box-sizing:border-box!important;
+}
+.loginHeroCopy{width:69%!important;max-width:700px!important}
+.loginEyebrow{font-size:clamp(14px,1.4vw,18px)!important}
+.loginHeroReal h1{font-size:clamp(36px,4.2vw,56px)!important;line-height:1.1!important}
+.loginHeroDescription{font-size:clamp(16px,1.55vw,20px)!important}
+.loginHeroMother{width:39%!important;height:112%!important;right:-1%!important;bottom:-6%!important}
+.loginFeatureGrid{
+  display:grid!important;
+  width:100%!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:16px!important;
+  margin:0 0 24px!important;
+}
+.loginFeatureCard{
+  width:auto!important;
+  min-width:0!important;
+  min-height:145px!important;
+  font-size:clamp(14px,1.25vw,17px)!important;
+  padding:16px 8px!important;
+}
+.loginFeatureIcon{width:62px!important;height:62px!important}
+.loginCardReal{
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  margin:0 auto!important;
+  padding:30px clamp(22px,4vw,48px) 24px!important;
+  box-sizing:border-box!important;
+}
+.loginCardReal h2{font-size:clamp(30px,3vw,38px)!important}
+.loginFormReal{width:100%!important;max-width:100%!important}
+.loginFieldReal{width:100%!important;min-width:0!important;min-height:64px!important;box-sizing:border-box!important}
+.loginFieldReal input{font-size:16px!important;min-width:0!important}
+.loginSubmitReal{min-height:60px!important;font-size:18px!important}
+.loginFooterReal{
+  display:flex!important;
+  position:relative!important;
+  left:50%!important;
+  transform:translateX(-50%)!important;
+  width:100vw!important;
+  max-width:100vw!important;
+  margin:26px 0 0!important;
+  padding:48px 20px 28px!important;
+  box-sizing:border-box!important;
+  text-align:center!important;
+  align-items:center!important;
+}
+body:has(#loginView:not([hidden])) #floatingPatientQaButton{
+  display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;
+}
+@media(max-width:650px){
+  body:has(#loginView:not([hidden])) main{
+    width:100%!important;max-width:100%!important;padding:0 15px!important;
+  }
+  #loginView.loginExperience{padding-top:16px!important}
+  .loginBrand{gap:12px!important;padding:0 2px!important;margin-bottom:5px!important}
+  .loginBrandLogo{width:72px!important;height:72px!important;flex-basis:72px!important}
+  .loginBrandText strong,.loginBrandText b{font-size:clamp(12px,3.5vw,16px)!important;line-height:1.28!important}
+  .loginBrandText span{font-size:12px!important;margin-top:2px!important}
+  .loginHeroReal{min-height:clamp(215px,62vw,270px)!important;padding:18px 2px 20px!important}
+  .loginHeroCopy{width:78%!important}
+  .loginEyebrow{font-size:11px!important;letter-spacing:.05em!important;margin-bottom:9px!important}
+  .loginHeroReal h1{font-size:clamp(27px,7.2vw,38px)!important;margin-bottom:10px!important}
+  .loginHeroDescription{font-size:clamp(12px,3.5vw,15px)!important;line-height:1.4!important}
+  .loginHeroMother{width:43%!important;height:105%!important;right:-5%!important;bottom:-3%!important}
+  .desktopBreak{display:none!important}
+  .loginFeatureGrid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:7px!important;margin-bottom:15px!important}
+  .loginFeatureCard{min-height:104px!important;padding:9px 3px!important;border-radius:15px!important;gap:7px!important;font-size:clamp(9px,2.8vw,12px)!important;line-height:1.25!important}
+  .loginFeatureIcon{width:43px!important;height:43px!important}
+  .loginFeatureIcon svg{width:25px!important;height:25px!important}
+  .loginCardReal{padding:20px 14px 17px!important;border-radius:21px!important}
+  .loginCardReal h2{font-size:27px!important;margin-bottom:13px!important}
+  .loginFormReal{gap:10px!important}
+  .loginFieldReal{min-height:54px!important;padding:0 10px!important;gap:9px!important}
+  .loginFieldReal input{font-size:13px!important}
+  .loginPasswordToggle{flex-basis:30px!important;width:30px!important}
+  .loginRememberReal{font-size:11px!important;gap:8px!important}
+  .loginSubmitReal{min-height:52px!important;font-size:16px!important}
+  .loginSecurityReal{font-size:10px!important;gap:6px!important}
+  .loginFooterReal{margin-top:18px!important;padding:38px 14px 22px!important}
+  .loginFooterReal strong{font-size:12px!important}
+  .loginFooterReal span{font-size:12px!important}
+  .loginFooterReal small{font-size:10px!important}
+}
