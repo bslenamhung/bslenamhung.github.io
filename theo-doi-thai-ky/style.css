@@ -1567,3 +1567,26 @@ body:has(#adminView:not([hidden])) #loginView .loginFooterReal{
     mask-composite:intersect!important;
   }
 }
+
+
+/* Final targeted fix: preserve the currently approved portrait size and position;
+   soften all visible edges with a single radial mask (more reliable on mobile Safari). */
+#loginView.loginExperience .loginHeroMother{
+  -webkit-mask-image:radial-gradient(ellipse 76% 80% at 62% 49%,
+    #000 42%,rgba(0,0,0,.94) 54%,rgba(0,0,0,.70) 67%,rgba(0,0,0,.32) 82%,transparent 100%)!important;
+  mask-image:radial-gradient(ellipse 76% 80% at 62% 49%,
+    #000 42%,rgba(0,0,0,.94) 54%,rgba(0,0,0,.70) 67%,rgba(0,0,0,.32) 82%,transparent 100%)!important;
+  -webkit-mask-repeat:no-repeat!important;
+  mask-repeat:no-repeat!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+}
+@media(max-width:650px){
+  #loginView.loginExperience .loginHeroMother{
+    /* Keep the same mobile scale/position; only blend the photo edges. */
+    -webkit-mask-image:radial-gradient(ellipse 78% 82% at 62% 49%,
+      #000 43%,rgba(0,0,0,.94) 55%,rgba(0,0,0,.70) 68%,rgba(0,0,0,.32) 83%,transparent 100%)!important;
+    mask-image:radial-gradient(ellipse 78% 82% at 62% 49%,
+      #000 43%,rgba(0,0,0,.94) 55%,rgba(0,0,0,.70) 68%,rgba(0,0,0,.32) 83%,transparent 100%)!important;
+  }
+}
