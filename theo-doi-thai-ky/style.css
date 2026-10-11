@@ -139,3 +139,6 @@
  #patientView .note{margin-top:7px;line-height:1.45}
  #patientView .stats{margin:9px 0}
 }
+
+/* Ensure the floating AI button is genuinely hidden outside the patient portal view. */
+.floatingPatientQaButton[hidden]{display:none!important;}
