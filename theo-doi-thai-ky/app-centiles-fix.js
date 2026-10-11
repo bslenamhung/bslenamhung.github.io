@@ -725,18 +725,27 @@ $("adminQaForm")?.addEventListener("submit",async e=>{e.preventDefault();if(user
 
 
 document.querySelectorAll(".logout").forEach(button=>button.addEventListener("click",async()=>{
- if(button.disabled)return;
+ if(button.dataset.loggingOut==="true")return;
+ button.dataset.loggingOut="true";
  button.disabled=true;
  button.textContent="Đang đăng xuất…";
  try {
   const {error}=await db.auth.signOut({scope:"local"});
-  if(error)console.error("Logout signOut error",error);
+  if(error)console.error("Logout signOut error; clearing local session",error);
  } catch(error) {
-  console.error("Logout failed",error);
+  // Supabase may throw before clearing local storage if its logout request fails.
+  console.error("Logout request failed; clearing local session locally",error);
  } finally {
+  // Force-clear this project's persisted session even if the Auth request fails.
+  try {
+   const authStorageKey="sb-ckwhjyzomppsdplnkdeq-auth-token";
+   localStorage.removeItem(authStorageKey);
+   localStorage.removeItem(authStorageKey+"-code-verifier");
+  } catch(storageError) {
+   console.error("Could not clear Supabase local storage",storageError);
+  }
   user=null;profile=null;records=[];selectedPatient=null;patientDirectory=[];
-  // Reloading the portal forces a fresh session check and prevents stale admin/patient views.
-  window.location.replace("index.html?refresh=logoutfix20261011");
+  window.location.replace("index.html?refresh=logoutfix20261011b");
  }
 }));
 
