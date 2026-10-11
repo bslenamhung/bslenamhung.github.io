@@ -1590,3 +1590,46 @@ body:has(#adminView:not([hidden])) #loginView .loginFooterReal{
       #000 43%,rgba(0,0,0,.94) 55%,rgba(0,0,0,.70) 68%,rgba(0,0,0,.32) 83%,transparent 100%)!important;
   }
 }
+
+
+/* Restore the desired framing: smaller full portrait with a soft radial fade.
+   Do not zoom/crop the face or belly; only adjust the existing CSS image element. */
+#loginView.loginExperience .loginHeroReal{
+  overflow:hidden!important;
+}
+#loginView.loginExperience .loginHeroMother{
+  position:absolute!important;
+  z-index:0!important;
+  right:-6%!important;
+  bottom:-8%!important;
+  top:auto!important;
+  width:53%!important;
+  height:120%!important;
+  max-height:none!important;
+  object-fit:cover!important;
+  object-position:50% 35%!important;
+  opacity:.98!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  -webkit-mask-image:radial-gradient(ellipse 70% 74% at 61% 47%,
+    #000 34%,rgba(0,0,0,.92) 48%,rgba(0,0,0,.62) 62%,rgba(0,0,0,.20) 77%,transparent 91%)!important;
+  mask-image:radial-gradient(ellipse 70% 74% at 61% 47%,
+    #000 34%,rgba(0,0,0,.92) 48%,rgba(0,0,0,.62) 62%,rgba(0,0,0,.20) 77%,transparent 91%)!important;
+}
+@media(max-width:650px){
+  #loginView.loginExperience .loginHeroMother{
+    right:-10%!important;
+    bottom:-4%!important;
+    top:auto!important;
+    width:56%!important;
+    height:112%!important;
+    max-height:none!important;
+    object-fit:cover!important;
+    object-position:50% 35%!important;
+    -webkit-mask-image:radial-gradient(ellipse 73% 76% at 60% 48%,
+      #000 27%,rgba(0,0,0,.90) 44%,rgba(0,0,0,.58) 60%,rgba(0,0,0,.18) 76%,transparent 91%)!important;
+    mask-image:radial-gradient(ellipse 73% 76% at 60% 48%,
+      #000 27%,rgba(0,0,0,.90) 44%,rgba(0,0,0,.58) 60%,rgba(0,0,0,.18) 76%,transparent 91%)!important;
+  }
+}
