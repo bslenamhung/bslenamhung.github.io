@@ -1350,3 +1350,20 @@ body:has(#adminView:not([hidden])) #loginView .loginFooterReal{
   #loginView.loginExperience .loginHeroCopy{width:74%!important;max-width:74%!important}
   #loginView.loginExperience .loginHeroMother{width:35%!important;right:0!important}
 }
+
+
+/* Stronger all-edge feathering: remove the visible rectangular boundary around the mother image. */
+#loginView.loginExperience .loginHeroMother{
+  background:transparent!important;
+  border:0!important;
+  outline:0!important;
+  box-shadow:none!important;
+  -webkit-mask-image:radial-gradient(ellipse 64% 73% at 57% 50%,#000 22%,rgba(0,0,0,.92) 40%,rgba(0,0,0,.62) 59%,rgba(0,0,0,.28) 76%,transparent 100%)!important;
+  mask-image:radial-gradient(ellipse 64% 73% at 57% 50%,#000 22%,rgba(0,0,0,.92) 40%,rgba(0,0,0,.62) 59%,rgba(0,0,0,.28) 76%,transparent 100%)!important;
+}
+@media(max-width:650px){
+  #loginView.loginExperience .loginHeroMother{
+    -webkit-mask-image:radial-gradient(ellipse 66% 75% at 57% 50%,#000 18%,rgba(0,0,0,.9) 37%,rgba(0,0,0,.58) 57%,rgba(0,0,0,.24) 75%,transparent 100%)!important;
+    mask-image:radial-gradient(ellipse 66% 75% at 57% 50%,#000 18%,rgba(0,0,0,.9) 37%,rgba(0,0,0,.58) 57%,rgba(0,0,0,.24) 75%,transparent 100%)!important;
+  }
+}
