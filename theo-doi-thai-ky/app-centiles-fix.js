@@ -93,19 +93,24 @@ async function routeUser() {
 async function loadWeeklyClinicSchedule(){
  const panel=$("weeklyPatientSchedulePanel"),img=$("patientWeeklyScheduleImage"),imgLink=$("patientScheduleImageLink");
  if(!panel||!img||!imgLink)return;
- panel.hidden=true;imgLink.hidden=true;
+ panel.hidden=false;imgLink.hidden=false;
+ imgLink.href="https://bslenamhung.github.io/#weeklyScheduleWrap";
  try{
   const response=await fetch("../data.json?refresh="+Date.now(),{cache:"no-store"});
   if(!response.ok)throw new Error("Không tải được ảnh lịch phòng khám");
   const data=await response.json(),clinic=data?.clinic||{};
   const src=typeof clinic.weeklyScheduleImage==="string"?clinic.weeklyScheduleImage.trim():"";
-  if(!src){img.removeAttribute("src");return;}
-  img.onerror=()=>{panel.hidden=true;imgLink.hidden=true;};
-  img.onload=()=>{panel.hidden=false;imgLink.hidden=false;};
+  if(!src){
+   img.removeAttribute("src");
+   img.alt="Chưa có ảnh lịch khám tuần này. Nhấn để xem lịch trên website phòng khám.";
+   return;
+  }
+  img.alt="Ảnh lịch khám hàng tuần của Phòng khám chuyên khoa Phụ sản BS Hùng";
+  img.onerror=()=>{panel.hidden=false;imgLink.hidden=false;img.alt="Không tải được ảnh lịch khám. Nhấn để xem trên website phòng khám.";};
   img.src=src+(src.includes("?")?"&":"?")+"refresh="+Date.now();
-  imgLink.href="https://bslenamhung.github.io/#weeklyScheduleWrap";
  }catch(error){
-  panel.hidden=true;imgLink.hidden=true;
+  panel.hidden=false;imgLink.hidden=false;
+  img.alt="Không tải được ảnh lịch khám. Nhấn để xem trên website phòng khám.";
   console.error("Không tải được ảnh lịch khám tuần này:",error);
  }
 }
