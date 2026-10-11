@@ -572,3 +572,76 @@ body:has(#loginView:not([hidden])) footer small{font-size:clamp(11px,1.9vw,17px)
   .exactPortal .heroArt{top:-116px;right:0;width:28%;height:260px;margin:0}
   .exactPortal .heroArt .motherReference{width:100%;height:100%;object-fit:fill}
 }
+
+
+/* Pixel-matched login: the supplied screenshot is the page artwork, not a redraw */
+body:has(#loginView:not([hidden])){
+  background:#fff7fa;
+}
+body:has(#loginView:not([hidden])) header.clinicHeader,
+body:has(#loginView:not([hidden])) footer{
+  display:none!important;
+}
+body:has(#loginView:not([hidden])) main{
+  width:100%;max-width:889px;margin:0 auto;padding:0;
+}
+#loginView.exactReferenceLogin{
+  display:block;width:100%;max-width:889px;margin:0 auto;padding:0;
+}
+.referencePosterFrame{
+  position:relative;width:100%;margin:0 auto;overflow:hidden;background:#fff7fa;
+}
+.referencePosterImage{
+  display:block;width:100%;height:auto;margin:0;padding:0;border:0;object-fit:contain;
+}
+.referencePosterForm{
+  position:absolute;inset:0;width:100%;height:100%;margin:0!important;padding:0!important;
+  border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;
+  display:block;overflow:hidden;
+}
+.referencePosterForm .posterUsername,
+.referencePosterForm .posterPassword{
+  position:absolute;display:block;box-sizing:border-box;left:20.3%;width:63.5%;height:2.6%;
+  margin:0;padding:0 1%;border:0!important;border-radius:0!important;outline:none!important;
+  background:transparent!important;box-shadow:none!important;color:#51465b;
+  font-family:Arial,sans-serif;font-size:clamp(11px,2.7vw,22px);line-height:1.2;
+}
+.referencePosterForm .posterUsername{top:60.15%}
+.referencePosterForm .posterPassword{top:66.55%}
+.referencePosterForm .posterUsername::placeholder,
+.referencePosterForm .posterPassword::placeholder{color:transparent;opacity:0}
+.referencePosterForm .posterTogglePassword{
+  position:absolute;left:83.7%;top:66.15%;width:6%;height:3.2%;margin:0;padding:0;
+  border:0;border-radius:0;background:transparent;box-shadow:none;cursor:pointer;
+  color:transparent;opacity:.02;
+}
+.referencePosterForm .posterRemember{
+  position:absolute;left:8.95%;top:71.45%;width:4.9%;height:2.8%;margin:0;padding:0;
+  display:block;cursor:pointer;
+}
+.referencePosterForm .posterRemember input{
+  appearance:none;-webkit-appearance:none;position:absolute;inset:0;width:100%;height:100%;
+  margin:0;padding:0;border:1px solid #e3c8d7;border-radius:22%;background:#fff;cursor:pointer;
+}
+.referencePosterForm .posterRemember input:checked{
+  background:linear-gradient(135deg,#d94c8e,#b92a6d);border-color:#d94c8e;
+}
+.referencePosterForm .posterRemember input:checked::after{
+  content:"";position:absolute;left:27%;top:18%;width:40%;height:24%;
+  border-left:3px solid #fff;border-bottom:3px solid #fff;transform:rotate(-45deg);
+}
+.referencePosterForm .posterSubmit{
+  position:absolute;left:8.9%;top:75.45%;width:82.5%;height:5.15%;margin:0;padding:0;
+  border:0;border-radius:999px;background:transparent;box-shadow:none;cursor:pointer;
+  color:transparent;
+}
+.referencePosterForm .posterLoginError{
+  position:absolute;left:10%;top:80.65%;width:80%;min-height:1.25%;margin:0;padding:0;
+  color:#a30e4d;text-align:center;font-family:Arial,sans-serif;font-size:clamp(9px,1.5vw,13px);
+  line-height:1.2;background:rgba(255,255,255,.88);border-radius:4px;
+}
+@media(max-width:500px){
+  .referencePosterForm .posterUsername,
+  .referencePosterForm .posterPassword{font-size:clamp(10px,2.7vw,13px)}
+  .referencePosterForm .posterRemember input:checked::after{border-left-width:2px;border-bottom-width:2px}
+}
