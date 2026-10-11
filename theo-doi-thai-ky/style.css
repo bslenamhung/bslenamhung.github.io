@@ -1158,3 +1158,26 @@ body:has(#adminView:not([hidden])) #loginView .loginFooterReal{
     right:-2%!important;
   }
 }
+
+
+/* Remove the decorative pink wave above the clinic footer on login view. */
+#loginView.loginExperience .loginFooterWave,
+#loginView.loginExperience .loginFooterReal::before,
+#loginView.loginExperience .loginFooterReal::after{
+  display:none!important;
+  content:none!important;
+  background-image:none!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+#loginView.loginExperience .loginFooterReal{
+  background:#fff7fa!important;
+  margin-top:0!important;
+  padding-top:14px!important;
+}
+@media(max-width:650px){
+  #loginView.loginExperience .loginFooterReal{
+    margin-top:0!important;
+    padding-top:12px!important;
+  }
+}
