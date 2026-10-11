@@ -1173,3 +1173,32 @@ body:has(#adminView:not([hidden])) #floatingPatientQaButton:not([hidden]){
     line-height:1.4!important;
   }
 }
+
+
+/* Prevent the date and current-weight inputs from overlapping on narrow phones. */
+@media(max-width:650px){
+  #patientView .maternalWeightForm{
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  #patientView .maternalWeightForm>label{
+    display:flex!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+  }
+  #patientView .maternalWeightForm>label input,
+  #patientView .maternalWeightForm>label select{
+    display:block!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    box-sizing:border-box!important;
+  }
+  #patientView .maternalWeightForm>label input[type="date"]{
+    padding-left:5px!important;
+    padding-right:5px!important;
+    font-size:11px!important;
+  }
+}
