@@ -86,6 +86,14 @@ function renderPatientFiles(rows, files) {
 const rememberedLoginKey="bsHungRememberedLogin";
 try{const remembered=localStorage.getItem(rememberedLoginKey);if(remembered){$("username").value=remembered;$("rememberLogin").checked=true;}}catch(_){}
 $("rememberLogin").addEventListener("change",()=>{if(!$("rememberLogin").checked){try{localStorage.removeItem(rememberedLoginKey);}catch(_){}}});
+const togglePasswordButton=$("togglePassword");
+if(togglePasswordButton)togglePasswordButton.addEventListener("click",()=>{
+  const passwordField=$("password");
+  if(!passwordField)return;
+  const showing=passwordField.type==="text";
+  passwordField.type=showing?"password":"text";
+  togglePasswordButton.setAttribute("aria-label",showing?"Hiện mật khẩu":"Ẩn mật khẩu");
+});
 $("loginForm").addEventListener("submit", async e => {
   e.preventDefault(); fail("loginError", "");
   const raw = $("username").value.trim();
