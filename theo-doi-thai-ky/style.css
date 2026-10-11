@@ -715,3 +715,110 @@ body:has(#loginView:not([hidden])) main,
     padding-right:5px!important;
   }
 }
+
+
+/* Rebuilt login UI v9 — crisp HTML text and native controls, matching the supplied pink reference. */
+body:has(#loginView:not([hidden])){background:#fff7fa!important;color:#43152d}
+body:has(#loginView:not([hidden])) header.clinicHeader,
+body:has(#loginView:not([hidden])) footer{display:none!important}
+body:has(#loginView:not([hidden])) main{
+  width:100%!important;max-width:960px!important;margin:0 auto!important;padding:0 24px 0!important;
+}
+#loginView.loginExperience{
+  display:block;width:100%;max-width:100%;margin:0 auto;padding:24px 0 0;
+  color:#43152d;font-family:'Be Vietnam Pro',Arial,sans-serif;
+}
+.loginBrand{display:flex;align-items:center;gap:20px;position:relative;z-index:2;margin:0 0 8px;padding:0 12px}
+.loginBrandLogo{display:block;flex:0 0 clamp(76px,11vw,116px);width:clamp(76px,11vw,116px);height:clamp(76px,11vw,116px);object-fit:contain;border-radius:50%;background:#fff}
+.loginBrandText{display:flex;flex-direction:column;gap:3px;min-width:0}
+.loginBrandText strong,.loginBrandText b{color:#bf2e70;font-size:clamp(15px,2.2vw,22px);font-weight:800;line-height:1.25}
+.loginBrandText span{color:#756a75;font-size:clamp(13px,1.6vw,17px);line-height:1.3;margin-top:4px}
+.loginHeroReal{position:relative;display:flex;align-items:center;min-height:300px;padding:18px 12px 28px;isolation:isolate;overflow:hidden}
+.loginHeroCopy{position:relative;z-index:1;width:70%;max-width:650px}
+.loginEyebrow{margin:0 0 12px;color:#c84483;font-size:clamp(13px,1.9vw,19px);font-weight:800;letter-spacing:.08em;line-height:1.3}
+.loginHeroReal h1{margin:0 0 16px;color:#690d35;font-size:clamp(34px,5.2vw,56px);font-weight:800;line-height:1.12;letter-spacing:-.035em}
+.loginHeroDescription{margin:0;color:#766a77;font-size:clamp(16px,2vw,21px);line-height:1.45}
+.loginHeroMother{position:absolute;z-index:0;right:-2%;bottom:-8%;width:39%;height:115%;object-fit:cover;object-position:50% 38%;pointer-events:none;mask-image:linear-gradient(to right,transparent 0%,#000 18%);-webkit-mask-image:linear-gradient(to right,transparent 0%,#000 18%)}
+.loginFeatureGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:0 0 24px}
+.loginFeatureCard{min-width:0;min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:16px 8px;border:1px solid #fff;background:rgba(255,255,255,.94);border-radius:22px;box-shadow:0 7px 24px rgba(151,56,98,.07);text-align:center;color:#271b26;font-size:clamp(13px,1.65vw,17px);font-weight:700;line-height:1.3}
+.loginFeatureIcon{width:66px;height:66px;display:grid;place-items:center;border-radius:50%;background:#fff0f6;color:#cb3e83}
+.loginFeatureIcon svg{width:36px;height:36px;fill:none;stroke:currentColor;stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round}
+.loginCardReal{position:relative;z-index:2;width:100%;margin:0 auto 0;padding:28px 36px 22px;border:1px solid rgba(255,255,255,.9);border-radius:28px;background:rgba(255,255,255,.96);box-shadow:0 10px 35px rgba(113,25,66,.07)}
+.loginCardReal h2{margin:0 0 18px;color:#8b1248;font-size:clamp(28px,3.4vw,38px);font-weight:800;line-height:1.2}
+.loginFormReal{display:flex;flex-direction:column;gap:12px;margin:0;padding:0;border:0;background:transparent;box-shadow:none}
+.loginFieldReal{display:flex;flex-direction:row;align-items:center;gap:15px;min-width:0;min-height:66px;margin:0;padding:0 17px;border:1.5px solid #e1d9e0;border-radius:16px;background:#fff;box-shadow:0 2px 5px rgba(65,25,46,.025)}
+.loginFieldReal:focus-within{border-color:#d64a8c;box-shadow:0 0 0 3px rgba(214,74,140,.1)}
+.loginFieldIcon{flex:0 0 28px;width:28px;height:28px;fill:none;stroke:#8b8792;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.loginFieldReal input{display:block;flex:1;min-width:0;width:100%;height:100%;margin:0;padding:12px 0;border:0!important;border-radius:0!important;outline:0!important;background:transparent!important;box-shadow:none!important;color:#4b3a4a!important;-webkit-text-fill-color:#4b3a4a!important;font:500 16px/1.35 'Be Vietnam Pro',Arial,sans-serif}
+.loginFieldReal input::placeholder{color:#89828b!important;opacity:1!important;-webkit-text-fill-color:#89828b!important}
+.loginFieldReal input:-webkit-autofill,.loginFieldReal input:-webkit-autofill:hover,.loginFieldReal input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 1000px #fff inset!important;-webkit-text-fill-color:#4b3a4a!important;caret-color:#a72e69!important}
+.loginPasswordToggle{flex:0 0 34px;width:34px;height:38px;display:grid;place-items:center;margin:0;padding:3px;border:0;border-radius:8px;background:transparent;color:#77717b;box-shadow:none}
+.loginPasswordToggle:hover{background:#fff0f6}
+.eyeIcon{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.loginPasswordToggle[aria-label="Hiện mật khẩu"] .eyeSlash{display:block}
+.loginPasswordToggle[aria-label="Ẩn mật khẩu"] .eyeSlash{display:none}
+.loginRememberReal{display:flex;flex-direction:row;align-items:center;gap:12px;margin:1px 0 2px;color:#3f303c;font-size:15px;font-weight:500;line-height:1.4;cursor:pointer}
+.loginRememberReal input{appearance:none;-webkit-appearance:none;flex:0 0 22px;width:22px;height:22px;margin:0;border:1px solid #e6c5d6;border-radius:6px;background:#fff;position:relative;cursor:pointer}
+.loginRememberReal input:checked{border-color:#c92f7a;background:linear-gradient(135deg,#d94b91,#b62c70)}
+.loginRememberReal input:checked::after{content:"";position:absolute;left:6px;top:3px;width:6px;height:11px;border-right:2.5px solid #fff;border-bottom:2.5px solid #fff;transform:rotate(42deg)}
+.loginSubmitReal{display:flex;align-items:center;justify-content:center;gap:14px;width:100%;min-height:62px;margin:0;padding:13px 20px;border:0;border-radius:999px;background:linear-gradient(105deg,#d84d91,#bd2d72);color:#fff;font:800 19px/1.2 'Be Vietnam Pro',Arial,sans-serif;box-shadow:0 7px 18px rgba(188,42,110,.17)}
+.loginSubmitReal span{font-size:27px;font-weight:500;line-height:.8}
+.loginSubmitReal:hover{filter:brightness(1.025)}
+.loginSubmitReal:disabled{opacity:.7;cursor:wait}
+.loginErrorReal{margin:0;color:#a51c51;text-align:center;font-size:13px;line-height:1.4}
+.loginSecurityReal{display:flex;align-items:center;justify-content:center;gap:10px;margin:4px 0 0;padding-top:13px;border-top:1px solid #f0e6ec;color:#8a7a86;font-size:13px;line-height:1.45;text-align:center}
+.loginSecurityReal span{color:#d34c8a;font-size:31px;line-height:1}
+.loginFooterReal{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;gap:7px;margin:22px calc((960px - 100vw)/2) 0;padding:48px 20px 28px;background:linear-gradient(180deg,#fff7fa,#ffedf5);text-align:center;color:#6f173f}
+.loginFooterReal strong{font-size:clamp(13px,1.7vw,17px);font-weight:800;line-height:1.4}
+.loginFooterReal span{font-size:clamp(13px,1.6vw,16px);line-height:1.4}
+.loginFooterReal small{font-size:12px;line-height:1.45;color:#8a7c87}
+.loginFooterWave{position:absolute;top:-24px;left:-4%;width:108%;height:48px;border-top:8px solid #f5a7ce;border-radius:50% 50% 0 0/90% 90% 0 0;box-shadow:0 -8px 0 #ffe0ee}
+.loginFooterReal>*:not(.loginFooterWave){position:relative;z-index:1}
+body:has(#loginView:not([hidden])) #floatingPatientQaButton{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important}
+@media(max-width:650px){
+ body:has(#loginView:not([hidden])) main{padding:0 16px 0!important}
+ #loginView.loginExperience{padding-top:18px}
+ .loginBrand{gap:12px;padding:0 3px;margin-bottom:4px}
+ .loginBrandLogo{flex-basis:78px;width:78px;height:78px}
+ .loginBrandText strong,.loginBrandText b{font-size:clamp(12px,3.4vw,16px)}
+ .loginBrandText span{font-size:13px}
+ .loginHeroReal{min-height:235px;padding:17px 3px 23px}
+ .loginHeroCopy{width:77%}
+ .loginEyebrow{font-size:12px;letter-spacing:.055em;margin-bottom:10px}
+ .loginHeroReal h1{font-size:clamp(28px,7.1vw,38px);line-height:1.12;margin-bottom:12px;letter-spacing:-.04em}
+ .loginHeroDescription{max-width:94%;font-size:14px;line-height:1.42}
+ .loginHeroMother{right:-5%;bottom:-3%;width:42%;height:105%;object-position:50% 38%;opacity:.94}
+ .desktopBreak{display:none}
+ .loginFeatureGrid{gap:8px;margin:0 0 15px}
+ .loginFeatureCard{min-height:108px;padding:10px 3px;border-radius:16px;gap:7px;font-size:clamp(10px,2.9vw,13px);line-height:1.25}
+ .loginFeatureIcon{width:48px;height:48px}
+ .loginFeatureIcon svg{width:27px;height:27px;stroke-width:2.7}
+ .loginCardReal{padding:20px 16px 17px;border-radius:22px}
+ .loginCardReal h2{font-size:28px;margin-bottom:14px}
+ .loginFormReal{gap:10px}
+ .loginFieldReal{min-height:56px;gap:10px;padding:0 12px;border-radius:13px}
+ .loginFieldIcon{flex-basis:23px;width:23px;height:23px}
+ .loginFieldReal input{font-size:14px;line-height:1.35}
+ .loginPasswordToggle{flex-basis:30px;width:30px;height:34px}
+ .eyeIcon{width:23px;height:23px}
+ .loginRememberReal{font-size:12px;gap:9px}
+ .loginRememberReal input{flex-basis:20px;width:20px;height:20px}
+ .loginSubmitReal{min-height:55px;font-size:16px}
+ .loginSecurityReal{font-size:11px;gap:7px;padding-top:10px}
+ .loginSecurityReal span{font-size:25px}
+ .loginFooterReal{margin:18px -16px 0;padding:39px 14px 23px}
+ .loginFooterReal small{font-size:10px}
+}
+@media(max-width:360px){
+ .loginBrandLogo{flex-basis:68px;width:68px;height:68px}
+ .loginHeroReal{min-height:220px}
+ .loginHeroReal h1{font-size:27px}
+ .loginFeatureCard{font-size:10px}
+ .loginCardReal{padding-left:13px;padding-right:13px}
+ .loginFieldReal{gap:8px;padding:0 9px}
+ .loginFieldReal input{font-size:12px}
+}
+@media(min-width:651px){
+ .loginExperience{max-width:900px}
+ .loginHeroReal{min-height:335px}
+}
