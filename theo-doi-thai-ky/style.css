@@ -1202,3 +1202,26 @@ body:has(#adminView:not([hidden])) #floatingPatientQaButton:not([hidden]){
     font-size:11px!important;
   }
 }
+
+
+/* Keep a visible gap between the date field and weight field on small screens,
+   including when the weight field is focused and shows its pink outline. */
+@media(max-width:650px){
+  #patientView .maternalWeightForm{
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+    column-gap:14px!important;
+    row-gap:8px!important;
+  }
+  #patientView .maternalWeightForm>label{
+    min-width:0!important;
+    width:100%!important;
+  }
+  #patientView .maternalWeightForm>label input{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+  }
+  #patientView .maternalWeightForm>label input:focus{
+    outline-offset:-2px!important;
+  }
+}
