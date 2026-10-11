@@ -724,6 +724,23 @@ $("refreshAdminQa")?.addEventListener("click",()=>loadAdminQaThreads(true));
 $("adminQaForm")?.addEventListener("submit",async e=>{e.preventDefault();if(user?.app_metadata?.role!=="admin"||!activeAdminQaConversation){$("adminQaReplyStatus").textContent="Chọn một cuộc trò chuyện trước.";return;}const body=$("adminQaInput").value.trim();if(!body||body.length>6000)return;const c=await db.from("patient_ai_conversations").select("patient_user_id").eq("id",activeAdminQaConversation).single();if(c.error||!c.data){$("adminQaReplyStatus").textContent="Không tìm thấy hội thoại.";return;}const btn=$("adminQaSend");btn.disabled=true;btn.textContent="Đang gửi…";const r=await db.from("patient_ai_messages").insert({conversation_id:activeAdminQaConversation,patient_user_id:c.data.patient_user_id,sender_role:"doctor",body});btn.disabled=false;btn.textContent="Gửi trả lời";if(r.error){$("adminQaReplyStatus").textContent="Chưa gửi được câu trả lời. Vui lòng thử lại.";return;}$("adminQaInput").value="";$("adminQaReplyStatus").textContent="Đã gửi câu trả lời cho bệnh nhân.";await renderAdminQaMessages(activeAdminQaConversation);await loadAdminQaThreads(false);});
 
 
-document.querySelectorAll(".logout").forEach(b=>b.addEventListener("click", async()=>{await db.auth.signOut();user=null;profile=null;records=[];selectedPatient=null;view("loginView");$("password").value="";}));
+document.querySelectorAll(".logout").forEach(button=>button.addEventListener("click",async()=>{
+ if(button.disabled)return;
+ button.disabled=true;
+ const originalText=button.textContent;
+ button.textContent="Đang đăng xuất…";
+ try{
+  const {error}=await db.auth.signOut({scope:"local"});
+  if(error)console.error("Logout signOut error",error);
+ }catch(error){console.error("Logout failed",error);}
+ finally{
+  user=null;profile=null;records=[];selectedPatient=null;patientDirectory=[];
+  document.querySelectorAll(".logout").forEach(b=>{b.disabled=false;b.textContent=originalText;});
+  view("loginView");
+  const password=$("password");if(password)password.value="";
+  const loginError=$("loginError");if(loginError)loginError.textContent="Bạn đã thoát khỏi phiên làm việc. Vui lòng đăng nhập lại khi cần.";
+  window.scrollTo({top:0,behavior:"auto"});
+ }
+}));
 (async()=>{const {data}=await db.auth.getSession();if(data.session){user=data.session.user;await routeUser();}})();
 setInterval(()=>{if(user?.app_metadata?.role==="admin"&&!$("adminView").hidden)loadAdminQaThreads(true);},30000);
