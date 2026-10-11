@@ -1633,3 +1633,53 @@ body:has(#adminView:not([hidden])) #loginView .loginFooterReal{
       #000 27%,rgba(0,0,0,.90) 44%,rgba(0,0,0,.58) 60%,rgba(0,0,0,.18) 76%,transparent 91%)!important;
   }
 }
+
+
+/* Precise correction from the two user screenshots:
+   make the mother portrait narrow again, preserve its whole framing, and feather
+   only the left/top/bottom edges into the pink background. */
+#loginView.loginExperience .loginHeroReal{
+  overflow:hidden!important;
+  background:radial-gradient(ellipse at 79% 52%, rgba(248,211,229,.55) 0%, rgba(255,239,247,.26) 43%, rgba(255,247,250,0) 77%)!important;
+}
+#loginView.loginExperience .loginHeroMother{
+  right:-2%!important;
+  bottom:0!important;
+  top:auto!important;
+  width:37%!important;
+  height:100%!important;
+  max-height:100%!important;
+  object-fit:contain!important;
+  object-position:right bottom!important;
+  opacity:1!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0%, rgba(0,0,0,.18) 10%, rgba(0,0,0,.68) 25%, #000 44%),
+    linear-gradient(to bottom, transparent 0%, #000 12%, #000 89%, transparent 100%)!important;
+  -webkit-mask-composite:source-in!important;
+  mask-image:
+    linear-gradient(to right, transparent 0%, rgba(0,0,0,.18) 10%, rgba(0,0,0,.68) 25%, #000 44%),
+    linear-gradient(to bottom, transparent 0%, #000 12%, #000 89%, transparent 100%)!important;
+  mask-composite:intersect!important;
+}
+@media(max-width:650px){
+  #loginView.loginExperience .loginHeroMother{
+    right:-2%!important;
+    bottom:0!important;
+    width:37%!important;
+    height:100%!important;
+    max-height:100%!important;
+    object-fit:contain!important;
+    object-position:right bottom!important;
+    -webkit-mask-image:
+      linear-gradient(to right, transparent 0%, rgba(0,0,0,.18) 10%, rgba(0,0,0,.68) 25%, #000 44%),
+      linear-gradient(to bottom, transparent 0%, #000 10%, #000 90%, transparent 100%)!important;
+    -webkit-mask-composite:source-in!important;
+    mask-image:
+      linear-gradient(to right, transparent 0%, rgba(0,0,0,.18) 10%, rgba(0,0,0,.68) 25%, #000 44%),
+      linear-gradient(to bottom, transparent 0%, #000 10%, #000 90%, transparent 100%)!important;
+    mask-composite:intersect!important;
+  }
+}
