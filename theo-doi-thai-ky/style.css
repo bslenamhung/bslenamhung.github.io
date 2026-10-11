@@ -1724,3 +1724,43 @@ body:has(#adminView:not([hidden])) #loginView .loginFooterReal{
       transparent 100%)!important;
   }
 }
+
+
+/* Stronger feathering on all four edges. Keep the approved portrait size and position unchanged. */
+#loginView.loginExperience .loginHeroMother{
+  -webkit-mask-image:radial-gradient(ellipse 70% 78% at 50% 50%,
+    #000 22%,
+    rgba(0,0,0,.96) 34%,
+    rgba(0,0,0,.78) 47%,
+    rgba(0,0,0,.48) 61%,
+    rgba(0,0,0,.20) 76%,
+    transparent 96%)!important;
+  mask-image:radial-gradient(ellipse 70% 78% at 50% 50%,
+    #000 22%,
+    rgba(0,0,0,.96) 34%,
+    rgba(0,0,0,.78) 47%,
+    rgba(0,0,0,.48) 61%,
+    rgba(0,0,0,.20) 76%,
+    transparent 96%)!important;
+  -webkit-mask-repeat:no-repeat!important;
+  mask-repeat:no-repeat!important;
+  mix-blend-mode:multiply!important;
+}
+@media(max-width:650px){
+  #loginView.loginExperience .loginHeroMother{
+    -webkit-mask-image:radial-gradient(ellipse 70% 78% at 50% 50%,
+      #000 22%,
+      rgba(0,0,0,.96) 34%,
+      rgba(0,0,0,.78) 47%,
+      rgba(0,0,0,.48) 61%,
+      rgba(0,0,0,.20) 76%,
+      transparent 96%)!important;
+    mask-image:radial-gradient(ellipse 70% 78% at 50% 50%,
+      #000 22%,
+      rgba(0,0,0,.96) 34%,
+      rgba(0,0,0,.78) 47%,
+      rgba(0,0,0,.48) 61%,
+      rgba(0,0,0,.20) 76%,
+      transparent 96%)!important;
+  }
+}
