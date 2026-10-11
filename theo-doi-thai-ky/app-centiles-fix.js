@@ -27,7 +27,7 @@ const todayLocal=()=>{const n=new Date();return new Date(n.getTime()-n.getTimezo
 const gestationText=g=>g&&!g.invalid?g.weeks+" tuần "+g.days+" ngày":"Không tính được tuổi thai (kiểm tra ngày dự sinh)";
 const allowedTypes = ["application/pdf","image/jpeg","image/png","image/webp","application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
 const maxFileBytes = 10 * 1024 * 1024;
-function view(id) { ["loginView","patientView","adminView"].forEach(k => $(k).hidden = k !== id); const qaButton=$("floatingPatientQaButton"); if(qaButton) qaButton.hidden = id !== "patientView"; }
+function view(id) { ["loginView","patientView","adminView"].forEach(k => $(k).hidden = k !== id); const qaButton=$("floatingPatientQaButton"); if(qaButton) qaButton.hidden = !["patientView","adminView"].includes(id); }
 function toast(msg) { $("globalMessage").textContent = msg; $("globalMessage").hidden = false; }
 function fail(el, msg) { $(el).textContent = msg; }
 function addHistoryLine(container, text) { const d=document.createElement("div"); d.textContent=text; container.append(d); }
@@ -658,8 +658,8 @@ async function renderPatientQaMessages(id){
 async function openPatientQaConversation(id){activePatientQaConversation=id;await loadPatientQaThreads(false);await renderPatientQaMessages(id);}
 $("floatingPatientQaButton")?.addEventListener("click",(event)=>{
   event.preventDefault();
-  if(!user||user.app_metadata?.role==="admin")return;
-  window.location.href="tro-ly-ai.html";
+  if(!user)return;
+  window.location.href="tro-ly-ai.html?refresh=20261011unified";
 });
 $("newQaConversation")?.addEventListener("click",()=>{activePatientQaConversation=null;$("patientQaSubject").textContent="Câu hỏi mới";$("patientQaMessages").replaceChildren();$("patientQaChat").hidden=false;$("patientQaInput").value="";$("patientQaStatus").textContent="";$("patientQaInput").focus();});
 $("patientQaForm")?.addEventListener("submit",async e=>{
