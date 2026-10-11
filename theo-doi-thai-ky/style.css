@@ -1071,3 +1071,29 @@ body:has(#patientView:not([hidden])) #loginView .loginFooterReal,
 body:has(#adminView:not([hidden])) #loginView .loginFooterReal{
   display:none!important;
 }
+
+
+/* Tighten the specific gap between the login security note and clinic name. */
+#loginView.loginExperience .loginFooterReal{
+  margin-top:0!important;
+  padding-top:12px!important;
+  padding-bottom:22px!important;
+}
+#loginView.loginExperience .loginFooterWave{
+  top:-10px!important;
+  height:18px!important;
+}
+#loginView.loginExperience .loginFooterReal strong{
+  margin-top:0!important;
+}
+@media(max-width:650px){
+  #loginView.loginExperience .loginFooterReal{
+    margin-top:0!important;
+    padding-top:12px!important;
+    padding-bottom:18px!important;
+  }
+  #loginView.loginExperience .loginFooterWave{
+    top:-9px!important;
+    height:16px!important;
+  }
+}
