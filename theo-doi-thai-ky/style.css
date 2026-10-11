@@ -229,3 +229,61 @@ body:has(#loginView:not([hidden])) .logo{flex-basis:72px;width:72px;height:72px;
 .createPatientPanelHead h2{margin:0}
 .createPatientToggle{min-height:48px;padding:12px 20px;white-space:normal}
 @media(max-width:620px){.createPatientPanelHead{align-items:stretch;flex-direction:column}.createPatientPanelHead h2{font-size:21px}.createPatientToggle{width:100%;min-height:48px}}
+
+
+/* Giao diện cổng thai kỳ BS Hùng — tinh chỉnh theo mẫu đã duyệt */
+body:has(#loginView:not([hidden])){background:linear-gradient(180deg,#fffafd 0%,#fff4f8 58%,#fff 100%);color:#302630}
+body:has(#loginView:not([hidden])) header{padding:14px max(18px,calc((100% - 1120px)/2));gap:16px;background:rgba(255,255,255,.96);border-bottom:1px solid #f3dce7}
+body:has(#loginView:not([hidden])) .logo{width:72px;height:72px;flex-basis:72px;padding:0;border-radius:50%;background:#fff;object-fit:contain}
+body:has(#loginView:not([hidden])) header strong{font-size:clamp(12px,1.8vw,17px);line-height:1.4;color:#a71952}
+body:has(#loginView:not([hidden])) header small{font-size:clamp(12px,1.5vw,15px);line-height:1.45;color:#786a78}
+body:has(#loginView:not([hidden])) .loginRedesign{max-width:980px;grid-template-columns:1fr;gap:18px;margin:24px auto 34px}
+.loginRedesign .loginHero{position:relative;isolation:isolate;grid-template-columns:minmax(0,1fr) minmax(240px,38%);gap:4px;align-items:center;min-height:450px;padding:26px 20px 24px;border-radius:28px;overflow:hidden;background:radial-gradient(ellipse at 72% 42%,#ffe2ed 0%,#fff3f7 37%,#fffafd 72%);border:1px solid #f8e1eb}
+.loginRedesign .heroCopy{position:relative;z-index:2;max-width:590px}
+.loginRedesign .heroCopy .eyebrow{display:block;font-size:clamp(11px,1.6vw,15px);letter-spacing:.13em;color:#c3427e;margin-bottom:16px}
+.loginRedesign .heroCopy h1{font-size:clamp(35px,5vw,58px);line-height:1.08;letter-spacing:-.045em;color:#a7134d;margin:0 0 20px}
+.loginRedesign .heroCopy p{font-size:clamp(16px,2vw,21px);line-height:1.65;color:#514758;max-width:520px;margin:0}
+.loginRedesign .heroArt{position:relative;z-index:1;height:390px;min-height:0;margin:0;display:flex;align-items:center;justify-content:center}
+.loginRedesign .heroArt svg{width:100%;max-width:370px;max-height:100%;filter:drop-shadow(0 12px 16px #d64d8217);transform:scale(1.06)}
+.loginRedesign .heroHalo{width:340px;height:340px;max-width:100%;background:linear-gradient(145deg,#ffe5ef,#f9c5da);border:1px solid #f9d5e3;opacity:.8}
+.loginRedesign .heroTrust{display:inline-flex;align-items:center;gap:12px;margin-top:22px;padding:12px 18px;border-radius:18px;background:#fff8fb;border:1px solid #f8dce8;color:#6f5265;font-size:14px;box-shadow:0 8px 20px #b33a6c0c}
+.loginRedesign .trustHeart{background:#ffe2ed;color:#d62e7d}
+.loginRedesign .loginPanel{width:100%;max-width:100%;margin:0;padding:28px 32px 25px;border-radius:26px;border:1px solid #f1dce6;box-shadow:0 16px 40px #9e416d12;gap:16px}
+.loginRedesign .loginPanelTitle{margin-bottom:2px}
+.loginRedesign .loginPanelTitle h2{font-size:30px;color:#9f164f}
+.loginRedesign .loginPanelTitle p{font-size:14px}
+.loginRedesign .loginPersonIcon{background:linear-gradient(145deg,#f34ca8,#bd276c);box-shadow:0 8px 18px #d13a9c24}
+.loginRedesign .loginInputWrap{min-height:62px;border-radius:14px;background:#fffdfd}
+.loginRedesign .loginInputWrap input{font-size:16px}
+.loginRedesign .loginSubmit{min-height:64px;border-radius:15px;background:linear-gradient(100deg,#d63b91,#b51f60);font-size:18px}
+.loginRedesign .loginSecurity{font-size:12px;color:#8a7482}
+@media(max-width:620px){
+ body:has(#loginView:not([hidden])) main{padding:12px 14px 30px}
+ body:has(#loginView:not([hidden])) header{padding:12px 15px;gap:12px}
+ body:has(#loginView:not([hidden])) .logo{width:60px;height:60px;flex-basis:60px}
+ body:has(#loginView:not([hidden])) header strong{font-size:clamp(11px,3.1vw,14px);line-height:1.35}
+ body:has(#loginView:not([hidden])) header small{font-size:clamp(11px,2.9vw,13px)}
+ body:has(#loginView:not([hidden])) .loginRedesign{margin:0 auto 22px;gap:14px}
+ .loginRedesign .loginHero{grid-template-columns:minmax(0,1fr) 35%;gap:0;min-height:0;padding:22px 12px 18px;border-radius:23px}
+ .loginRedesign .heroCopy .eyebrow{font-size:clamp(10px,2.7vw,12px);letter-spacing:.1em;margin-bottom:11px}
+ .loginRedesign .heroCopy h1{font-size:clamp(27px,7.3vw,40px);line-height:1.17;letter-spacing:-.04em;margin-bottom:13px}
+ .loginRedesign .heroCopy p{font-size:clamp(13px,3.7vw,16px);line-height:1.6}
+ .loginRedesign .heroArt{height:auto;min-height:215px;margin-left:-10px}
+ .loginRedesign .heroArt svg{width:145%;max-width:none;transform:translateX(-3px) scale(1.04)}
+ .loginRedesign .heroHalo{width:130%;height:auto;aspect-ratio:1;right:-7px;top:50%}
+ .loginRedesign .heroTrust{font-size:11px;margin-top:13px;gap:8px;padding:9px 10px;border-radius:14px}
+ .loginRedesign .heroTrust strong{font-size:11px}
+ .loginRedesign .trustHeart{width:29px;height:29px;flex-basis:29px}
+ .loginRedesign .loginPanel{padding:23px 19px 20px;border-radius:22px;gap:13px}
+ .loginRedesign .loginPanelTitle{gap:13px}
+ .loginRedesign .loginPersonIcon{width:52px;height:52px;flex-basis:52px}
+ .loginRedesign .loginPanelTitle h2{font-size:25px}
+ .loginRedesign .loginPanelTitle p{font-size:12px}
+ .loginRedesign .loginPanel>label:not(.rememberLogin){font-size:13px}
+ .loginRedesign .loginInputWrap{min-height:56px;padding:0 12px;gap:10px}
+ .loginRedesign .loginInputWrap input{font-size:14px!important}
+ .loginRedesign .loginPanel .rememberLogin{font-size:12px;line-height:1.5}
+ .loginRedesign .loginPanel .rememberHint,.loginRedesign .loginPanel .fieldHelp{font-size:11px}
+ .loginRedesign .loginSubmit{min-height:57px;font-size:16px}
+}
+@media(max-width:360px){.loginRedesign .loginHero{grid-template-columns:minmax(0,1fr) 31%;padding-left:10px;padding-right:8px}.loginRedesign .heroCopy h1{font-size:26px}.loginRedesign .heroArt{min-height:175px}.loginRedesign .loginPanel{padding:20px 15px}}
