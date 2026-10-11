@@ -1225,3 +1225,17 @@ body:has(#adminView:not([hidden])) #floatingPatientQaButton:not([hidden]){
     outline-offset:-2px!important;
   }
 }
+
+
+/* Slightly enlarge the fetal-weight chart on mobile while preserving its width and surrounding layout. */
+@media(max-width:720px){
+  #patientView .chart{
+    min-height:180px!important;
+    padding:5px!important;
+  }
+  #patientView .chart canvas{
+    width:100%!important;
+    max-width:100%!important;
+    height:auto!important;
+  }
+}
