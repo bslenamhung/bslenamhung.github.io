@@ -339,3 +339,10 @@ body:has(#loginView:not([hidden])) .loginRedesign{max-width:980px;grid-template-
  .loginRedesign .heroTrust{font-size:10px;gap:7px;padding:8px}
  .loginRedesign .loginPanel{padding:21px 16px 18px}
 }
+
+
+/* Tránh nút trợ lý AI che nút đăng nhập trên màn hình đăng nhập */
+body:has(#loginView:not([hidden])) .floatingPatientQaButton{
+  position:relative!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;
+  margin:0 auto 22px!important;display:flex!important;width:max-content!important;max-width:calc(100vw - 32px)!important;
+}
