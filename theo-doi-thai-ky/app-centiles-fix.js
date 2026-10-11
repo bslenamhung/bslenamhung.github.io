@@ -658,20 +658,8 @@ async function renderPatientQaMessages(id){
 async function openPatientQaConversation(id){activePatientQaConversation=id;await loadPatientQaThreads(false);await renderPatientQaMessages(id);}
 $("floatingPatientQaButton")?.addEventListener("click",(event)=>{
   event.preventDefault();
-  const panel=$("patientQaPanel");
-  const patientView=$("patientView");
-  if(!panel||!patientView||patientView.hidden)return;
-  panel.setAttribute("tabindex","-1");
-  // scrollIntoView is more reliable than calculating window.scrollY on iOS Safari.
-  panel.scrollIntoView({behavior:"smooth",block:"start"});
-  // Re-align after layout settles (mobile Safari can change viewport after a tap).
-  window.setTimeout(()=>{
-    if(panel.getClientRects().length){
-      const top=panel.getBoundingClientRect().top;
-      if(Math.abs(top)>24) window.scrollBy({top:top-12,behavior:"smooth"});
-      panel.focus({preventScroll:true});
-    }
-  },450);
+  if(!user||user.app_metadata?.role==="admin")return;
+  window.location.href="tro-ly-ai.html";
 });
 $("newQaConversation")?.addEventListener("click",()=>{activePatientQaConversation=null;$("patientQaSubject").textContent="Câu hỏi mới";$("patientQaMessages").replaceChildren();$("patientQaChat").hidden=false;$("patientQaInput").value="";$("patientQaStatus").textContent="";$("patientQaInput").focus();});
 $("patientQaForm")?.addEventListener("submit",async e=>{
