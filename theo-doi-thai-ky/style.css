@@ -822,3 +822,8 @@ body:has(#loginView:not([hidden])) #floatingPatientQaButton{display:none!importa
  .loginExperience{max-width:900px}
  .loginHeroReal{min-height:335px}
 }
+
+/* Footer inside the rebuilt login is part of the reference and must remain visible. */
+body:has(#loginView:not([hidden])) #loginView .loginFooterReal{display:flex!important}
+.loginFooterReal{width:100vw!important;margin:22px 0 0 calc(50% - 50vw)!important}
+@media(max-width:650px){.loginFooterReal{margin:18px 0 0 calc(50% - 50vw)!important}}
