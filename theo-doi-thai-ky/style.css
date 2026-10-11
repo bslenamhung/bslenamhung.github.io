@@ -1239,3 +1239,35 @@ body:has(#adminView:not([hidden])) #floatingPatientQaButton:not([hidden]){
     height:auto!important;
   }
 }
+
+/* Admin due-date reminders: compact, private dashboard panel. */
+.dueReminderPanel{border-color:#e8c5d5;background:linear-gradient(180deg,#fff 0%,#fffafd 100%)}
+.dueReminderHead{align-items:center}
+.dueReminderSummary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0}
+.dueSummaryCard{display:flex;flex-direction:column;gap:5px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fff;min-width:0}
+.dueSummaryCard span{font-size:12px;line-height:1.4;color:var(--muted)}
+.dueSummaryCard strong{font-size:25px;line-height:1.2}
+.dueSummaryCard.today{background:#fff0f5;border-color:#edc2d4}.dueSummaryCard.today strong{color:#9d2857}
+.dueSummaryCard.soon{background:#fff8e8;border-color:#f1dfb1}.dueSummaryCard.soon strong{color:#8c6412}
+.dueSummaryCard.overdue{background:#fff0ef;border-color:#f0c7c3}.dueSummaryCard.overdue strong{color:#a42e2e}
+.dueReminderList{display:grid;gap:10px}
+.dueReminderItem{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.dueReminderDetails{min-width:0;flex:1}.dueReminderDetails>strong{font-size:15px;overflow-wrap:anywhere}
+.dueReminderDetails p{margin:4px 0 8px;font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+.dueReminderBadge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:800;line-height:1.35}
+.dueReminderBadge.today{background:#fce4ed;color:#9d2857}.dueReminderBadge.soon{background:#fff1cc;color:#80580b}.dueReminderBadge.overdue{background:#fbe3e1;color:#9e2828}
+.dueReminderControls{display:flex;align-items:flex-end;gap:8px;flex:0 0 240px}
+.dueReminderControls label{flex:1;min-width:0;font-size:11px;gap:4px}
+.dueReminderStatusSelect{font-size:12px;padding:9px 7px;min-width:0}
+.dueReminderSave{font-size:12px;padding:10px 12px;white-space:nowrap}
+@media(max-width:650px){
+ .dueReminderSummary{gap:6px}
+ .dueSummaryCard{padding:9px 7px;border-radius:10px}
+ .dueSummaryCard span{font-size:10px}
+ .dueSummaryCard strong{font-size:21px}
+ .dueReminderItem{display:flex;flex-direction:column;gap:10px;padding:12px}
+ .dueReminderControls{width:100%;flex:1;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:8px}
+ .dueReminderControls label{font-size:11px}
+ .dueReminderSave{white-space:normal;max-width:132px}
+ .dueReminderHead{gap:8px}
+}
