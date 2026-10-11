@@ -27,7 +27,7 @@ const todayLocal=()=>{const n=new Date();return new Date(n.getTime()-n.getTimezo
 const gestationText=g=>g&&!g.invalid?g.weeks+" tuần "+g.days+" ngày":"Không tính được tuổi thai (kiểm tra ngày dự sinh)";
 const allowedTypes = ["application/pdf","image/jpeg","image/png","image/webp","application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
 const maxFileBytes = 10 * 1024 * 1024;
-function view(id) { ["loginView","patientView","adminView"].forEach(k => $(k).hidden = k !== id); }
+function view(id) { ["loginView","patientView","adminView"].forEach(k => $(k).hidden = k !== id); const qaButton=$("floatingPatientQaButton"); if(qaButton) qaButton.hidden = id !== "patientView"; }
 function toast(msg) { $("globalMessage").textContent = msg; $("globalMessage").hidden = false; }
 function fail(el, msg) { $(el).textContent = msg; }
 function addHistoryLine(container, text) { const d=document.createElement("div"); d.textContent=text; container.append(d); }
@@ -659,12 +659,19 @@ async function openPatientQaConversation(id){activePatientQaConversation=id;awai
 $("floatingPatientQaButton")?.addEventListener("click",(event)=>{
   event.preventDefault();
   const panel=$("patientQaPanel");
-  if(!panel)return;
-  if(panel.closest("[hidden]"))return;
+  const patientView=$("patientView");
+  if(!panel||!patientView||patientView.hidden)return;
   panel.setAttribute("tabindex","-1");
-  const top=panel.getBoundingClientRect().top+window.scrollY-12;
-  window.scrollTo({top:Math.max(0,top),behavior:"smooth"});
-  window.setTimeout(()=>{panel.focus({preventScroll:true});},350);
+  // scrollIntoView is more reliable than calculating window.scrollY on iOS Safari.
+  panel.scrollIntoView({behavior:"smooth",block:"start"});
+  // Re-align after layout settles (mobile Safari can change viewport after a tap).
+  window.setTimeout(()=>{
+    if(panel.getClientRects().length){
+      const top=panel.getBoundingClientRect().top;
+      if(Math.abs(top)>24) window.scrollBy({top:top-12,behavior:"smooth"});
+      panel.focus({preventScroll:true});
+    }
+  },450);
 });
 $("newQaConversation")?.addEventListener("click",()=>{activePatientQaConversation=null;$("patientQaSubject").textContent="Câu hỏi mới";$("patientQaMessages").replaceChildren();$("patientQaChat").hidden=false;$("patientQaInput").value="";$("patientQaStatus").textContent="";$("patientQaInput").focus();});
 $("patientQaForm")?.addEventListener("submit",async e=>{
