@@ -1764,3 +1764,95 @@ body:has(#adminView:not([hidden])) #loginView .loginFooterReal{
       transparent 96%)!important;
   }
 }
+
+
+/* Preserve the visible belly and hands: fade the left/top edges into the hero,
+   keep the bottom fully opaque, and avoid cropping the source image. */
+#loginView.loginExperience .loginHeroReal{
+  overflow:hidden!important;
+}
+#loginView.loginExperience .loginHeroMother{
+  right:-2%!important;
+  bottom:0!important;
+  top:auto!important;
+  width:37%!important;
+  height:100%!important;
+  max-height:100%!important;
+  object-fit:contain!important;
+  object-position:right bottom!important;
+  opacity:1!important;
+  mix-blend-mode:multiply!important;
+  -webkit-mask-image:
+    linear-gradient(to right,
+      transparent 0%,
+      rgba(0,0,0,.06) 7%,
+      rgba(0,0,0,.32) 20%,
+      rgba(0,0,0,.78) 38%,
+      #000 52%,
+      #000 94%,
+      rgba(0,0,0,.84) 98%,
+      rgba(0,0,0,.52) 100%),
+    linear-gradient(to bottom,
+      transparent 0%,
+      rgba(0,0,0,.32) 7%,
+      #000 16%,
+      #000 100%)!important;
+  -webkit-mask-composite:source-in!important;
+  mask-image:
+    linear-gradient(to right,
+      transparent 0%,
+      rgba(0,0,0,.06) 7%,
+      rgba(0,0,0,.32) 20%,
+      rgba(0,0,0,.78) 38%,
+      #000 52%,
+      #000 94%,
+      rgba(0,0,0,.84) 98%,
+      rgba(0,0,0,.52) 100%),
+    linear-gradient(to bottom,
+      transparent 0%,
+      rgba(0,0,0,.32) 7%,
+      #000 16%,
+      #000 100%)!important;
+  mask-composite:intersect!important;
+}
+@media(max-width:650px){
+  #loginView.loginExperience .loginHeroMother{
+    width:37%!important;
+    height:100%!important;
+    object-fit:contain!important;
+    object-position:right bottom!important;
+    /* Bottom stays opaque so the belly and hand aren't faded away. */
+    -webkit-mask-image:
+      linear-gradient(to right,
+        transparent 0%,
+        rgba(0,0,0,.06) 7%,
+        rgba(0,0,0,.32) 20%,
+        rgba(0,0,0,.78) 38%,
+        #000 52%,
+        #000 94%,
+        rgba(0,0,0,.84) 98%,
+        rgba(0,0,0,.52) 100%),
+      linear-gradient(to bottom,
+        transparent 0%,
+        rgba(0,0,0,.32) 7%,
+        #000 16%,
+        #000 100%)!important;
+    -webkit-mask-composite:source-in!important;
+    mask-image:
+      linear-gradient(to right,
+        transparent 0%,
+        rgba(0,0,0,.06) 7%,
+        rgba(0,0,0,.32) 20%,
+        rgba(0,0,0,.78) 38%,
+        #000 52%,
+        #000 94%,
+        rgba(0,0,0,.84) 98%,
+        rgba(0,0,0,.52) 100%),
+      linear-gradient(to bottom,
+        transparent 0%,
+        rgba(0,0,0,.32) 7%,
+        #000 16%,
+        #000 100%)!important;
+    mask-composite:intersect!important;
+  }
+}
