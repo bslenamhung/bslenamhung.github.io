@@ -827,3 +827,82 @@ body:has(#loginView:not([hidden])) #floatingPatientQaButton{display:none!importa
 body:has(#loginView:not([hidden])) #loginView .loginFooterReal{display:flex!important}
 .loginFooterReal{width:100vw!important;margin:22px 0 0 calc(50% - 50vw)!important}
 @media(max-width:650px){.loginFooterReal{margin:18px 0 0 calc(50% - 50vw)!important}}
+
+
+/* Lab attachments: never crop image previews; make PDF preview large and usable on patient/admin pages. */
+#patientTestGallery,
+#adminTestHistory,
+.testGallery,
+.testFileCard,
+.adminTestGallery .adminTestFileLine,
+.adminTestFileLine > div{
+  min-width:0;
+  max-width:100%;
+  overflow:visible!important;
+}
+.testFileCard{
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+}
+.testPreviewImage,
+.adminTestThumb{
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  height:auto!important;
+  max-height:none!important;
+  object-fit:contain!important;
+  object-position:top center;
+  overflow:visible!important;
+}
+.testPdfPreview,
+.adminTestPdfPreview{
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  height:85vh!important;
+  min-height:680px!important;
+  max-height:1100px!important;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+  overflow:auto!important;
+  -webkit-overflow-scrolling:touch;
+}
+.testFileCard .attachmentLink,
+.adminTestFileLine .attachmentLink{
+  display:inline-block;
+  max-width:100%;
+  overflow-wrap:anywhere;
+  white-space:normal;
+  margin:12px 0 4px;
+  line-height:1.5;
+}
+.adminTestFileLine{
+  align-items:flex-start!important;
+  min-width:0;
+  overflow:visible!important;
+}
+.adminTestFileLine > div:first-child{
+  min-width:0;
+  width:100%;
+  overflow:visible!important;
+}
+@media(max-width:720px){
+  .testGallery{grid-template-columns:minmax(0,1fr)!important}
+  .testFileCard{padding:10px}
+  .testPdfPreview,
+  .adminTestPdfPreview{
+    width:100%!important;
+    height:78vh!important;
+    min-height:600px!important;
+    max-height:900px!important;
+  }
+  .testPreviewImage,.adminTestThumb{
+    width:100%!important;
+    max-width:100%!important;
+    height:auto!important;
+    max-height:none!important;
+  }
+}
