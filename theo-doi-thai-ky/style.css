@@ -1048,3 +1048,26 @@ body:has(#loginView:not([hidden])) #floatingPatientQaButton{
   .loginFooterReal span{font-size:12px!important}
   .loginFooterReal small{font-size:10px!important}
 }
+
+
+/* Critical visibility fix: preserve the app's [hidden] view switching even with custom display rules. */
+[hidden],
+#loginView[hidden],
+#patientView[hidden],
+#adminView[hidden],
+#floatingPatientQaButton[hidden]{
+  display:none!important;
+}
+body:has(#loginView:not([hidden])) .loginFooterReal{
+  display:flex!important;
+}
+body:has(#loginView[hidden]) #loginView,
+body:has(#patientView:not([hidden])) #loginView,
+body:has(#adminView:not([hidden])) #loginView{
+  display:none!important;
+}
+body:has(#loginView[hidden]) #floatingPatientQaButton,
+body:has(#patientView:not([hidden])) #loginView .loginFooterReal,
+body:has(#adminView:not([hidden])) #loginView .loginFooterReal{
+  display:none!important;
+}
