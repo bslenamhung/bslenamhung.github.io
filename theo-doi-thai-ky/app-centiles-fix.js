@@ -329,6 +329,7 @@ async function loadPatients() {
  if (error) { toast("Không tải được danh sách hồ sơ."); return; }
  patientDirectory=(data||[]).filter(p=>p.user_id!==user.id);
  renderPatientOptions();
+ await loadDueDateReminders();
 }
 async function loadSelectedPatient() {
   selectedPatient = $("patientSelect").value || null;
@@ -759,3 +760,57 @@ document.querySelectorAll(".logout").forEach(button=>button.addEventListener("cl
 
 (async()=>{const {data}=await db.auth.getSession();if(data.session){user=data.session.user;await routeUser();}})();
 setInterval(()=>{if(user?.app_metadata?.role==="admin"&&!$("adminView").hidden)loadAdminQaThreads(true);},30000);
+async function loadDueDateReminders(){
+ const panel=$("adminDueDatePanel"),list=$("adminDueDateReminderList"),status=$("adminDueDateReminderStatus");
+ if(!panel||!list||!status||user?.app_metadata?.role!=="admin")return;
+ list.replaceChildren();status.textContent="Đang kiểm tra ngày dự sinh…";
+ const {data:followups,error}=await db.from("patient_due_date_followups").select("patient_user_id,birth_status,actual_birth_date,updated_at");
+ if(error){status.textContent="Chưa tải được trạng thái theo dõi ngày dự sinh. Vui lòng tải lại trang hoặc thử nút Làm mới.";return;}
+ const saved=new Map((followups||[]).map(r=>[r.patient_user_id,r]));
+ const today=todayLocal();
+ const plus3=new Date(Date.parse(today+"T00:00:00Z")+3*86400000).toISOString().slice(0,10);
+ const pending=(patientDirectory||[])
+  .filter(p=>p.due_date&&p.due_date<=plus3&&(saved.get(p.user_id)?.birth_status!=="delivered"))
+  .map(p=>({...p,followup:saved.get(p.user_id)||{birth_status:"pending"}}))
+  .sort((a,b)=>a.due_date.localeCompare(b.due_date));
+ const dueToday=pending.filter(p=>p.due_date===today).length;
+ const upcoming=pending.filter(p=>p.due_date>today).length;
+ const overdue=pending.filter(p=>p.due_date<today).length;
+ $("adminDueTodayCount").textContent=String(dueToday);
+ $("adminDueSoonCount").textContent=String(upcoming);
+ $("adminOverdueCount").textContent=String(overdue);
+ if(!pending.length){
+  const empty=document.createElement("p");empty.className="muted";empty.textContent="Hiện không có bệnh nhân nào đến ngày dự sinh trong 3 ngày tới hoặc đã quá ngày dự sinh cần xác nhận.";
+  list.append(empty);status.textContent="Đã cập nhật lúc "+new Date().toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit"});return;
+ }
+ pending.forEach(p=>{
+  const diff=Math.round((Date.parse(p.due_date+"T00:00:00Z")-Date.parse(today+"T00:00:00Z"))/86400000);
+  const card=document.createElement("article");card.className="dueReminderItem";
+  const details=document.createElement("div");details.className="dueReminderDetails";
+  const name=document.createElement("strong");name.textContent=p.display_name||p.username||"Bệnh nhân";
+  const meta=document.createElement("p");meta.className="muted";
+  meta.textContent="Ngày dự sinh: "+dateVi(p.due_date)+(p.phone?" · SĐT: "+p.phone:"");
+  const urgency=document.createElement("span");urgency.className="dueReminderBadge "+(diff<0?"overdue":diff===0?"today":"soon");
+  urgency.textContent=diff<0?"Quá ngày dự sinh "+Math.abs(diff)+" ngày":diff===0?"Đến ngày dự sinh hôm nay":"Còn "+diff+" ngày đến dự sinh";
+  details.append(name,meta,urgency);
+  const controls=document.createElement("div");controls.className="dueReminderControls";
+  const label=document.createElement("label");label.textContent="Kết quả liên hệ";
+  const select=document.createElement("select");select.className="dueReminderStatusSelect";
+  [["pending","Chưa xác nhận"],["not_yet","Đã liên hệ – chưa sinh"],["delivered","Đã xác nhận sinh"]].forEach(([value,text])=>{const opt=document.createElement("option");opt.value=value;opt.textContent=text;select.append(opt);});
+  select.value=p.followup.birth_status||"pending";label.append(select);
+  const save=document.createElement("button");save.type="button";save.className="primary dueReminderSave";save.textContent="Lưu trạng thái";
+  save.addEventListener("click",async()=>{
+   save.disabled=true;save.textContent="Đang lưu…";
+   const payload={patient_user_id:p.user_id,birth_status:select.value,updated_by:user.id,updated_at:new Date().toISOString()};
+   const {error:saveError}=await db.from("patient_due_date_followups").upsert(payload,{onConflict:"patient_user_id"});
+   save.disabled=false;save.textContent="Lưu trạng thái";
+   if(saveError){status.textContent="Không lưu được trạng thái của "+(p.display_name||p.username)+". Vui lòng thử lại.";return;}
+   status.textContent="Đã lưu trạng thái của "+(p.display_name||p.username)+".";
+   await loadDueDateReminders();
+  });
+  controls.append(label,save);card.append(details,controls);list.append(card);
+ });
+ status.textContent="Đã cập nhật lúc "+new Date().toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit"})+". Bệnh nhân đã xác nhận sinh sẽ không còn trong danh sách nhắc.";
+}
+
+$("refreshDueDateReminders")?.addEventListener("click",async()=>{await loadPatients();});
