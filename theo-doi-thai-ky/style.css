@@ -1292,3 +1292,61 @@ body:has(#adminView:not([hidden])) #loginView .loginFooterReal{
     height:35px!important;
   }
 }
+
+
+/* Softer, smaller maternity illustration: fade all image edges into the pink hero background. */
+#loginView.loginExperience .loginHeroReal{
+  position:relative!important;
+  isolation:isolate!important;
+  overflow:hidden!important;
+  background:#fff7fa!important;
+}
+#loginView.loginExperience .loginHeroMother{
+  width:32%!important;
+  height:94%!important;
+  max-height:94%!important;
+  right:1%!important;
+  top:3%!important;
+  bottom:auto!important;
+  object-fit:contain!important;
+  object-position:center bottom!important;
+  mix-blend-mode:multiply!important;
+  opacity:.96!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  -webkit-mask-image:radial-gradient(ellipse 70% 67% at 63% 53%,#000 37%,rgba(0,0,0,.88) 52%,rgba(0,0,0,.5) 67%,transparent 100%)!important;
+  mask-image:radial-gradient(ellipse 70% 67% at 63% 53%,#000 37%,rgba(0,0,0,.88) 52%,rgba(0,0,0,.5) 67%,transparent 100%)!important;
+}
+@media(max-width:650px){
+  #loginView.loginExperience .loginHeroReal{
+    min-height:clamp(250px,66vw,290px)!important;
+    padding-right:2px!important;
+    overflow:hidden!important;
+  }
+  #loginView.loginExperience .loginHeroCopy{
+    width:72%!important;
+    max-width:72%!important;
+    position:relative!important;
+    z-index:2!important;
+  }
+  #loginView.loginExperience .loginHeroMother{
+    width:36%!important;
+    height:90%!important;
+    max-height:90%!important;
+    top:5%!important;
+    right:0!important;
+    bottom:auto!important;
+    object-fit:contain!important;
+    object-position:center bottom!important;
+    mix-blend-mode:multiply!important;
+    opacity:.96!important;
+    -webkit-mask-image:radial-gradient(ellipse 73% 69% at 60% 52%,#000 33%,rgba(0,0,0,.88) 50%,rgba(0,0,0,.45) 68%,transparent 100%)!important;
+    mask-image:radial-gradient(ellipse 73% 69% at 60% 52%,#000 33%,rgba(0,0,0,.88) 50%,rgba(0,0,0,.45) 68%,transparent 100%)!important;
+  }
+}
+@media(max-width:390px){
+  #loginView.loginExperience .loginHeroReal{min-height:260px!important}
+  #loginView.loginExperience .loginHeroCopy{width:74%!important;max-width:74%!important}
+  #loginView.loginExperience .loginHeroMother{width:35%!important;right:0!important}
+}
