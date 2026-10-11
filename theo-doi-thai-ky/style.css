@@ -222,3 +222,10 @@ body:has(#loginView:not([hidden])) .logo{flex-basis:72px;width:72px;height:72px;
  .loginSubmit{min-height:58px;font-size:16px}
 }
 @media(max-width:360px){.loginHero{grid-template-columns:minmax(0,1fr) 32%}.loginHero h1{font-size:26px}.heroArt{min-height:160px}.loginPanel{padding:20px 15px}.loginHero p{font-size:12px}}
+
+/* Thu gọn biểu mẫu tạo tài khoản bệnh nhân trong khu vực quản trị */
+#createPatientForm[hidden]{display:none!important}
+.createPatientPanelHead{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.createPatientPanelHead h2{margin:0}
+.createPatientToggle{min-height:48px;padding:12px 20px;white-space:normal}
+@media(max-width:620px){.createPatientPanelHead{align-items:stretch;flex-direction:column}.createPatientPanelHead h2{font-size:21px}.createPatientToggle{width:100%;min-height:48px}}
