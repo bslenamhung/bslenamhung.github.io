@@ -1271,3 +1271,18 @@ body:has(#adminView:not([hidden])) #floatingPatientQaButton:not([hidden]){
  .dueReminderSave{white-space:normal;max-width:132px}
  .dueReminderHead{gap:8px}
 }
+
+/* Four gestational-age groups for due-date follow-up. */
+.dueReminderSummaryFour{grid-template-columns:repeat(4,minmax(0,1fr))}
+.dueSummaryCard small{font-size:10px;line-height:1.35;color:var(--muted)}
+.dueSummaryCard.week3{background:#f2f7ff;border-color:#cbdcf6}.dueSummaryCard.week3 strong{color:#315d9a}
+.dueSummaryCard.week2{background:#fff8e8;border-color:#f1dfb1}.dueSummaryCard.week2 strong{color:#8c6412}
+.dueSummaryCard.birthweek{background:#fff0f5;border-color:#edc2d4}.dueSummaryCard.birthweek strong{color:#9d2857}
+.dueReminderGroup{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff;margin-bottom:12px}
+.dueReminderGroupHead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.dueReminderGroupHead h3{margin:0;font-size:16px}
+.dueReminderGroupHead p{margin:4px 0 0;font-size:12px}
+.dueReminderGroupCount{display:flex;align-items:center;justify-content:center;min-width:34px;height:34px;border-radius:50%;font-size:16px;font-weight:800;background:#f7edf2;color:#8f3159}
+.dueReminderGroup.week3{border-color:#cbdcf6}.dueReminderGroup.week2{border-color:#f1dfb1}.dueReminderGroup.birthweek{border-color:#edc2d4}.dueReminderGroup.overdue{border-color:#f0c7c3}
+.dueGroupEmpty{font-size:12px;margin:8px 0 2px}
+@media(max-width:720px){.dueReminderSummaryFour{grid-template-columns:repeat(2,minmax(0,1fr))}}
