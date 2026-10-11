@@ -656,12 +656,15 @@ async function renderPatientQaMessages(id){
  $("patientQaChat").hidden=false;$("patientQaMessages").scrollTop=$("patientQaMessages").scrollHeight;
 }
 async function openPatientQaConversation(id){activePatientQaConversation=id;await loadPatientQaThreads(false);await renderPatientQaMessages(id);}
-$("floatingPatientQaButton")?.addEventListener("click",()=>{
+$("floatingPatientQaButton")?.addEventListener("click",(event)=>{
+  event.preventDefault();
   const panel=$("patientQaPanel");
   if(!panel)return;
-  panel.scrollIntoView({behavior:"smooth",block:"start"});
+  if(panel.closest("[hidden]"))return;
   panel.setAttribute("tabindex","-1");
-  panel.focus({preventScroll:true});
+  const top=panel.getBoundingClientRect().top+window.scrollY-12;
+  window.scrollTo({top:Math.max(0,top),behavior:"smooth"});
+  window.setTimeout(()=>{panel.focus({preventScroll:true});},350);
 });
 $("newQaConversation")?.addEventListener("click",()=>{activePatientQaConversation=null;$("patientQaSubject").textContent="Câu hỏi mới";$("patientQaMessages").replaceChildren();$("patientQaChat").hidden=false;$("patientQaInput").value="";$("patientQaStatus").textContent="";$("patientQaInput").focus();});
 $("patientQaForm")?.addEventListener("submit",async e=>{
