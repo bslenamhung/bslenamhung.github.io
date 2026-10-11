@@ -685,11 +685,8 @@ async function renderPatientQaMessages(id){
  $("patientQaChat").hidden=false;$("patientQaMessages").scrollTop=$("patientQaMessages").scrollHeight;
 }
 async function openPatientQaConversation(id){activePatientQaConversation=id;await loadPatientQaThreads(false);await renderPatientQaMessages(id);}
-$("floatingPatientQaButton")?.addEventListener("click",(event)=>{
-  event.preventDefault();
-  if(!user)return;
-  window.location.href="tro-ly-ai.html?refresh=20261011unified";
-});
+// Chat is opened by the button's real href in index.html. Do not intercept navigation here;
+// this keeps the chat link working even while the portal's authentication script is initializing.
 $("newQaConversation")?.addEventListener("click",()=>{activePatientQaConversation=null;$("patientQaSubject").textContent="Câu hỏi mới";$("patientQaMessages").replaceChildren();$("patientQaChat").hidden=false;$("patientQaInput").value="";$("patientQaStatus").textContent="";$("patientQaInput").focus();});
 $("patientQaForm")?.addEventListener("submit",async e=>{
  e.preventDefault();const input=$("patientQaInput"),body=input.value.trim();if(!body||body.length>6000)return;const btn=$("patientQaSend");btn.disabled=true;btn.textContent="Đang gửi…";$("patientQaStatus").textContent="";
