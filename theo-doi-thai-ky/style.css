@@ -1387,7 +1387,7 @@ body:has(#loginView:not([hidden])) .clinicHeader small{
 
 
 /* Login page already has its own branded header; prevent showing the global header twice. */
-body:has(#loginView:not([hidden])) > header.clinicHeader{display:none!important}
+/* Keep the upper clinic header visible on login page. */
 body:has(#loginView:not([hidden])) .loginBrand{width:100%;max-width:none}
 body:has(#loginView:not([hidden])) .loginBrandText{flex:1 1 auto;min-width:0}
 body:has(#loginView:not([hidden])) .loginBrandText>span{
