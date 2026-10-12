@@ -1981,3 +1981,28 @@ img{max-width:100%}
     padding:4px!important;
   }
 }
+
+
+/* V57 – Ưu tiên ảnh đại diện theo đúng tỷ lệ gốc, không ép chiều cao cố định */
+#articleGrid .article-card .body > img{
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  max-height:none!important;
+  min-height:0!important;
+  aspect-ratio:auto!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+  padding:4px!important;
+  margin:0 0 8px!important;
+  box-sizing:border-box!important;
+  background:#fff!important;
+}
+@media(max-width:520px){
+  #articleGrid .article-card .body > img{
+    height:auto!important;
+    max-height:none!important;
+    aspect-ratio:auto!important;
+    padding:3px!important;
+  }
+}
