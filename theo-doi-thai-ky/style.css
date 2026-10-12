@@ -1384,3 +1384,20 @@ body:has(#loginView:not([hidden])) .clinicHeader small{
     letter-spacing:-.045em!important;
   }
 }
+
+
+/* Login page already has its own branded header; prevent showing the global header twice. */
+body:has(#loginView:not([hidden])) > header.clinicHeader{display:none!important}
+body:has(#loginView:not([hidden])) .loginBrand{width:100%;max-width:none}
+body:has(#loginView:not([hidden])) .loginBrandText{flex:1 1 auto;min-width:0}
+body:has(#loginView:not([hidden])) .loginBrandText>span{
+  display:block!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+  font-size:clamp(10px,2.6vw,17px)!important;
+  line-height:1.25!important;
+  letter-spacing:-.035em!important;
+}
+@media(max-width:380px){
+ body:has(#loginView:not([hidden])) .loginBrandText>span{font-size:10px!important;letter-spacing:-.045em!important}
+}
