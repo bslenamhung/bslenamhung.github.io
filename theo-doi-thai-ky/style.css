@@ -1398,3 +1398,20 @@ body:has(#loginView:not([hidden])) .loginBrandText>span{
 
 /* Show only the upper global clinic header on the login page. */
 body:has(#loginView:not([hidden])) .loginBrand{display:none!important}
+
+
+/* Menu điều hướng gọn cho cổng thông tin bệnh nhân */
+.clinicHeader{position:relative}
+.clinicHeaderBrand{flex:1;min-width:0}
+.portalNavWrap{position:relative;flex:0 0 auto;margin-left:auto;align-self:center}
+.portalMenuToggle{width:44px;height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border:0;border-radius:12px;background:transparent;color:var(--d,#843651);cursor:pointer;touch-action:manipulation}
+.portalMenuToggle span{display:block;width:25px;height:3px;border-radius:3px;background:currentColor;transition:transform .18s ease,opacity .18s ease}
+.portalMenuToggle[aria-expanded="true"] span:first-child{transform:translateY(8px) rotate(45deg)}
+.portalMenuToggle[aria-expanded="true"] span:nth-child(2){opacity:0}
+.portalMenuToggle[aria-expanded="true"] span:last-child{transform:translateY(-8px) rotate(-45deg)}
+.portalMenuToggle:focus-visible,.portalQuickMenu a:focus-visible{outline:3px solid #d58bab;outline-offset:3px}
+.portalQuickMenu{position:absolute;z-index:1000;top:calc(100% + 8px);right:0;width:min(265px,calc(100vw - 32px));padding:8px;background:#fff;border:1px solid var(--line,#eadfe5);border-radius:16px;box-shadow:0 12px 32px rgba(48,38,48,.16)}
+.portalQuickMenu[hidden]{display:none!important}
+.portalQuickMenu a{display:block;padding:13px 14px;border-radius:10px;color:var(--ink,#302630);font-weight:700;text-decoration:none;line-height:1.4}
+.portalQuickMenu a:hover,.portalQuickMenu a:active{background:var(--pale,#fff0f6);color:var(--d,#843651)}
+@media(max-width:600px){.clinicHeader{gap:9px;padding-left:16px;padding-right:14px}.clinicHeader .logo{flex-basis:42px;width:42px;height:42px}.clinicHeaderBrand strong{font-size:10px}.clinicHeaderBrand b{font-size:15px}.clinicHeaderBrand small{font-size:10px}.portalMenuToggle{width:42px;height:42px}}
