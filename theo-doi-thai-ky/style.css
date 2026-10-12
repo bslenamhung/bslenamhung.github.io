@@ -1361,3 +1361,26 @@ body:has(#loginView:not([hidden])) .clinicHeader small{
   body:has(#loginView:not([hidden])) .clinicHeader b{font-size:15px!important}
   body:has(#loginView:not([hidden])) .clinicHeader small{font-size:11px!important}
 }
+
+
+/* Keep the clinic tagline on one line on mobile when there is enough room. */
+body:has(#loginView:not([hidden])) .clinicHeader small{
+  white-space:nowrap!important;
+  display:block!important;
+  font-size:clamp(10px,1.8vw,17px)!important;
+  letter-spacing:-.025em!important;
+}
+@media(max-width:720px){
+  body:has(#loginView:not([hidden])) .clinicHeader small{
+    white-space:nowrap!important;
+    font-size:clamp(10px,2.75vw,15px)!important;
+    letter-spacing:-.035em!important;
+    line-height:1.25!important;
+  }
+}
+@media(max-width:360px){
+  body:has(#loginView:not([hidden])) .clinicHeader small{
+    font-size:10px!important;
+    letter-spacing:-.045em!important;
+  }
+}
