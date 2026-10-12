@@ -834,4 +834,6 @@ async function loadDueDateReminders(){
 }
 
 $("refreshDueDateReminders")?.addEventListener("click",async()=>{await loadPatients();});
-$("toggleObstetricTracking")?.addEventListener("click",async()=>{const panel=$("adminDueDatePanel"),button=$("toggleObstetricTracking");const opening=panel.hidden;panel.hidden=!opening;button.setAttribute("aria-expanded",String(opening));button.classList.toggle("active",opening);if(opening){await loadPatients();panel.scrollIntoView({behavior:"smooth",block:"start"});}});
+function showAdminView(view){const pregnancy=$("pregnancyAdmin"),obstetric=$("adminDueDatePanel"),pregnancyButton=$("togglePregnancyAdmin"),obstetricButton=$("toggleObstetricTracking");const showPregnancy=view==="pregnancy";pregnancy.hidden=!showPregnancy;obstetric.hidden=showPregnancy;pregnancyButton.classList.toggle("active",showPregnancy);obstetricButton.classList.toggle("active",!showPregnancy);pregnancyButton.setAttribute("aria-expanded",String(showPregnancy));obstetricButton.setAttribute("aria-expanded",String(!showPregnancy));if(!showPregnancy){loadPatients();obstetric.scrollIntoView({behavior:"smooth",block:"start"});}}
+$("togglePregnancyAdmin")?.addEventListener("click",()=>showAdminView("pregnancy"));
+$("toggleObstetricTracking")?.addEventListener("click",()=>showAdminView("obstetric"));
