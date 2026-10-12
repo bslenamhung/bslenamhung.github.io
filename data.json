@@ -15,7 +15,7 @@
     "info": "🌸 PHÒNG KHÁM SẢN PHỤ KHOA THS.BSNT LÊ NAM HÙNG 🌸\n\"Điều trị bằng tri thức - chăm sóc từ trái tim\" \n\nVới mong muốn mang đến dịch vụ khám và chăm sóc Sản – Phụ khoa chất lượng, tận tâm và thân thiện, Phòng khám Sản Phụ khoa Ths.BSNT Lê Nam Hùng là địa chỉ đồng hành cùng chị em trong hành trình chăm sóc sức khỏe sinh sản.\n\n👨‍⚕️ Ths.BSNT Lê Nam Hùng với kinh nghiệm chuyên môn trong lĩnh vực Sản – Phụ khoa, trực tiếp thăm khám, tư vấn và theo dõi sức khỏe cho từng khách hàng.\n\n💗 Tận tâm trong thăm khám – Chính xác trong chẩn đoán – Hợp lý trong chi phí – An tâm trong điều trị.\n\nPhòng khám luôn hướng đến một không gian sạch sẽ, riêng tư, thân thiện, giúp chị em cảm thấy thoải mái và yên tâm khi đến thăm khám.\n\n📍 Phòng khám Sản Phụ khoa Ths.BSNT Lê Nam Hùng – đồng hành cùng sức khỏe của mẹ và bé, chăm sóc sức khỏe phụ nữ ở mọi giai đoạn.",
     "logo": "clinic-logo.png",
     "zalo": "",
-    "hours": "Thứ 2-6: Sáng 11h20-13h; chiều 16h40-19h\nThứ 7-Chủ nhật: 7-19h\n+ Xét nghiệm tiểu đường thai kỳ (thai 24-28 tuần) vào T7 và CN.\n+ Thai trên 35 tuần có thể đến khám trước 20 phút để đo tim thai.\n+ Vui lòng đánh giá trang PK trên google map để chúng tôi cải thiện dịch vụ tốt hơn:\nhttps://g.page/r/CT7KGLYTePvHEBE/review\n\nLịch khám tuần 40 từ ngày  05/10/2026 đến ngày 11/10/2026",
+    "hours": "Thứ 2-6: Sáng 11h20-13h; chiều 16h40-19h\nThứ 7-Chủ nhật: 7-19h\n+ Xét nghiệm tiểu đường thai kỳ (thai 24-28 tuần) vào T7 và CN.\n+ Thai trên 35 tuần có thể đến khám trước 20 phút để đo tim thai.\n+ Vui lòng đánh giá trang PK trên google map để chúng tôi cải thiện dịch vụ tốt hơn:\nhttps://g.page/r/CT7KGLYTePvHEBE/review\n\nLịch khám tuần 41 từ ngày  12/10/2026 đến ngày 18/10/2026",
     "intro": "",
     "phone": "0946444812",
     "images": [
@@ -30,7 +30,7 @@
     "booking": "Liên hệ trực tiếp qua Zalo hoặc số điện thoại để được hướng dẫn đặt lịch khám.",
     "tagline": "Điều trị bằng tri thức, chăm sóc từ trái tim",
     "facebook": "https://www.facebook.com/DrLeNamHung/",
-    "weeklyScheduleImage": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/schedule/1791730647223-4fj6te.jpeg"
+    "weeklyScheduleImage": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/schedule/1791778500014-6pu0w1.png"
   },
   "articles": [
     {
@@ -519,8 +519,13 @@
     },
     {
       "desc": "",
-      "name": "Dịch vụ mới",
-      "published": false
+      "name": "Thực phẩm chức năng cho mẹ",
+      "published": true
+    },
+    {
+      "desc": "",
+      "name": "Thực phẩm chức năng cho bé",
+      "published": true
     }
   ],
   "specialties": [
@@ -556,8 +561,18 @@
     },
     {
       "desc": "Các xét nghiệm trong quá trình mang thai",
-      "icon": "XN",
+      "icon": "🩸",
       "name": "Xét Nghiệm"
+    },
+    {
+      "desc": "Bổ bầu cho mẹ trước sinh, sau sinh, canxi, DHA cho mẹ…",
+      "icon": "💊",
+      "name": "Thực phẩm chức năng cho mẹ"
+    },
+    {
+      "desc": "Vitamin D3, D3K2, DHA, Kẽm, Men vi sinh, canxi, lactoferin…",
+      "icon": "💊",
+      "name": "Thực phẩm chức năng cho bé"
     }
   ]
 }
