@@ -578,10 +578,7 @@ body:has(#loginView:not([hidden])) footer small{font-size:clamp(11px,1.9vw,17px)
 body:has(#loginView:not([hidden])){
   background:#fff7fa;
 }
-body:has(#loginView:not([hidden])) header.clinicHeader,
-body:has(#loginView:not([hidden])) footer{
-  display:none!important;
-}
+body:has(#loginView:not([hidden])) footer{display:none!important}
 body:has(#loginView:not([hidden])) main{
   width:100%;max-width:889px;margin:0 auto;padding:0;
 }
@@ -719,7 +716,6 @@ body:has(#loginView:not([hidden])) main,
 
 /* Rebuilt login UI v9 — crisp HTML text and native controls, matching the supplied pink reference. */
 body:has(#loginView:not([hidden])){background:#fff7fa!important;color:#43152d}
-body:has(#loginView:not([hidden])) header.clinicHeader,
 body:has(#loginView:not([hidden])) footer{display:none!important}
 body:has(#loginView:not([hidden])) main{
   width:100%!important;max-width:960px!important;margin:0 auto!important;padding:0 24px 0!important;
@@ -915,10 +911,7 @@ body:has(#loginView:not([hidden])){
   overflow-x:hidden!important;
   background:#fff7fa!important;
 }
-body:has(#loginView:not([hidden])) header.clinicHeader,
-body:has(#loginView:not([hidden])) > footer{
-  display:none!important;
-}
+body:has(#loginView:not([hidden])) > footer{display:none!important}
 body:has(#loginView:not([hidden])) main{
   display:block!important;
   width:100%!important;
