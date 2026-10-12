@@ -665,7 +665,7 @@ function drawChart(data, canvasId="weightChart", emptyId="chartEmpty") {
     ctx.fillText(outside.length+" số đo ngoài khoảng chuẩn 22–40 tuần không hiển thị trên đồ thị.",x0,y1+49);
   }
 }
-$("downloadCsv").addEventListener("click", () => {
+$("downloadCsv")?.addEventListener("click", () => {
   const rows = [["Ngày khám","Tuổi thai","EFW (g)","Ghi chú"], ...records.map(r=>[r.scan_date,ga(r),r.efw_grams,r.note||""])];
   const csv = "\uFEFF" + rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n");
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8;"}));a.download="lich-su-can-nang-thai-nhi.csv";a.click();URL.revokeObjectURL(a.href);
