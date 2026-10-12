@@ -1950,3 +1950,34 @@ img{max-width:100%}
   html{scroll-behavior:auto}
   *,*::before,*::after{transition:none!important;animation:none!important}
 }
+
+
+/* V56 – Ảnh thẻ bài viết hiển thị trọn vẹn, không cắt mất nội dung */
+#articleGrid .article-card img{
+  display:block!important;
+  width:100%!important;
+  height:190px!important;
+  max-height:190px!important;
+  aspect-ratio:4/3!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  background:#fff!important;
+  padding:6px!important;
+  box-sizing:border-box!important;
+  border-radius:10px!important;
+  margin:0!important;
+}
+@media(max-width:900px){
+  #articleGrid .article-card img{
+    height:150px!important;
+    max-height:150px!important;
+    padding:4px!important;
+  }
+}
+@media(max-width:520px){
+  #articleGrid .article-card img{
+    height:132px!important;
+    max-height:132px!important;
+    padding:4px!important;
+  }
+}
