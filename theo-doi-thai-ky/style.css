@@ -1401,3 +1401,7 @@ body:has(#loginView:not([hidden])) .loginBrandText>span{
 @media(max-width:380px){
  body:has(#loginView:not([hidden])) .loginBrandText>span{font-size:10px!important;letter-spacing:-.045em!important}
 }
+
+
+/* Show only the upper global clinic header on the login page. */
+body:has(#loginView:not([hidden])) .loginBrand{display:none!important}
