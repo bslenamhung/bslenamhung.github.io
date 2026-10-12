@@ -24,21 +24,40 @@ function bindContactTracking(){
 }
 async function loadArticleViewTotal(){try{if(!window.supabase||!window.SUPABASE_URL)return;const c=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY);const r=await c.from('article_view_stats').select('view_count');if(!r.error){const total=(r.data||[]).reduce((n,x)=>n+Number(x.view_count||0),0);const el=document.getElementById('articleViewsTotal');if(el)el.textContent=total.toLocaleString('vi-VN')}}catch(e){}}
 async function loadData(){
-  // Không để mạng/Supabase chặn giao diện. data.json chỉ được phép chờ tối đa 2 giây.
+  // Ưu tiên dữ liệu mới nhất từ nơi quản trị đang lưu; JSON chỉ là bản dự phòng.
+  let snapshot=null;
   try{
-    const controller=new AbortController();
-    const timer=setTimeout(()=>controller.abort(),2000);
-    const local=await fetch('./data-home.json?v=2',{cache:'no-store',signal:controller.signal});
-    clearTimeout(timer);
-    if(local.ok){
-      const snapshot=await local.json();
-      if(snapshot&&typeof snapshot==='object') return snapshot;
+    if(window.supabase&&window.SUPABASE_URL&&window.SUPABASE_ANON_KEY){
+      const client=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
+      const query=client.from('site_content').select('content,updated_at').eq('id',1).maybeSingle();
+      const timeout=new Promise((_,reject)=>setTimeout(()=>reject(new Error('Supabase read timeout')),3500));
+      const {data,error}=await Promise.race([query,timeout]);
+      if(!error&&data?.content&&typeof data.content==='object'){
+        snapshot=data.content;
+      }else if(error){
+        console.warn('Không đọc được site_content; dùng bản JSON dự phòng:',error.message);
+      }
     }
   }catch(e){
-    console.warn('data.json chậm/không khả dụng:',e);
+    console.warn('Supabase chưa khả dụng; dùng bản JSON dự phòng:',e?.message||e);
   }
-  // Có dữ liệu dự phòng ngay trong script, nên trang vẫn phải render.
-  return DEFAULT_DATA;
+  // Bài viết trên trang chủ vẫn dùng bản metadata nhẹ; nội dung khác lấy trực tiếp từ quản trị.
+  try{
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(),2500);
+    const local=await fetch('./data-home.json?v=3',{cache:'no-store',signal:controller.signal});
+    clearTimeout(timer);
+    if(local.ok){
+      const json=await local.json();
+      if(json&&typeof json==='object'){
+        if(!snapshot)return json;
+        return {...json,...snapshot,articles:Array.isArray(json.articles)?json.articles:(snapshot.articles||[])};
+      }
+    }
+  }catch(e){
+    console.warn('Không đọc được data-home.json:',e);
+  }
+  return snapshot||DEFAULT_DATA;
 }
 function mergeWithDefaults(remote){
   const r=remote&&typeof remote==='object'?remote:{};
