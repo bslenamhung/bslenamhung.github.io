@@ -30,7 +30,7 @@
     "booking": "Liên hệ trực tiếp qua Zalo hoặc số điện thoại để được hướng dẫn đặt lịch khám.",
     "tagline": "Điều trị bằng tri thức, chăm sóc từ trái tim",
     "facebook": "https://www.facebook.com/DrLeNamHung/",
-    "weeklyScheduleImage": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/schedule/1791778500014-6pu0w1.png"
+    "weeklyScheduleImage": "https://tufzlxfrtdhestbemcly.supabase.co/storage/v1/object/public/site-media/schedule/1791803500456-oo73ws.png"
   },
   "articles": [
     {
@@ -518,13 +518,13 @@
       "published": true
     },
     {
-      "desc": "",
+      "desc": "Bổ bầu cho mẹ bầu, sau sinh, sắt, acid folic, canxi, DHA...",
       "name": "Thực phẩm chức năng cho mẹ",
       "published": true
     },
     {
-      "desc": "",
-      "name": "Thực phẩm chức năng cho bé",
+      "desc": "Vitamin D3, D3K2, DHA, Sắt, Kẽm, Lactoferin, canxi… cho trẻ từ sơ sinh",
+      "name": "Thực phẩm chức năng cho mẹ",
       "published": true
     }
   ],
@@ -536,7 +536,7 @@
     },
     {
       "desc": "Khám, tư vấn và các bệnh lý phụ khoa.",
-      "icon": "🩺",
+      "icon": "🔬",
       "name": "Phụ khoa"
     },
     {
@@ -561,7 +561,7 @@
     },
     {
       "desc": "Các xét nghiệm trong quá trình mang thai",
-      "icon": "🩸",
+      "icon": "🧬",
       "name": "Xét Nghiệm"
     },
     {
@@ -573,6 +573,11 @@
       "desc": "Vitamin D3, D3K2, DHA, Kẽm, Men vi sinh, canxi, lactoferin…",
       "icon": "💊",
       "name": "Thực phẩm chức năng cho bé"
+    },
+    {
+      "desc": "phẫu thuật lấy thai, phẫu thuật u xơ, phẫu thuật u nang,... ",
+      "icon": "🔪",
+      "name": "Phẫu thuật"
     }
   ]
 }
