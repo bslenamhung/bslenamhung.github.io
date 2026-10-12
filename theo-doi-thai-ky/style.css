@@ -1011,12 +1011,12 @@ body:has(#loginView:not([hidden])) #floatingPatientQaButton{
   body:has(#loginView:not([hidden])) main{
     width:100%!important;max-width:100%!important;padding:0 15px!important;
   }
-  #loginView.loginExperience{padding-top:16px!important}
+  #loginView.loginExperience{padding-top:5px!important}
   .loginBrand{gap:12px!important;padding:0 2px!important;margin-bottom:5px!important}
   .loginBrandLogo{width:72px!important;height:72px!important;flex-basis:72px!important}
   .loginBrandText strong,.loginBrandText b{font-size:clamp(12px,3.5vw,16px)!important;line-height:1.28!important}
   .loginBrandText span{font-size:12px!important;margin-top:2px!important}
-  .loginHeroReal{min-height:clamp(215px,62vw,270px)!important;padding:18px 2px 20px!important}
+  .loginHeroReal{min-height:clamp(215px,62vw,270px)!important;padding:10px 2px 20px!important}
   .loginHeroCopy{width:78%!important}
   .loginEyebrow{font-size:11px!important;letter-spacing:.05em!important;margin-bottom:9px!important}
   .loginHeroReal h1{font-size:clamp(27px,7.2vw,38px)!important;margin-bottom:10px!important}
