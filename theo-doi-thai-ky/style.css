@@ -1415,3 +1415,9 @@ body:has(#loginView:not([hidden])) .loginBrand{display:none!important}
 .portalQuickMenu a{display:block;padding:13px 14px;border-radius:10px;color:var(--ink,#302630);font-weight:700;text-decoration:none;line-height:1.4}
 .portalQuickMenu a:hover,.portalQuickMenu a:active{background:var(--pale,#fff0f6);color:var(--d,#843651)}
 @media(max-width:600px){.clinicHeader{gap:9px;padding-left:16px;padding-right:14px}.clinicHeader .logo{flex-basis:42px;width:42px;height:42px}.clinicHeaderBrand strong{font-size:10px}.clinicHeaderBrand b{font-size:15px}.clinicHeaderBrand small{font-size:10px}.portalMenuToggle{width:42px;height:42px}}
+
+
+/* Chỉ hiện menu điều hướng khi bệnh nhân đã đăng nhập hoặc đang ở khu vực quản trị */
+body:has(#loginView:not([hidden])) .portalNavWrap{display:none!important}
+body:has(#patientView:not([hidden])) .portalNavWrap,
+body:has(#adminView:not([hidden])) .portalNavWrap{display:block!important}
