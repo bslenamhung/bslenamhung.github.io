@@ -13,6 +13,8 @@ const dateToDMY=iso=>iso?iso.slice(8,10)+"/"+iso.slice(5,7)+"/"+iso.slice(0,4):"
 function formatDateInput(el){const digits=el.value.split("").filter(ch=>ch>="0"&&ch<="9").join("").slice(0,8);el.value=digits.length>4?digits.slice(0,2)+"/"+digits.slice(2,4)+"/"+digits.slice(4):digits.length>2?digits.slice(0,2)+"/"+digits.slice(2):digits;}
 function setupDateInput(inputId){
  const input=$(inputId),popup=$("calendar-"+inputId),toggle=document.querySelector('[data-calendar="'+inputId+'"]');if(!input||!popup||!toggle)return;
+  // Anchor the popup to the matching date control instead of the page. 
+  toggle.parentElement.append(popup);
  let shown=new Date();
  function render(){
   popup.replaceChildren();
