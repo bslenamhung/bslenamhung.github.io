@@ -2027,3 +2027,29 @@ img{max-width:100%}
 @media(max-width:520px){
  #articleGrid.article-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;}
 }
+
+
+/* V59 – Thống nhất khung ảnh bài viết: toàn ảnh, không cắt, không làm thẻ cao bất thường */
+#articleGrid .article-card .body > img{
+  display:block!important;
+  width:100%!important;
+  height:clamp(130px,18vw,190px)!important;
+  max-height:none!important;
+  min-height:0!important;
+  aspect-ratio:4/3!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+  background:#fff!important;
+  border:1px solid #e2e8ec!important;
+  border-radius:9px!important;
+  padding:4px!important;
+  box-sizing:border-box!important;
+  margin:0 0 9px!important;
+}
+@media(max-width:520px){
+  #articleGrid .article-card .body > img{
+    height:clamp(115px,34vw,155px)!important;
+    aspect-ratio:4/3!important;
+    object-fit:contain!important;
+  }
+}
