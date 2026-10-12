@@ -2,11 +2,48 @@ import {createClient} from "https://esm.sh/@supabase/supabase-js@2";
 const db=createClient("https://ckwhjyzomppsdplnkdeq.supabase.co","sb_publishable_FmJK_HkQxhoQ04dIzI1mCg_eupXeR48");
 const $=id=>document.getElementById(id);let user=null,profile=null,postpartum=null,measurements=[],directory=[];
 const today=()=>{const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10)};
-const dateToISO=value=>{const m=String(value||"").trim().match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);if(!m)return "";const day=Number(m[1]),month=Number(m[2]),year=Number(m[3]),d=new Date(Date.UTC(year,month-1,day));return d.getUTCFullYear()===year&&d.getUTCMonth()===month-1&&d.getUTCDate()===day?year+"-"+String(month).padStart(2,"0")+"-"+String(day).padStart(2,"0"):""};
-const dateToDMY=value=>{if(!value)return "";const m=String(value).match(/^(\\d{4})-(\\d{2})-(\\d{2})$/);return m?m[3]+"/"+m[2]+"/"+m[1]:value};
-function formatDateInput(el){const digits=el.value.replace(/\D/g,"").slice(0,8);el.value=digits.length<=2?digits:digits.length<=4?digits.slice(0,2)+"/"+digits.slice(2):digits.slice(0,2)+"/"+digits.slice(2,4)+"/"+digits.slice(4);}
-function setupDateInput(id){const el=$(id),popup=$("calendar-"+id),toggle=document.querySelector('[data-calendar="'+id+'"]');if(!el||!popup||!toggle)return;let shown=new Date();el.addEventListener("input",()=>{el.setCustomValidity("");formatDateInput(el);});el.addEventListener("blur",()=>{if(el.value.trim()&&!dateToISO(el.value))el.setCustomValidity("Nhập ngày hợp lệ theo dd/mm/yyyy.");else el.setCustomValidity("");});function render(){popup.replaceChildren();const head=document.createElement("div");head.className="dateCalendarHead";const prev=document.createElement("button");prev.type="button";prev.textContent="‹";prev.setAttribute("aria-label","Tháng trước");const label=document.createElement("strong");label.textContent=shown.toLocaleDateString("vi-VN",{month:"long",year:"numeric"});const next=document.createElement("button");next.type="button";next.textContent="›";next.setAttribute("aria-label","Tháng sau");prev.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();shown=new Date(shown.getFullYear(),shown.getMonth()-1,1);render();});next.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();shown=new Date(shown.getFullYear(),shown.getMonth()+1,1);render();});head.append(prev,label,next);popup.append(head);const grid=document.createElement("div");grid.className="dateCalendarGrid";["CN","T2","T3","T4","T5","T6","T7"].forEach(d=>{const s=document.createElement("span");s.className="dateCalendarWeekday";s.textContent=d;grid.append(s);});const offset=new Date(shown.getFullYear(),shown.getMonth(),1).getDay(),count=new Date(shown.getFullYear(),shown.getMonth()+1,0).getDate();for(let i=0;i<offset;i++)grid.append(document.createElement("span"));for(let day=1;day<=count;day++){const b=document.createElement("button");b.type="button";b.textContent=String(day);const iso=shown.getFullYear()+"-"+String(shown.getMonth()+1).padStart(2,"0")+"-"+String(day).padStart(2,"0");if(iso===today())b.classList.add("today");if(dateToISO(el.value)===iso)b.classList.add("selected");b.addEventListener("click",()=>{el.value=dateToDMY(iso);el.setCustomValidity("");popup.hidden=true;el.dispatchEvent(new Event("input",{bubbles:true}));el.dispatchEvent(new Event("change",{bubbles:true}));});grid.append(b);}popup.append(grid);const foot=document.createElement("div");foot.className="dateCalendarFoot";const clear=document.createElement("button");clear.type="button";clear.textContent="Xóa";clear.addEventListener("click",()=>{el.value="";el.setCustomValidity("");popup.hidden=true;el.dispatchEvent(new Event("input",{bubbles:true}));});const nowBtn=document.createElement("button");nowBtn.type="button";nowBtn.textContent="Hôm nay";nowBtn.addEventListener("click",()=>{el.value=dateToDMY(today());shown=new Date();popup.hidden=true;el.setCustomValidity("");el.dispatchEvent(new Event("input",{bubbles:true}));el.dispatchEvent(new Event("change",{bubbles:true}));});foot.append(clear,nowBtn);popup.append(foot);}toggle.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();popup.hidden=!popup.hidden;if(!popup.hidden){const iso=dateToISO(el.value);shown=iso?new Date(Number(iso.slice(0,4)),Number(iso.slice(5,7))-1,1):new Date();render();}});}
-document.addEventListener("click",e=>{if(!e.target.closest(".dateControl")&&!e.target.closest(".dateCalendar"))document.querySelectorAll(".dateCalendar").forEach(p=>p.hidden=true);});
+function dateToISO(value){
+ const parts=(value||"").trim().split("/");
+ if(parts.length!==3||parts[0].length!==2||parts[1].length!==2||parts[2].length!==4||parts.some(part=>part.split("").some(ch=>ch<"0"||ch>"9")))return "";
+ const day=Number(parts[0]),month=Number(parts[1]),year=Number(parts[2]),d=new Date(Date.UTC(year,month-1,day));
+ if(d.getUTCFullYear()!==year||d.getUTCMonth()!==month-1||d.getUTCDate()!==day)return "";
+ return year+"-"+String(month).padStart(2,"0")+"-"+String(day).padStart(2,"0");
+}
+const dateToDMY=iso=>iso?iso.slice(8,10)+"/"+iso.slice(5,7)+"/"+iso.slice(0,4):"";
+function formatDateInput(el){const digits=el.value.split("").filter(ch=>ch>="0"&&ch<="9").join("").slice(0,8);el.value=digits.length>4?digits.slice(0,2)+"/"+digits.slice(2,4)+"/"+digits.slice(4):digits.length>2?digits.slice(0,2)+"/"+digits.slice(2):digits;}
+function setupDateInput(inputId){
+ const input=$(inputId),popup=$("calendar-"+inputId),toggle=document.querySelector('[data-calendar="'+inputId+'"]');if(!input||!popup||!toggle)return;
+ let shown=new Date();
+ function render(){
+  popup.replaceChildren();
+  const head=document.createElement("div");head.className="dateCalendarHead";
+  const prev=document.createElement("button");prev.type="button";prev.textContent="‹";prev.setAttribute("aria-label","Tháng trước");
+  const label=document.createElement("strong");label.textContent=shown.toLocaleDateString("vi-VN",{month:"long",year:"numeric"});
+  const next=document.createElement("button");next.type="button";next.textContent="›";next.setAttribute("aria-label","Tháng sau");
+  prev.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();shown=new Date(shown.getFullYear(),shown.getMonth()-1,1);render();});
+  next.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();shown=new Date(shown.getFullYear(),shown.getMonth()+1,1);render();});
+  head.append(prev,label,next);popup.append(head);
+  const grid=document.createElement("div");grid.className="dateCalendarGrid";
+  ["CN","T2","T3","T4","T5","T6","T7"].forEach(day=>{const el=document.createElement("span");el.className="dateCalendarWeekday";el.textContent=day;grid.append(el);});
+  const offset=new Date(shown.getFullYear(),shown.getMonth(),1).getDay(),count=new Date(shown.getFullYear(),shown.getMonth()+1,0).getDate();
+  for(let i=0;i<offset;i++)grid.append(document.createElement("span"));
+  for(let day=1;day<=count;day++){
+   const b=document.createElement("button");b.type="button";b.textContent=String(day);
+   const iso=shown.getFullYear()+"-"+String(shown.getMonth()+1).padStart(2,"0")+"-"+String(day).padStart(2,"0");
+   if(iso===today())b.classList.add("today");if(dateToISO(input.value)===iso)b.classList.add("selected");
+   b.addEventListener("click",()=>{input.value=dateToDMY(iso);input.setCustomValidity("");popup.hidden=true;input.dispatchEvent(new Event("input",{bubbles:true}));input.dispatchEvent(new Event("change",{bubbles:true}));});grid.append(b);
+  }
+  popup.append(grid);
+  const foot=document.createElement("div");foot.className="dateCalendarFoot";
+  const clear=document.createElement("button");clear.type="button";clear.textContent="Xóa";clear.addEventListener("click",()=>{input.value="";input.setCustomValidity("");popup.hidden=true;input.dispatchEvent(new Event("input",{bubbles:true}));input.dispatchEvent(new Event("change",{bubbles:true}));});
+  const nowBtn=document.createElement("button");nowBtn.type="button";nowBtn.textContent="Hôm nay";nowBtn.addEventListener("click",()=>{input.value=dateToDMY(today());shown=new Date();popup.hidden=true;input.setCustomValidity("");input.dispatchEvent(new Event("input",{bubbles:true}));input.dispatchEvent(new Event("change",{bubbles:true}));});
+  foot.append(clear,nowBtn);popup.append(foot);
+ }
+ toggle.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();popup.hidden=!popup.hidden;if(!popup.hidden){const iso=dateToISO(input.value);shown=iso?new Date(Number(iso.slice(0,4)),Number(iso.slice(5,7))-1,1):new Date();render();}});
+ input.addEventListener("input",()=>{input.setCustomValidity("");formatDateInput(input);});
+ input.addEventListener("blur",()=>{if(input.value.trim()&&!dateToISO(input.value))input.setCustomValidity("Nhập ngày hợp lệ theo dd/mm/yyyy.");else input.setCustomValidity("");});
+}
+document.addEventListener("click",e=>{if(!e.target.closest(".dateControl")&&!e.target.closest(".dateCalendar"))document.querySelectorAll(".dateCalendar").forEach(el=>el.hidden=true);});
 ["birthDate","measureDate","adminBirthDate"].forEach(setupDateInput);
 const vi=d=>d?new Date(d+"T12:00:00").toLocaleDateString("vi-VN"):"—";
 const ageDays=(birth,when)=>Math.floor((Date.parse(when+"T00:00:00Z")-Date.parse(birth+"T00:00:00Z"))/86400000);
