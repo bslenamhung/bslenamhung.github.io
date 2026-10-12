@@ -614,7 +614,7 @@ function drawChart(data, canvasId="weightChart", emptyId="chartEmpty") {
   const pts=[...data].filter(p=>p.efw_grams!==null&&p.efw_grams!==undefined&&Number.isFinite(Number(p.efw_grams))&&Number(p.efw_grams)>=100&&Number(p.efw_grams)<=7000)
     .map(p=>({...p,gaExact:Number(p.ga_weeks)+Number(p.ga_days||0)/7,efw:Number(p.efw_grams)}))
     .sort((a,b)=>a.gaExact-b.gaExact);
-  const W=1000,H=520,x0=78,x1=900,y0=42,y1=420,minGA=22,maxGA=40,minW=300,maxW=4500;
+  const W=1000,H=550,x0=78,x1=900,y0=42,y1=445,minGA=22,maxGA=40,minW=300,maxW=4500;
   canvas.width=W;canvas.height=H;ctx.clearRect(0,0,W,H);
   // The reference curves remain visible even when no EFW values have been entered.
   empty.hidden=true;
