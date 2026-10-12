@@ -259,7 +259,9 @@ $("maternalWeightForm")?.addEventListener("submit",async e=>{
 
 async function loadPatient() {
  await loadWeeklyClinicSchedule();
-  $("patientName").textContent = profile.display_name || profile.username;
+  const greetingSource = String(profile.display_name || profile.username || "").trim();
+  const greetingFirstName = greetingSource ? greetingSource.split(/\\s+/).pop().toLocaleLowerCase("vi-VN") : "";
+  $("patientName").textContent = greetingFirstName ? greetingFirstName.charAt(0).toLocaleUpperCase("vi-VN") + greetingFirstName.slice(1) : "";
   $("patientProfileName").textContent = profile.display_name || "Chưa cập nhật";
   $("patientProfileDob").textContent = profile.date_of_birth ? dateVi(profile.date_of_birth) : "Chưa cập nhật";
   $("patientProfileUsername").textContent = profile.username || "—";
