@@ -834,3 +834,4 @@ async function loadDueDateReminders(){
 }
 
 $("refreshDueDateReminders")?.addEventListener("click",async()=>{await loadPatients();});
+$("toggleObstetricTracking")?.addEventListener("click",async()=>{const panel=$("adminDueDatePanel"),button=$("toggleObstetricTracking");const opening=panel.hidden;panel.hidden=!opening;button.setAttribute("aria-expanded",String(opening));button.classList.toggle("active",opening);if(opening){await loadPatients();panel.scrollIntoView({behavior:"smooth",block:"start"});}});
