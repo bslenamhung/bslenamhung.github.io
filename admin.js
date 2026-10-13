@@ -232,19 +232,37 @@ async function uploadArticleSeoImage(){
   if(status)status.textContent="Đang tải ảnh SEO lên...";
   try{const url=await uploadPublicImage(file,'seo');$("editSeoImage").value=url;renderSeoImagePreview(url);status.textContent="✅ Đã tải ảnh SEO. Hãy lưu bài viết.";}catch(err){status.textContent='Tải ảnh thất bại: '+(err.message||err);}
 }
-function saveArticleFromModal(){
-  collect();
-  const current=editingArticleIndex>=0?D.articles[editingArticleIndex]:null;
-  const title=$("editTitle").value.trim()||"Bài viết mới";
-  const cover=$("editImage").value.trim();
-  const published=$("editPublished").checked;
-  const now=new Date().toISOString();
-  const createdAt=current?.createdAt||now;
-  const publishedAt=published ? (current?.publishedAt||now) : (current?.publishedAt||'');
-  const slug=($("editSlug")?.value||"").trim();
-   const obj={id:current?.id||('art-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8)),title,slug,specialty:$("editSpecialty").value||D.specialties[0]?.name||"Sản khoa",desc:$("editDesc").value.trim(),image:cover,content:$("editContent").innerHTML.trim(),published,seoTitle:$("editSeoTitle").value.trim()||seoDefaultsFromCurrent().seoTitle,seoDescription:$("editSeoDescription").value.trim()||seoDefaultsFromCurrent().seoDescription,keywords:$("editKeywords").value.trim()||seoDefaultsFromCurrent().keywords,seoImage:$("editSeoImage").value.trim()||cover,updatedAt:now,createdAt,publishedAt};
-  if(editingArticleIndex<0)D.articles.unshift(obj);else D.articles[editingArticleIndex]=obj;
-  closeArticleEditor();renderAll();gotoSection('articles');setStatus('Đã cập nhật bài viết trong bộ nhớ. Hãy bấm “Lưu thay đổi” để ghi lên hệ thống.')
+async function saveArticleFromModal(){
+  const saveButton=$("saveArticle");
+  if(saveButton){saveButton.disabled=true;saveButton.textContent="Đang lưu...";}
+  const previousArticles=[...(D.articles||[])];
+  try{
+    collect();
+    const current=editingArticleIndex>=0?D.articles[editingArticleIndex]:null;
+    const title=$("editTitle").value.trim();
+    if(!title){setStatus("Vui lòng nhập tiêu đề bài viết.",false);$("editTitle").focus();return;}
+    const content=$("editContent").innerHTML.trim();
+    if(!content){setStatus("Vui lòng nhập nội dung bài viết.",false);$("editContent").focus();return;}
+    const cover=$("editImage").value.trim();
+    const published=$("editPublished").checked;
+    const now=new Date().toISOString();
+    const createdAt=current?.createdAt||now;
+    const publishedAt=published ? (current?.publishedAt||now) : (current?.publishedAt||'');
+    const slug=($("editSlug")?.value||"").trim();
+    const obj={id:current?.id||('art-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8)),title,slug,specialty:$("editSpecialty").value||D.specialties[0]?.name||"Sản khoa",desc:$("editDesc").value.trim(),image:cover,content,videoUrl:$("editVideoUrl")?.value.trim()||"",published,seoTitle:$("editSeoTitle").value.trim()||seoDefaultsFromCurrent().seoTitle,seoDescription:$("editSeoDescription").value.trim()||seoDefaultsFromCurrent().seoDescription,keywords:$("editKeywords").value.trim()||seoDefaultsFromCurrent().keywords,localKeywords:$("editLocalKeywords").value.trim()||"",seoImage:$("editSeoImage").value.trim()||cover,updatedAt:now,createdAt,publishedAt};
+    if(editingArticleIndex<0)D.articles.unshift(obj);else D.articles[editingArticleIndex]=obj;
+    const saved=await save();
+    if(!saved){D.articles=previousArticles;return;}
+    closeArticleEditor();
+    await renderAll();
+    gotoSection("articles");
+    setStatus(published?"✅ Đã lưu và xuất bản bài viết lên hệ thống.":"✅ Đã lưu bài viết dưới dạng bản nháp.");
+  }catch(err){
+    D.articles=previousArticles;
+    setStatus("Lưu bài viết thất bại: "+(err?.message||err),false);
+  }finally{
+    if(saveButton){saveButton.disabled=false;saveButton.textContent="Lưu bài viết";}
+  }
 }
 
 async function uploadClinicLogo(){const file=$('clinicLogoFile')?.files?.[0],status=$('clinicLogoStatus');if(!file){if(status)status.textContent='Vui lòng chọn logo.';return}if(status)status.textContent='Đang tải logo lên...';try{const url=await uploadPublicImage(file,'clinic-logo');$('clinicLogoUrl').value=url;$('clinicLogoPreview').src=url;$('clinicLogoPreview').style.display='block';status.textContent='Đã tải logo. Đang lưu lên hệ thống...';await saveClinicOnly();status.textContent='✅ Đã tải và lưu logo phòng khám.'}catch(err){status.textContent='Tải logo thất bại: '+(err.message||err)}}
@@ -265,7 +283,7 @@ async function purgeLegacyArticles(){
   await save();
   setStatus(`✅ Đã xóa ${legacy.length} bài cũ. Bây giờ hãy tạo bài viết mới.`);
 }
-async function save(){collect();const {data:{session}}=await client.auth.getSession();if(!session){location.href='admin-login.html';return}const guard=await isAdmin();if(!guard.ok){setStatus('Phiên quản trị không hợp lệ.',false);return}setStatus('Đang lưu...');const {error}=await client.from('site_content').upsert({id:1,content:D,updated_at:new Date().toISOString(),updated_by:session.user.id});if(error)setStatus('Lưu thất bại: '+error.message,false);else{setStatus('Đã lưu thành công lên hệ thống.');await renderStats();renderArticlesList()}}
+async function save(){try{collect();const {data:{session},error:sessionError}=await client.auth.getSession();if(sessionError||!session){setStatus('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',false);return false}const guard=await isAdmin();if(!guard.ok){setStatus('Phiên quản trị không hợp lệ. '+(guard.error||''),false);return false}setStatus('Đang lưu dữ liệu lên Supabase...');const {error}=await client.from('site_content').upsert({id:1,content:D,updated_at:new Date().toISOString(),updated_by:session.user.id});if(error){setStatus('Lưu thất bại: '+error.message,false);return false}setStatus('Đã lưu thành công lên hệ thống.');await renderStats();renderArticlesList();return true}catch(err){setStatus('Lưu thất bại: '+(err?.message||err),false);return false}}
 document.querySelectorAll('[data-upload-clinic-image]').forEach(b=>b.onclick=()=>uploadClinicImage(+b.dataset.uploadClinicImage));if($('uploadClinicLogo'))$('uploadClinicLogo').onclick=uploadClinicLogo;const logoUrlInput=$('clinicLogoUrl');if(logoUrlInput)logoUrlInput.addEventListener('input',()=>{const src=logoUrlInput.value.trim(),img=$('clinicLogoPreview');if(img){img.src=src||'clinic-logo.png';img.style.display='block'}});$('uploadWeeklySchedule').onclick=uploadWeeklySchedule;$('weeklyScheduleUrl').addEventListener('input',()=>{const src=$('weeklyScheduleUrl').value.trim(),img=$('weeklySchedulePreview');if(img){img.src=src;img.style.display=src?'block':'none'}});for(let i=1;i<=4;i++){const input=$("clinicImage"+i+"Url");input.addEventListener('input',()=>{const src=input.value.trim(),img=$("clinicImage"+i+"Preview");if(img){img.src=src;img.style.display=src?'block':'none'}})}document.querySelectorAll('[data-upload-about]').forEach(b=>b.onclick=()=>uploadAboutImage(b.dataset.uploadAbout));['bioImage','careerImage','expertiseImage','researchImage'].forEach(key=>{const input=$(key);input?.addEventListener('input',()=>{const src=input.value.trim(),pre=$(key+'Preview'),ph=pre?.parentElement?.querySelector('span');if(pre){pre.src=src;pre.style.display=src?'block':'none';}if(ph)ph.style.display=src?'none':'inline'})});$('purgeLegacyArticles')?.addEventListener('click',purgeLegacyArticles);$('saveBtn').onclick=save;$('saveBtnBottom').onclick=save;if($('saveClinicTop'))$('saveClinicTop').onclick=saveClinicOnly;if($('saveClinicBottom'))$('saveClinicBottom').onclick=saveClinicOnly;$('logoutBtn').onclick=async()=>{await client.auth.signOut();location.href='admin-login.html'};document.addEventListener('click',(event)=>{
   const nav=event.target.closest('.nav-item[data-section]');
   if(nav){event.preventDefault();gotoSection(nav.dataset.section);return;}
