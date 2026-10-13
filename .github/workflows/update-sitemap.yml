@@ -18,6 +18,10 @@ on:
     # Đồng bộ bài viết đã xuất bản từ Supabase tự động mỗi 5 phút.
     - cron: '*/5 * * * *'
 
+concurrency:
+  group: github-pages-publish
+  cancel-in-progress: false
+
 permissions:
   contents: write
   pages: write
