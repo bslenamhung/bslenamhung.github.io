@@ -45,7 +45,7 @@ async function loadData(){
   try{
     const controller=new AbortController();
     const timer=setTimeout(()=>controller.abort(),2500);
-    const local=await fetch('./data-home.json?v=3',{cache:'no-store',signal:controller.signal});
+    const local=await fetch('./data-home.json?v=4',{cache:'no-store',signal:controller.signal});
     clearTimeout(timer);
     if(local.ok){
       const json=await local.json();
@@ -111,10 +111,24 @@ function normalizeSearchText(value){
     .replace(/\bquy\s+i\b/g,'quy 1').replace(/\bquy\s+ii\b/g,'quy 2').replace(/\bquy\s+iii\b/g,'quy 3')
     .replace(/\bquy\s+iv\b/g,'quy 4').replace(/\bquy\s+v\b/g,'quy 5').replace(/\s+/g,' ').trim();
 }
+function articlePublishTime(a){
+  const raw=a?.publishedAt||a?.createdAt||a?.created_at||a?.date||'';
+  const time=Date.parse(raw);
+  return Number.isFinite(time)?time:0;
+}
+function isArticlePublished(a){
+  return a?.published!==false && String(a?.published??'true').toLowerCase()!=='false';
+}
 function getFilteredArticles(filter=''){
   const q=normalizeSearchText(document.getElementById('searchInput')?.value||'');
   const tokens=q.split(/\s+/).filter(Boolean);
-  const rows=(DATA.articles||[]).filter(a=>a.published!==false&&(!filter||a.specialty===filter));
+  // Never rely on the order returned by Supabase or a cached JSON snapshot.
+  // Published articles are always listed newest first.
+  const rows=(DATA.articles||[])
+    .filter(a=>isArticlePublished(a)&&(!filter||a.specialty===filter))
+    .map((a,index)=>({a,index}))
+    .sort((x,y)=>articlePublishTime(y.a)-articlePublishTime(x.a)||x.index-y.index)
+    .map(x=>x.a);
   if(!q)return rows;
   return rows.map(a=>{
     const title=normalizeSearchText(a.title||''),desc=normalizeSearchText(a.desc||''),specialty=normalizeSearchText(a.specialty||''),keywords=normalizeSearchText(a.keywords||'');
@@ -126,7 +140,7 @@ function getFilteredArticles(filter=''){
     if(title.split(' ').some(word=>word===q))score+=40;
     tokens.forEach(t=>{if(title.includes(t))score+=15;if(desc.includes(t))score+=5;if(keywords.includes(t))score+=3});
     return {a,score};
-  }).filter(Boolean).sort((x,y)=>y.score-x.score).map(x=>x.a);
+  }).filter(Boolean).sort((x,y)=>y.score-x.score||articlePublishTime(y.a)-articlePublishTime(x.a)).map(x=>x.a);
 }
 
 function renderPagination(totalPages){
