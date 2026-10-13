@@ -407,7 +407,7 @@ $("editPatientForm").addEventListener("submit",async e=>{
  if(preWeightRaw!==""&&(!Number.isFinite(pre_pregnancy_weight_kg)||pre_pregnancy_weight_kg<1||pre_pregnancy_weight_kg>300)){fail("editPatientMessage","Cân nặng trước mang thai phải từ 1 đến 300 kg.");return;}
  if(heightRaw!==""&&(!Number.isFinite(height_cm)||height_cm<50||height_cm>250)){fail("editPatientMessage","Chiều cao phải từ 50 đến 250 cm.");return;}
  if(ultrasound_abnormalities.length>2000){fail("editPatientMessage","Thông tin bất thường trên siêu âm quá dài.");return;}
- const g=gestationAt(due_date,todayLocal());if(!due_date||!g||g.invalid){fail("editPatientMessage","Ngày dự sinh không hợp lệ hoặc tuổi thai ngoài khoảng 0–42 tuần.");return;}
+ const g=due_date?gestationAt(due_date,todayLocal()):null;if(due_date&&(!g||g.invalid)){fail("editPatientMessage","Ngày dự sinh không hợp lệ hoặc tuổi thai ngoài khoảng 0–42 tuần.");return;}
  const {error}=await db.from("profiles").update({display_name,date_of_birth,phone:phone||null,address:address||null,para:para||null,medical_history:medical_history||null,pre_pregnancy_weight_kg,height_cm,ultrasound_abnormalities:ultrasound_abnormalities||null,due_date}).eq("user_id",selectedPatient);
  if(error){fail("editPatientMessage","Không cập nhật được hồ sơ: "+error.message);return;}
  fail("editPatientMessage","Đã cập nhật hồ sơ thành công.");await loadPatients();$("patientSelect").value=selectedPatient;await loadSelectedPatient();await refreshRecordGestation();
@@ -504,8 +504,9 @@ $("createPatientForm").addEventListener("submit", async e => {
   const display_name = $("newPatientName").value.trim().toLocaleUpperCase("vi-VN"), username = $("newUsername").value.trim().toLowerCase(), password = $("newPassword").value, dobRaw=$("newPatientDob").value.trim(), date_of_birth=dobRaw?dueDateIso(dobRaw):null;
   const phone = $("newPatientPhone").value.trim(), address = $("newPatientAddress").value.trim().toLocaleUpperCase("vi-VN");
   const para=$("newPatientPara").value.trim(), medical_history=$("newPatientHistory").value.trim(), preWeightRaw=$("newPatientPreWeight").value.trim(), heightRaw=$("newPatientHeight").value.trim(), pre_pregnancy_weight_kg=preWeightRaw===""?null:Number(preWeightRaw), height_cm=heightRaw===""?null:Number(heightRaw), ultrasound_abnormalities=$("newPatientUltrasoundAbnormalities").value.trim(), due_date=dueDateIso($("newPatientDueDate").value);
-  const newGa=gestationAt(due_date,todayLocal());
-  if(!due_date||!newGa||newGa.invalid){fail("createMessage","Ngày dự sinh không hợp lệ. Nhập đúng dạng dd/mm/yyyy (ví dụ 25/04/2027) và kiểm tra tuổi thai trong khoảng 0–42 tuần.");return;}
+  const newGa=due_date?gestationAt(due_date,todayLocal()):null;
+  if(raw&&!due_date){fail("createMessage","Ngày dự sinh không hợp lệ. Hãy nhập đúng dạng dd/mm/yyyy hoặc để trống nếu chưa có.");return;}
+  if(due_date&&(!newGa||newGa.invalid)){fail("createMessage","Ngày dự sinh không hợp lệ. Kiểm tra ngày nhập và tuổi thai trong khoảng 0–42 tuần.");return;}
   if(dobRaw&&!date_of_birth){fail("createMessage","Ngày sinh không hợp lệ. Vui lòng nhập theo dd/mm/yyyy.");return;} if(date_of_birth&&date_of_birth>todayLocal()){fail("createMessage","Ngày sinh không thể ở tương lai.");return;}
   if(preWeightRaw!==""&&(!Number.isFinite(pre_pregnancy_weight_kg)||pre_pregnancy_weight_kg<1||pre_pregnancy_weight_kg>300)){fail("createMessage","Cân nặng trước mang thai phải từ 1 đến 300 kg.");return;}
   if(heightRaw!==""&&(!Number.isFinite(height_cm)||height_cm<50||height_cm>250)){fail("createMessage","Chiều cao phải từ 50 đến 250 cm.");return;}
