@@ -3,11 +3,19 @@ name: Tu dong cap nhat sitemap
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
     paths:
+      - '.github/workflows/update-sitemap.yml'
       - 'V71-TRIGGER.txt'
       - 'bmi.html'
+      - 'scripts/generate_article_pages.py'
+      - 'scripts/ensure_all_article_pages.py'
       - 'scripts/update_sitemap.py'
+      - 'scripts/**'
+      - 'supabase-config.js'
   schedule:
+    # Đồng bộ bài viết đã xuất bản từ Supabase tự động mỗi 5 phút.
     - cron: '*/5 * * * *'
 
 permissions:
@@ -91,9 +99,15 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-      - name: Luu V71 va sitemap
+      - name: Luu cac trang bai viet va du lieu da dong bo
         run: |
+          set -e
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A bai-viet sitemap.xml sitemap.txt data.json data-home.json
-          if git diff --cached --quiet; then echo "Khong co thay doi."; else git commit -m "feat: V71 slug bai viet va sitemap"; git push; fi
+          if git diff --cached --quiet; then
+            echo "Khong co thay doi can commit."
+          else
+            git commit -m "chore: sync published articles from Supabase"
+            git push
+          fi
