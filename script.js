@@ -29,7 +29,7 @@ async function loadData(){
   try{
     if(window.supabase&&window.SUPABASE_URL&&window.SUPABASE_ANON_KEY){
       const client=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
-      const query=client.from('public_site_content').select('content,updated_at').eq('id',1).maybeSingle();
+      const query=client.from('site_content_public').select('content,updated_at').eq('id',1).maybeSingle();
       const timeout=new Promise((_,reject)=>setTimeout(()=>reject(new Error('Supabase read timeout')),3500));
       const {data,error}=await Promise.race([query,timeout]);
       if(!error&&data?.content&&typeof data.content==='object'){
