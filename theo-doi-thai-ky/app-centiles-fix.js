@@ -505,7 +505,7 @@ $("createPatientForm").addEventListener("submit", async e => {
   const phone = $("newPatientPhone").value.trim(), address = $("newPatientAddress").value.trim().toLocaleUpperCase("vi-VN");
   const para=$("newPatientPara").value.trim(), medical_history=$("newPatientHistory").value.trim(), preWeightRaw=$("newPatientPreWeight").value.trim(), heightRaw=$("newPatientHeight").value.trim(), pre_pregnancy_weight_kg=preWeightRaw===""?null:Number(preWeightRaw), height_cm=heightRaw===""?null:Number(heightRaw), ultrasound_abnormalities=$("newPatientUltrasoundAbnormalities").value.trim(), due_date=dueDateIso($("newPatientDueDate").value);
   const newGa=due_date?gestationAt(due_date,todayLocal()):null;
-  if(raw&&!due_date){fail("createMessage","Ngày dự sinh không hợp lệ. Hãy nhập đúng dạng dd/mm/yyyy hoặc để trống nếu chưa có.");return;}
+  if($("newPatientDueDate").value.trim()&&!due_date){fail("createMessage","Ngày dự sinh không hợp lệ. Hãy nhập đúng dạng dd/mm/yyyy hoặc để trống nếu chưa có.");return;}
   if(due_date&&(!newGa||newGa.invalid)){fail("createMessage","Ngày dự sinh không hợp lệ. Kiểm tra ngày nhập và tuổi thai trong khoảng 0–42 tuần.");return;}
   if(dobRaw&&!date_of_birth){fail("createMessage","Ngày sinh không hợp lệ. Vui lòng nhập theo dd/mm/yyyy.");return;} if(date_of_birth&&date_of_birth>todayLocal()){fail("createMessage","Ngày sinh không thể ở tương lai.");return;}
   if(preWeightRaw!==""&&(!Number.isFinite(pre_pregnancy_weight_kg)||pre_pregnancy_weight_kg<1||pre_pregnancy_weight_kg>300)){fail("createMessage","Cân nặng trước mang thai phải từ 1 đến 300 kg.");return;}
