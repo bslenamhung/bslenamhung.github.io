@@ -99,6 +99,55 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
+      - name: Kiem tra website sau khi deploy
+        env:
+          PYTHONUNBUFFERED: '1'
+        run: |
+          python - <<'PY'
+          import json, time, re, unicodedata, urllib.parse, urllib.request
+          from pathlib import Path
+          BASE = 'https://bslenamhung.github.io'
+          def slugify(value, fallback='article'):
+              value = unicodedata.normalize('NFKD', str(value or '').strip().lower())
+              value = ''.join(ch for ch in value if not unicodedata.combining(ch)).replace('đ','d')
+              value = re.sub(r'[^a-z0-9]+', '-', value).strip('-')
+              return (value[:120] or fallback)
+          data = json.loads(Path('data-home.json').read_text(encoding='utf-8'))
+          articles = [a for a in (data.get('articles') or []) if isinstance(a, dict) and str(a.get('published', True)).lower() != 'false']
+          latest = sorted(articles, key=lambda a: str(a.get('publishedAt') or a.get('createdAt') or a.get('created_at') or a.get('date') or ''), reverse=True)[:5]
+          if not latest:
+              raise SystemExit('LOI: data-home.json khong co bai viet da xuat ban.')
+          failures = []
+          for attempt in range(1, 13):
+              try:
+                  # Verify the public JSON is the same generation as the deployed artifact.
+                  check_url = BASE + '/data-home.json?deploy-check=' + str(time.time_ns())
+                  req = urllib.request.Request(check_url, headers={'Cache-Control':'no-cache','Pragma':'no-cache','User-Agent':'BSHung-Publish-Check/1.0'})
+                  with urllib.request.urlopen(req, timeout=15) as response:
+                      live = json.loads(response.read().decode('utf-8'))
+                  live_slugs = {slugify(a.get('slug') or a.get('title'), str(a.get('id') or 'article')) for a in (live.get('articles') or [])}
+                  expected_slugs = [slugify(a.get('slug') or a.get('title'), str(a.get('id') or 'article')) for a in latest]
+                  missing = [s for s in expected_slugs if s not in live_slugs]
+                  if missing:
+                      raise RuntimeError('JSON public chua co cac bai moi: ' + ', '.join(missing))
+                  for slug in expected_slugs:
+                      url = BASE + '/bai-viet/' + urllib.parse.quote(slug, safe='-_.') + '.html?deploy-check=' + str(time.time_ns())
+                      req = urllib.request.Request(url, headers={'Cache-Control':'no-cache','User-Agent':'BSHung-Publish-Check/1.0'})
+                      with urllib.request.urlopen(req, timeout=15) as response:
+                          page = response.read().decode('utf-8', 'replace')
+                          if response.status != 200 or 'id="articleLiveRoot"' not in page:
+                              raise RuntimeError('Trang bai viet khong hop le: ' + slug)
+                  print('OK: data-home.json co bai moi va 5 trang bai viet moi nhat tra ve HTTP 200.')
+                  print('5 bai da kiem tra: ' + ', '.join(expected_slugs))
+                  break
+              except Exception as exc:
+                  failures.append(str(exc))
+                  if attempt == 12:
+                      print('\n'.join(failures[-4:]))
+                      raise SystemExit('LOI: website live chua dong bo du sau 12 lan kiem tra.')
+                  time.sleep(10)
+          PY
+
       - name: Luu cac trang bai viet va du lieu da dong bo
         run: |
           set -e
