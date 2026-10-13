@@ -1421,3 +1421,12 @@ body:has(#loginView:not([hidden])) .loginBrand{display:none!important}
 body:has(#loginView:not([hidden])) .portalNavWrap{display:none!important}
 body:has(#patientView:not([hidden])) .portalNavWrap,
 body:has(#adminView:not([hidden])) .portalNavWrap{display:block!important}
+
+/* Patient counts in admin area navigation */
+.adminNavCount{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;margin-left:8px;padding:0 8px;border-radius:999px;background:#fff;color:#a62d68;font-size:14px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.adminAreaSwitch .active .adminNavCount{background:#fff;color:#a62d68}
+.adminPatientCountCard{display:grid;grid-template-columns:1fr auto;align-items:center;gap:5px 18px;margin:18px 0 24px;padding:18px 22px;border:1px solid #eadde5;border-radius:20px;background:linear-gradient(120deg,#fff,#fff5f9);box-shadow:0 7px 22px rgba(132,54,81,.06)}
+.adminPatientCountLabel{font-weight:750;color:#843651;font-size:clamp(15px,2vw,19px);line-height:1.35}
+.adminPatientCountCard strong{grid-column:2;grid-row:1/3;display:flex;align-items:center;justify-content:center;min-width:76px;height:68px;padding:0 16px;border-radius:18px;background:#b84e79;color:#fff;font-size:32px;font-weight:850;font-variant-numeric:tabular-nums}
+.adminPatientCountNote,.adminPatientCountCard small{grid-column:1;color:#756a75;font-size:12px;line-height:1.4}
+@media(max-width:600px){.adminNavCount{min-width:24px;height:24px;font-size:12px;margin-left:4px}.adminPatientCountCard{padding:15px;gap:5px 10px}.adminPatientCountCard strong{min-width:58px;height:58px;font-size:27px;border-radius:15px}}
