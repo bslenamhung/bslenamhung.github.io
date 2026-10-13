@@ -51,7 +51,7 @@ async function loadData(){
       const json=await local.json();
       if(json&&typeof json==='object'){
         if(!snapshot)return json;
-        return {...json,...snapshot,articles:Array.isArray(json.articles)?json.articles:(snapshot.articles||[])};
+        return {...json,...snapshot,articles:Array.isArray(snapshot.articles)?snapshot.articles:(Array.isArray(json.articles)?json.articles:[])};
       }
     }
   }catch(e){
