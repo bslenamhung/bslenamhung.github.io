@@ -87,10 +87,15 @@ document.getElementById('year').textContent=new Date().getFullYear();const profi
  renderArticles();bindSpecialties();bindAboutCards();loadArticleViewTotal();
   const requestedSpecialty=new URLSearchParams(window.location.search).get('specialty');
   if(requestedSpecialty&&Array.isArray(DATA.specialties)){
-    const match=DATA.specialties.find(item=>String(item.name||'').trim().toLocaleLowerCase('vi')===requestedSpecialty.trim().toLocaleLowerCase('vi'));
+    const normalizedRequested=String(requestedSpecialty).trim().toLocaleLowerCase('vi');
+    const match=DATA.specialties.find(item=>String(item.name||'').trim().toLocaleLowerCase('vi')===normalizedRequested);
     if(match){
       renderArticles(match.name);
-      setTimeout(()=>{const target=document.getElementById('specialties');if(target)target.scrollIntoView({behavior:'smooth',block:'start'});},250);
+      const articleHeading=document.querySelector('#articles .section-head h2');
+      if(articleHeading)articleHeading.textContent='Bài viết: '+match.name;
+      const searchInput=document.getElementById('searchInput');
+      if(searchInput)searchInput.placeholder='Tìm trong mục '+match.name+'...';
+      setTimeout(()=>{const target=document.getElementById('articles');if(target)target.scrollIntoView({behavior:'smooth',block:'start'});},250);
     }
   }
 }
