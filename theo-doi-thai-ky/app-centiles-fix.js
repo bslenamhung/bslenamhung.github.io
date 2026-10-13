@@ -326,12 +326,49 @@ function renderPatientOptions() {
   : "Có "+patientDirectory.length+" bệnh nhân. Gõ không dấu cũng tìm được.";
  if(query && filtered.length===0) $("patientSearchCount").textContent="Không tìm thấy bệnh nhân phù hợp. Thử họ tên không dấu, tên đăng nhập hoặc số điện thoại.";
 }
+function setAdminPatientCount(mode, counts){
+ const label=$("adminPatientCountLabel"),value=$("adminPatientCountValue"),note=$("adminPatientCountNote");
+ if(!label||!value||!note)return;
+ const configs={
+  pregnancy:["Số bệnh nhân đang theo dõi thai kỳ",counts.pregnancy,"Hồ sơ có ngày dự sinh và chưa xác nhận sinh."],
+  obstetric:["Số bệnh nhân đang theo dõi sản khoa",counts.obstetric,"Thai từ 37 tuần, trong 3 tuần trước ngày dự sinh hoặc đã quá ngày dự sinh; chưa xác nhận sinh."],
+  postpartum:["Số bệnh nhân đang theo dõi sau sinh",counts.postpartum,"Hồ sơ đã khai báo ngày sinh của bé, gồm hồ sơ chờ bác sĩ xác nhận."]
+ };
+ const item=configs[mode]||configs.pregnancy;
+ label.textContent=item[0];value.textContent=String(item[1]);note.textContent=item[2];
+}
+let adminPatientCounts={pregnancy:0,obstetric:0,postpartum:0};
+async function refreshAdminPatientCounts(){
+ if(user?.app_metadata?.role!=="admin")return;
+ const today=todayLocal();
+ const [{data:followups,error:followupError},{data:postpartumRows,error:postpartumError}]=await Promise.all([
+  db.from("patient_due_date_followups").select("patient_user_id,birth_status"),
+  db.from("patient_postpartum_profiles").select("patient_user_id")
+ ]);
+ if(followupError||postpartumError){
+  const note=$("adminPatientCountNote");if(note)note.textContent="Chưa tải được toàn bộ số liệu. Vui lòng thử tải lại.";
+  return;
+ }
+ const birthMap=new Map((followups||[]).map(r=>[r.patient_user_id,r.birth_status]));
+ const activePregnancies=(patientDirectory||[]).filter(p=>p.due_date&&birthMap.get(p.user_id)!=="delivered");
+ const obstetric=activePregnancies.filter(p=>{
+  const diff=Math.round((Date.parse(p.due_date+"T00:00:00Z")-Date.parse(today+"T00:00:00Z"))/86400000);
+  return diff<0||diff<=21;
+ });
+ adminPatientCounts={pregnancy:activePregnancies.length,obstetric:obstetric.length,postpartum:(postpartumRows||[]).length};
+ const set=(id,n)=>{const el=$(id);if(el)el.textContent=String(n);};
+ set("pregnancyNavCount",adminPatientCounts.pregnancy);
+ set("obstetricNavCount",adminPatientCounts.obstetric);
+ set("postpartumNavCount",adminPatientCounts.postpartum);
+ const active=$("adminDueDatePanel")&&!$("adminDueDatePanel").hidden?"obstetric":"pregnancy";
+ setAdminPatientCount(active,adminPatientCounts);
+}
 async function loadPatients() {
  const { data, error } = await db.from("profiles").select("user_id,username,display_name,phone,address,para,medical_history,due_date,created_at").order("created_at",{ascending:false});
  if (error) { toast("Không tải được danh sách hồ sơ."); return; }
  patientDirectory=(data||[]).filter(p=>p.user_id!==user.id);
  renderPatientOptions();
- await loadDueDateReminders();
+ await Promise.all([loadDueDateReminders(),refreshAdminPatientCounts()]);
 }
 async function loadSelectedPatient() {
   selectedPatient = $("patientSelect").value || null;
@@ -835,6 +872,6 @@ async function loadDueDateReminders(){
 }
 
 $("refreshDueDateReminders")?.addEventListener("click",async()=>{await loadPatients();});
-function showAdminView(view){const pregnancy=$("pregnancyAdmin"),obstetric=$("adminDueDatePanel"),pregnancyButton=$("togglePregnancyAdmin"),obstetricButton=$("toggleObstetricTracking");const showPregnancy=view==="pregnancy";pregnancy.hidden=!showPregnancy;obstetric.hidden=showPregnancy;pregnancyButton.classList.toggle("active",showPregnancy);obstetricButton.classList.toggle("active",!showPregnancy);pregnancyButton.setAttribute("aria-expanded",String(showPregnancy));obstetricButton.setAttribute("aria-expanded",String(!showPregnancy));if(!showPregnancy){loadPatients();obstetric.scrollIntoView({behavior:"smooth",block:"start"});}}
+function showAdminView(view){const pregnancy=$("pregnancyAdmin"),obstetric=$("adminDueDatePanel"),pregnancyButton=$("togglePregnancyAdmin"),obstetricButton=$("toggleObstetricTracking");const showPregnancy=view==="pregnancy";pregnancy.hidden=!showPregnancy;obstetric.hidden=showPregnancy;pregnancyButton.classList.toggle("active",showPregnancy);obstetricButton.classList.toggle("active",!showPregnancy);pregnancyButton.setAttribute("aria-expanded",String(showPregnancy));obstetricButton.setAttribute("aria-expanded",String(!showPregnancy));setAdminPatientCount(showPregnancy?"pregnancy":"obstetric",adminPatientCounts);if(!showPregnancy){loadPatients();obstetric.scrollIntoView({behavior:"smooth",block:"start"});}}
 $("togglePregnancyAdmin")?.addEventListener("click",()=>showAdminView("pregnancy"));
 $("toggleObstetricTracking")?.addEventListener("click",()=>showAdminView("obstetric"));
