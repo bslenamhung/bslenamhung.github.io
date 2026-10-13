@@ -400,8 +400,16 @@ def render_article(article, published):
     if rel:
         cards = []
         for r in rel:
+            related_image = str(r.get('image') or r.get('seoImage') or '').strip()
+            image_html = (
+                f'<img class="related-card-image" src="{esc(related_image)}" alt="{esc(r.get("title") or "")}" '
+                'loading="lazy" decoding="async" '
+                'style="display:block;width:100%;height:140px;object-fit:contain;background:#f4f6f7;border-radius:8px;margin:0 0 12px">'
+                if related_image else ''
+            )
             cards.append(
                 f'<a class="related-card" href="{esc(article_link(r))}">'
+                f'{image_html}'
                 f'<div class="related-tag">{esc(r.get("specialty") or "")}</div>'
                 f'<h3>{esc(r.get("title") or "")}</h3>'
                 f'<p>{esc(re.sub(r"<[^>]+>", " ", str(r.get("desc") or "")).strip()[:150])}</p>'
@@ -492,7 +500,7 @@ btn?.addEventListener('click',()=>{{const open=nav?.classList.toggle('open');btn
 document.querySelectorAll('#mainNav a').forEach(a=>a.addEventListener('click',()=>{{nav?.classList.remove('open');btn?.setAttribute('aria-expanded','false')}}));
 </script>
 <script src="../site-visit.js?v=66"></script>
-<script src="../static-article-live.js?v=66"></script>
+<script src="../static-article-live.js?v=67"></script>
 </body></html>'''
 
 
