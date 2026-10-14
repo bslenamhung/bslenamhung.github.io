@@ -108,7 +108,7 @@ async function routeUser() {
   if (error || !data) { await db.auth.signOut(); view("loginView"); fail("loginError", "Không đọc được hồ sơ. Vui lòng liên hệ quản trị viên."); return; }
   profile = data;
   if (user.app_metadata?.role === "admin") { view("adminView"); await loadPatients(); await loadAdminQaThreads(false); }
-  else { view("patientView"); await loadPatient(); await loadPatientQaThreads(false); }
+  else { view("patientView"); await Promise.all([loadPatient(), loadPatientQaThreads(false)]); }
 }
 async function loadWeeklyClinicSchedule(){
  const panel=$("weeklyPatientSchedulePanel"),img=$("patientWeeklyScheduleImage"),imgLink=$("patientScheduleImageLink");
@@ -258,7 +258,8 @@ $("maternalWeightForm")?.addEventListener("submit",async e=>{
 });
 
 async function loadPatient() {
- await loadWeeklyClinicSchedule();
+  // Hiển thị hồ sơ ngay; lịch phòng khám tải nền để không chặn màn hình đăng nhập.
+  loadWeeklyClinicSchedule().catch(error=>console.error("Không tải được lịch khám tuần này:",error));
   const greetingSource = String(profile.display_name || profile.username || "").trim();
   const greetingFirstName = greetingSource ? greetingSource.split(/\s+/).pop().toLocaleLowerCase("vi-VN") : "";
   $("patientName").textContent = greetingFirstName ? greetingFirstName.charAt(0).toLocaleUpperCase("vi-VN") + greetingFirstName.slice(1) : "";
@@ -276,12 +277,24 @@ async function loadPatient() {
   $("patientProfileUltrasoundAbnormalities").textContent = profile.ultrasound_abnormalities || "Chưa cập nhật";
   $("patientProfileDueDate").textContent = profile.due_date ? dateVi(profile.due_date) : "Chưa cập nhật";
   $("patientProfileGestation").textContent = profile.due_date ? gestationText(gestationAt(profile.due_date,todayLocal())) : "Chưa cập nhật";
-  const { data, error } = await db.from("fetal_weight_records").select("scan_date,follow_up_date,ga_weeks,ga_days,efw_grams,note").eq("patient_user_id", user.id).order("scan_date");
-  if (error) { toast("Không tải được lịch sử khám."); return; }
-  records = data || [];
-  await renderFollowUpReminder(records);
-  await loadMaternalWeightEntries();
-  const today=todayLocal(); const futureFollowUps=records.filter(r=>r.follow_up_date&&r.follow_up_date>=today).sort((a,b)=>a.follow_up_date.localeCompare(b.follow_up_date)); const nextFollowUp=futureFollowUps[0]; const followEl=$("patientNextFollowUp"); followEl.textContent=nextFollowUp?dateVi(nextFollowUp.follow_up_date)+(futureFollowUps.length>1?" (ngày hẹn gần nhất)":""):"Chưa có lịch hẹn tái khám được cập nhật."; followEl.classList.toggle("hasFollowUp",!!nextFollowUp);
+
+  // Các truy vấn độc lập chạy đồng thời thay vì chờ lần lượt từng truy vấn.
+  const [recordResult, testResult, weightPromise] = await Promise.all([
+    db.from("fetal_weight_records").select("scan_date,follow_up_date,ga_weeks,ga_days,efw_grams,note").eq("patient_user_id", user.id).order("scan_date"),
+    db.from("patient_test_records").select("id,test_date").eq("patient_user_id", user.id).order("test_date", {ascending:false}),
+    loadMaternalWeightEntries().catch(error=>{console.error("Không tải được cân nặng mẹ:",error);return null;})
+  ]);
+  if (recordResult.error) { toast("Không tải được lịch sử khám."); records=[]; }
+  else records = recordResult.data || [];
+
+  // Không để truy vấn nhắc tái khám chặn việc hiển thị biểu đồ và lịch sử.
+  renderFollowUpReminder(records).catch(error=>console.error("Không tải được nhắc tái khám:",error));
+  const today=todayLocal();
+  const futureFollowUps=records.filter(r=>r.follow_up_date&&r.follow_up_date>=today).sort((a,b)=>a.follow_up_date.localeCompare(b.follow_up_date));
+  const nextFollowUp=futureFollowUps[0];
+  const followEl=$("patientNextFollowUp");
+  followEl.textContent=nextFollowUp?dateVi(nextFollowUp.follow_up_date)+(futureFollowUps.length>1?" (ngày hẹn gần nhất)":""):"Chưa có lịch hẹn tái khám được cập nhật.";
+  followEl.classList.toggle("hasFollowUp",!!nextFollowUp);
   const latest = [...records].sort((a,b) => b.scan_date.localeCompare(a.scan_date))[0];
   $("lastVisit").textContent = latest ? dateVi(latest.scan_date) : "—";
   $("lastGa").textContent = latest ? ga(latest) : "Chưa có dữ liệu";
@@ -294,13 +307,13 @@ async function loadPatient() {
     $("patientRows").append(tr);
   });
   drawChart(records);
-  const { data: tests, error: testError } = await db.from("patient_test_records").select("id,test_date").eq("patient_user_id", user.id).order("test_date", {ascending:false});
-  if (testError) { toast("Không tải được phiếu xét nghiệm."); return; }
+
+  if (testResult.error) { toast("Không tải được phiếu xét nghiệm."); return; }
   let testFiles = [];
-  try { testFiles = await attachmentsFor((tests || []).map(t=>t.id)); } catch { toast("Không tải được tệp xét nghiệm."); }
-  renderPatientFiles(tests || [], testFiles);
+  try { testFiles = await attachmentsFor((testResult.data || []).map(t=>t.id)); }
+  catch { toast("Không tải được tệp xét nghiệm."); }
+  renderPatientFiles(testResult.data || [], testFiles);
   $("patientTestsEmpty").hidden = testFiles.length > 0;
-  await loadPatientQaThreads(true);
 }
 function normalizePatientSearch(value) {
  return String(value||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/đ/g,"d").replace(/Đ/g,"D").toLowerCase().trim();
