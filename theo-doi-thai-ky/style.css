@@ -1430,3 +1430,24 @@ body:has(#adminView:not([hidden])) .portalNavWrap{display:block!important}
 .adminPatientCountCard strong{grid-column:2;grid-row:1/3;display:flex;align-items:center;justify-content:center;min-width:76px;height:68px;padding:0 16px;border-radius:18px;background:#b84e79;color:#fff;font-size:32px;font-weight:850;font-variant-numeric:tabular-nums}
 .adminPatientCountNote,.adminPatientCountCard small{grid-column:1;color:#756a75;font-size:12px;line-height:1.4}
 @media(max-width:600px){.adminNavCount{min-width:24px;height:24px;font-size:12px;margin-left:4px}.adminPatientCountCard{padding:15px;gap:5px 10px}.adminPatientCountCard strong{min-width:58px;height:58px;font-size:27px;border-radius:15px}}
+
+/* Bốn khu vực chính của trang theo dõi thai kỳ: 2x2 trên điện thoại, một cột trên máy tính */
+.pregnancyFeatureGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:18px 0 22px}
+.pregnancyFeatureCard{display:flex;align-items:center;gap:10px;min-width:0;padding:14px 12px;border:1px solid var(--line);border-radius:15px;background:#fff;text-decoration:none;color:var(--ink);box-shadow:0 5px 18px #5a2b4108;transition:transform .15s ease,border-color .15s ease}
+.pregnancyFeatureCard:hover,.pregnancyFeatureCard:focus-visible{transform:translateY(-1px);border-color:#d9a4bc;outline:2px solid #f3d3e1;outline-offset:1px}
+.pregnancyFeatureIcon{display:grid;place-items:center;flex:0 0 38px;width:38px;height:38px;border-radius:12px;background:#f9e8ef;color:#843651;font-size:22px;font-weight:800}
+.pregnancyFeatureCard.maternal .pregnancyFeatureIcon{background:#e8f4ef;color:#28775a}
+.pregnancyFeatureCard.vaccine .pregnancyFeatureIcon{background:#f0eafe;color:#7050a8}
+.pregnancyFeatureCard.visits .pregnancyFeatureIcon{background:#e8f1fc;color:#3269a8}
+.pregnancyFeatureText{display:flex;flex:1;flex-direction:column;gap:3px;min-width:0}
+.pregnancyFeatureText strong{font-size:13px;line-height:1.35}
+.pregnancyFeatureText small{font-size:11px;line-height:1.4;color:var(--muted)}
+.pregnancyFeatureArrow{flex:0 0 auto;color:var(--muted);font-size:16px}
+.pregnancyDetailSection{scroll-margin-top:18px}
+.pregnancyScheduleList{display:grid;gap:9px;margin:14px 0}
+.pregnancyScheduleItem{display:grid;gap:4px;padding:13px 14px;border:1px solid var(--line);border-radius:12px;background:#fffafd}
+.pregnancyScheduleItem strong{color:var(--d);font-size:14px}
+.pregnancyScheduleItem span{font-size:13px;line-height:1.55;color:var(--muted)}
+.pregnancySafetyNote{margin:14px 0;padding:13px 14px;border:1px solid #f0ddc8;border-radius:11px;background:#fff8ee;color:#684b59;font-size:12px;line-height:1.6}
+@media(min-width:721px){.pregnancyFeatureGrid{grid-template-columns:1fr;gap:10px}.pregnancyFeatureCard{padding:15px 18px}.pregnancyFeatureText strong{font-size:15px}.pregnancyFeatureText small{font-size:12px}}
+@media(max-width:420px){.pregnancyFeatureGrid{gap:7px}.pregnancyFeatureCard{align-items:flex-start;gap:7px;padding:10px 8px;border-radius:12px}.pregnancyFeatureIcon{flex-basis:30px;width:30px;height:30px;border-radius:9px;font-size:18px}.pregnancyFeatureText strong{font-size:11px}.pregnancyFeatureText small{font-size:10px}.pregnancyFeatureArrow{font-size:12px}}
