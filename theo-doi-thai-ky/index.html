@@ -231,7 +231,7 @@
  function addBack(panel){
   if(!panel||panel.querySelector('.pregnancyBackButton'))return;
   const button=document.createElement('button');
-  button.type='button';button.className='secondary pregnancyBackButton';button.textContent='← Quay lại 4 mục theo dõi';
+  button.type='button';button.className='secondary pregnancyBackButton';button.textContent='← Quay lại trang chính';
   button.addEventListener('click',showHome);panel.insertBefore(button,panel.firstChild);
  }
  function showHome(){
