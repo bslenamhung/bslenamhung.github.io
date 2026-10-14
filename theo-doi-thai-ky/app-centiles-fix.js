@@ -279,10 +279,10 @@ async function loadPatient() {
   $("patientProfileGestation").textContent = profile.due_date ? gestationText(gestationAt(profile.due_date,todayLocal())) : "Chưa cập nhật";
 
   // Các truy vấn độc lập chạy đồng thời thay vì chờ lần lượt từng truy vấn.
-  const [recordResult, testResult, weightPromise] = await Promise.all([
+  loadMaternalWeightEntries().catch(error=>console.error("Không tải được cân nặng mẹ:",error));
+  const [recordResult, testResult] = await Promise.all([
     db.from("fetal_weight_records").select("scan_date,follow_up_date,ga_weeks,ga_days,efw_grams,note").eq("patient_user_id", user.id).order("scan_date"),
-    db.from("patient_test_records").select("id,test_date").eq("patient_user_id", user.id).order("test_date", {ascending:false}),
-    loadMaternalWeightEntries().catch(error=>{console.error("Không tải được cân nặng mẹ:",error);return null;})
+    db.from("patient_test_records").select("id,test_date").eq("patient_user_id", user.id).order("test_date", {ascending:false})
   ]);
   if (recordResult.error) { toast("Không tải được lịch sử khám."); records=[]; }
   else records = recordResult.data || [];
