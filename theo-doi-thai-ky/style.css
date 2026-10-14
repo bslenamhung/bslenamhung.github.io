@@ -1451,3 +1451,11 @@ body:has(#adminView:not([hidden])) .portalNavWrap{display:block!important}
 .pregnancySafetyNote{margin:14px 0;padding:13px 14px;border:1px solid #f0ddc8;border-radius:11px;background:#fff8ee;color:#684b59;font-size:12px;line-height:1.6}
 @media(min-width:721px){.pregnancyFeatureGrid{grid-template-columns:1fr;gap:10px}.pregnancyFeatureCard{padding:15px 18px}.pregnancyFeatureText strong{font-size:15px}.pregnancyFeatureText small{font-size:12px}}
 @media(max-width:420px){.pregnancyFeatureGrid{gap:7px}.pregnancyFeatureCard{align-items:flex-start;gap:7px;padding:10px 8px;border-radius:12px}.pregnancyFeatureIcon{flex-basis:30px;width:30px;height:30px;border-radius:9px;font-size:18px}.pregnancyFeatureText strong{font-size:11px}.pregnancyFeatureText small{font-size:10px}.pregnancyFeatureArrow{font-size:12px}}
+
+
+/* Điều hướng bốn khu vực theo dõi thai kỳ */
+.pregnancyBackButton{display:inline-flex;align-items:center;gap:8px;margin:0 0 16px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--d);font:inherit;font-weight:700;cursor:pointer}
+.pregnancyDetailSection>.head{margin-bottom:14px}
+.pregnancyDetailSection h2{margin-top:0}
+#antenatalScheduleSection .followUpPanel,#antenatalScheduleSection .weeklyPatientSchedule{margin-top:18px}
+#fetalWeightSection .stats{margin:0 0 18px}
