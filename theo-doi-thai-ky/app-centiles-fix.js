@@ -107,7 +107,7 @@ async function routeUser() {
   const { data, error } = await db.from("profiles").select("user_id,username,display_name,phone,address,para,medical_history,pre_pregnancy_weight_kg,height_cm,ultrasound_abnormalities,due_date,date_of_birth").eq("user_id", user.id).single();
   if (error || !data) { await db.auth.signOut(); view("loginView"); fail("loginError", "Không đọc được hồ sơ. Vui lòng liên hệ quản trị viên."); return; }
   profile = data;
-  if (user.app_metadata?.role === "admin") { view("adminView"); await loadPatients(); await loadAdminQaThreads(false); }
+  if (user.app_metadata?.role === "admin") { view("adminView"); await Promise.all([loadPatients(), loadAdminQaThreads(false)]); }
   else { view("patientView"); await Promise.all([loadPatient(), loadPatientQaThreads(false)]); }
 }
 async function loadWeeklyClinicSchedule(){
@@ -116,7 +116,7 @@ async function loadWeeklyClinicSchedule(){
  panel.hidden=false;imgLink.hidden=false;
  imgLink.href="https://bslenamhung.github.io/#weeklyScheduleWrap";
  try{
-  const response=await fetch("../data.json?refresh="+Date.now(),{cache:"no-store"});
+  const response=await fetch("../data.json",{cache:"default"});
   if(!response.ok)throw new Error("Không tải được ảnh lịch phòng khám");
   const data=await response.json(),clinic=data?.clinic||{};
   const src=typeof clinic.weeklyScheduleImage==="string"?clinic.weeklyScheduleImage.trim():"";
@@ -127,7 +127,7 @@ async function loadWeeklyClinicSchedule(){
   }
   img.alt="Ảnh lịch khám hàng tuần của Phòng khám chuyên khoa Phụ sản BS Hùng";
   img.onerror=()=>{panel.hidden=false;imgLink.hidden=false;img.alt="Không tải được ảnh lịch khám. Nhấn để xem trên website phòng khám.";};
-  img.src=src+(src.includes("?")?"&":"?")+"refresh="+Date.now();
+  img.src=src;
  }catch(error){
   panel.hidden=false;imgLink.hidden=false;
   img.alt="Không tải được ảnh lịch khám. Nhấn để xem trên website phòng khám.";
@@ -258,7 +258,7 @@ $("maternalWeightForm")?.addEventListener("submit",async e=>{
 });
 
 async function loadPatient() {
-  // Hiển thị hồ sơ ngay; lịch phòng khám tải nền để không chặn màn hình đăng nhập.
+  // Tải phần thiết yếu trước: hồ sơ bệnh nhân và giao diện chính.
   loadWeeklyClinicSchedule().catch(error=>console.error("Không tải được lịch khám tuần này:",error));
   const greetingSource = String(profile.display_name || profile.username || "").trim();
   const greetingFirstName = greetingSource ? greetingSource.split(/\s+/).pop().toLocaleLowerCase("vi-VN") : "";
@@ -277,44 +277,54 @@ async function loadPatient() {
   $("patientProfileUltrasoundAbnormalities").textContent = profile.ultrasound_abnormalities || "Chưa cập nhật";
   $("patientProfileDueDate").textContent = profile.due_date ? dateVi(profile.due_date) : "Chưa cập nhật";
   $("patientProfileGestation").textContent = profile.due_date ? gestationText(gestationAt(profile.due_date,todayLocal())) : "Chưa cập nhật";
-
-  // Các truy vấn độc lập chạy đồng thời thay vì chờ lần lượt từng truy vấn.
-  loadMaternalWeightEntries().catch(error=>console.error("Không tải được cân nặng mẹ:",error));
-  const [recordResult, testResult] = await Promise.all([
-    db.from("fetal_weight_records").select("scan_date,follow_up_date,ga_weeks,ga_days,efw_grams,note").eq("patient_user_id", user.id).order("scan_date"),
-    db.from("patient_test_records").select("id,test_date").eq("patient_user_id", user.id).order("test_date", {ascending:false})
-  ]);
-  if (recordResult.error) { toast("Không tải được lịch sử khám."); records=[]; }
-  else records = recordResult.data || [];
-
-  // Không để truy vấn nhắc tái khám chặn việc hiển thị biểu đồ và lịch sử.
-  renderFollowUpReminder(records).catch(error=>console.error("Không tải được nhắc tái khám:",error));
-  const today=todayLocal();
-  const futureFollowUps=records.filter(r=>r.follow_up_date&&r.follow_up_date>=today).sort((a,b)=>a.follow_up_date.localeCompare(b.follow_up_date));
-  const nextFollowUp=futureFollowUps[0];
-  const followEl=$("patientNextFollowUp");
-  followEl.textContent=nextFollowUp?dateVi(nextFollowUp.follow_up_date)+(futureFollowUps.length>1?" (ngày hẹn gần nhất)":""):"Chưa có lịch hẹn tái khám được cập nhật.";
-  followEl.classList.toggle("hasFollowUp",!!nextFollowUp);
-  const latest = [...records].sort((a,b) => b.scan_date.localeCompare(a.scan_date))[0];
-  $("lastVisit").textContent = latest ? dateVi(latest.scan_date) : "—";
-  $("lastGa").textContent = latest ? ga(latest) : "Chưa có dữ liệu";
-  $("lastWeight").textContent = latest ? (latest.efw_grams==null?"Chưa nhập EFW":fmt(latest.efw_grams) + " g") : "—";
-  $("visitCount").textContent = records.length;
-  $("patientRows").replaceChildren();
-  [...records].sort((a,b) => b.scan_date.localeCompare(a.scan_date)).forEach(r => {
-    const tr = document.createElement("tr");
-    [dateVi(r.scan_date), r.follow_up_date ? dateVi(r.follow_up_date) : "—", ga(r), (r.efw_grams==null?"Chưa nhập EFW":fmt(r.efw_grams) + " g"), r.note || "—"].forEach(v => { const td = document.createElement("td"); td.textContent = v; tr.append(td); });
-    $("patientRows").append(tr);
-  });
-  drawChart(records);
-
-  if (testResult.error) { toast("Không tải được phiếu xét nghiệm."); return; }
-  let testFiles = [];
-  try { testFiles = await attachmentsFor((testResult.data || []).map(t=>t.id)); }
-  catch { toast("Không tải được tệp xét nghiệm."); }
-  renderPatientFiles(testResult.data || [], testFiles);
-  $("patientTestsEmpty").hidden = testFiles.length > 0;
+  $("lastVisit").textContent = "Mở mục theo dõi để tải dữ liệu";
+  $("lastGa").textContent = "—";
+  $("lastWeight").textContent = "—";
+  $("visitCount").textContent = "—";
+  $("patientNextFollowUp").textContent = "Mở mục Lịch khám thai để tải lịch sử và lịch hẹn.";
 }
+let pregnancyRecordsLoaded=false, patientTestsLoaded=false, maternalWeightsLoaded=false;
+async function loadPregnancyRecords(){
+ if(pregnancyRecordsLoaded){return records;}
+ const {data,error}=await db.from("fetal_weight_records").select("scan_date,follow_up_date,ga_weeks,ga_days,efw_grams,note").eq("patient_user_id",user.id).order("scan_date");
+ if(error){toast("Không tải được lịch sử khám.");throw error;}
+ records=data||[];pregnancyRecordsLoaded=true;
+ const today=todayLocal(),future=records.filter(r=>r.follow_up_date&&r.follow_up_date>=today).sort((a,b)=>a.follow_up_date.localeCompare(b.follow_up_date));
+ const next=future[0],followEl=$("patientNextFollowUp");
+ followEl.textContent=next?dateVi(next.follow_up_date)+(future.length>1?" (ngày hẹn gần nhất)":""):"Chưa có lịch hẹn tái khám được cập nhật.";
+ followEl.classList.toggle("hasFollowUp",!!next);
+ const latest=[...records].sort((a,b)=>b.scan_date.localeCompare(a.scan_date))[0];
+ $("lastVisit").textContent=latest?dateVi(latest.scan_date):"—";
+ $("lastGa").textContent=latest?ga(latest):"Chưa có dữ liệu";
+ $("lastWeight").textContent=latest?(latest.efw_grams==null?"Chưa nhập EFW":fmt(latest.efw_grams)+" g"):"—";
+ $("visitCount").textContent=records.length;
+ const body=$("patientRows");body.replaceChildren();
+ [...records].sort((a,b)=>b.scan_date.localeCompare(a.scan_date)).forEach(r=>{
+  const tr=document.createElement("tr");
+  [dateVi(r.scan_date),r.follow_up_date?dateVi(r.follow_up_date):"—",ga(r),r.efw_grams==null?"Chưa nhập EFW":fmt(r.efw_grams)+" g",r.note||"—"].forEach(v=>{const td=document.createElement("td");td.textContent=v;tr.append(td);});
+  body.append(tr);
+ });
+ drawChart(records);
+ renderFollowUpReminder(records).catch(error=>console.error("Không tải được nhắc tái khám:",error));
+ return records;
+}
+async function loadPatientTests(){
+ if(patientTestsLoaded)return;
+ const {data,error}=await db.from("patient_test_records").select("id,test_date").eq("patient_user_id",user.id).order("test_date",{ascending:false});
+ if(error){toast("Không tải được phiếu xét nghiệm.");throw error;}
+ let files=[];
+ try{files=await attachmentsFor((data||[]).map(t=>t.id));}catch(error){console.error("Không tải được tệp xét nghiệm:",error);toast("Không tải được tệp xét nghiệm.");}
+ renderPatientFiles(data||[],files);$("patientTestsEmpty").hidden=files.length>0;patientTestsLoaded=true;
+}
+window.addEventListener("pregnancy-feature-open",async event=>{
+ if(!user||user.app_metadata?.role==="admin")return;
+ const key=event.detail?.key;
+ try{
+  if(key==="fetal"){await Promise.all([loadPregnancyRecords(),loadPatientTests()]);}
+  else if(key==="maternal"&&!maternalWeightsLoaded){await loadMaternalWeightEntries();maternalWeightsLoaded=true;}
+  else if(key==="visits"){await loadPregnancyRecords();}
+ }catch(error){console.error("Không tải được dữ liệu mục theo dõi:",error);}
+});
 function normalizePatientSearch(value) {
  return String(value||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/đ/g,"d").replace(/Đ/g,"D").toLowerCase().trim();
 }
