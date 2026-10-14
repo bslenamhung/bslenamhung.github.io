@@ -89,13 +89,14 @@
   <a class="pregnancyFeatureCard vaccine" href="#maternalVaccineSection"><span class="pregnancyFeatureIcon" aria-hidden="true">✚</span><span class="pregnancyFeatureText"><strong>3. Lịch tiêm chủng thai kỳ</strong><small>Mốc tiêm tham khảo và lưu ý an toàn</small></span><span class="pregnancyFeatureArrow" aria-hidden="true">↗</span></a>
   <a class="pregnancyFeatureCard visits" href="#antenatalScheduleSection"><span class="pregnancyFeatureIcon" aria-hidden="true">▦</span><span class="pregnancyFeatureText"><strong>4. Lịch khám thai</strong><small>Các mốc khám và lịch tái khám</small></span><span class="pregnancyFeatureArrow" aria-hidden="true">↗</span></a>
 </nav>
-<div class="stats"><article><small>Lần khám gần nhất</small><strong id="lastVisit">—</strong><small id="lastGa">Chưa có dữ liệu</small></article><article class="pink"><small>EFW gần nhất</small><strong id="lastWeight">—</strong><small>Cân nặng ước tính (gam)</small></article><article><small>Số lần khám</small><strong id="visitCount">0</strong></article></div>
 
- <section id="patientFollowUpReminder" class="panel followUpReminder" aria-live="polite" hidden><div class="followUpReminderIcon" aria-hidden="true">♥</div><div class="followUpReminderContent"><p class="followUpReminderEyebrow">NHẮC LỊCH TÁI KHÁM</p><h2>Đã đến lịch tái khám</h2><p class="followUpReminderDate">Ngày hẹn: <strong id="followUpReminderDate">—</strong></p><p id="followUpReminderMessage" class="muted">Vui lòng liên hệ phòng khám để được hỗ trợ.</p><button id="acknowledgeFollowUpReminder" type="button" class="primary">Đã xem</button></div></section>
+
  
- <section id="fetalWeightSection" class="panel pregnancyDetailSection"><div class="head"><div><h2>Phần 1 · Theo dõi trọng lượng thai</h2><p class="muted">Biểu đồ cân nặng thai nhi theo tuổi thai và lịch sử siêu âm.</p><h2>Biểu đồ cân nặng thai nhi</h2><small class="muted">Chuẩn INTERGROWTH-21st · bách phân vị P3, P10, P50, P90, P97</small></div></div><div class="chart"><canvas id="weightChart" width="1000" height="420"></canvas><div id="chartEmpty" class="empty">Chưa có lần khám nào được cập nhật.</div></div><p class="note">Các đường P3, P10, P50, P90 và P97 là đường tham chiếu cân nặng ước tính theo tuổi thai của INTERGROWTH-21st (22–40 tuần); các chấm đậm là số đo của bệnh nhân. Đây là công cụ hỗ trợ theo dõi, không thay thế đánh giá lâm sàng.</p></section>
- <section class="panel"><h2>Lịch sử khám và cân nặng thai nhi</h2><div class="scroll"><table><thead><tr><th>Ngày khám</th><th>Ngày hẹn tái khám</th><th>Tuổi thai</th><th>EFW</th><th>Ghi chú</th></tr></thead><tbody id="patientRows"></tbody></table></div></section>
- <section class="panel"><h2>Phiếu xét nghiệm</h2><div id="patientTestGallery" class="testGallery"></div><p id="patientTestsEmpty" class="emptyInline">Chưa có phiếu xét nghiệm được cập nhật.</p></section>
+ 
+ <section id="fetalWeightSection" class="panel pregnancyDetailSection">
+<div class="stats"><article><small>Lần khám gần nhất</small><strong id="lastVisit">—</strong><small id="lastGa">Chưa có dữ liệu</small></article><article class="pink"><small>EFW gần nhất</small><strong id="lastWeight">—</strong><small>Cân nặng ước tính (gam)</small></article><article><small>Số lần khám</small><strong id="visitCount">0</strong></article></div><div class="head"><div><h2>Theo dõi trọng lượng thai</h2><p class="muted">Biểu đồ cân nặng thai nhi theo tuổi thai và lịch sử siêu âm.</p><h3>Biểu đồ cân nặng thai nhi</h3><small class="muted">Chuẩn INTERGROWTH-21st · bách phân vị P3, P10, P50, P90, P97</small></div></div><div class="chart"><canvas id="weightChart" width="1000" height="420"></canvas><div id="chartEmpty" class="empty">Chưa có lần khám nào được cập nhật.</div></div><p class="note">Các đường P3, P10, P50, P90 và P97 là đường tham chiếu cân nặng ước tính theo tuổi thai của INTERGROWTH-21st (22–40 tuần); các chấm đậm là số đo của bệnh nhân. Đây là công cụ hỗ trợ theo dõi, không thay thế đánh giá lâm sàng.</p></section>
+ 
+ 
  <section id="maternalWeightSection" class="panel maternalWeightPanel pregnancyDetailSection"><h2>Phần 2 · Theo dõi trọng lượng mẹ</h2><p class="muted">Bạn có thể tự nhập cân nặng sau mỗi lần cân. Hệ thống lưu lịch sử riêng trong tài khoản của bạn và đối chiếu với BMI trước mang thai, tuổi thai.</p>
  <form id="maternalWeightForm" class="maternalWeightForm">
   <label>Ngày cân<input id="maternalWeightDate" type="date" required></label>
@@ -122,6 +123,7 @@
   <div class="pregnancySafetyNote"><strong>Lưu ý an toàn:</strong> Không tự tiêm chỉ dựa vào danh sách tham khảo trên trang. Các vắc xin sống như sởi–quai bị–rubella (MMR) và thủy đậu thường không tiêm trong thai kỳ; nếu đã tiêm trước khi biết có thai, hãy báo bác sĩ để được tư vấn. Danh sách này hiện là hướng dẫn tham khảo, chưa phải hồ sơ ghi nhận mũi tiêm cá nhân.</div>
 </section>
 <section id="antenatalScheduleSection" class="panel pregnancyDetailSection antenatalSchedulePanel">
+<section id="patientFollowUpReminder" class="panel followUpReminder" aria-live="polite" hidden><div class="followUpReminderIcon" aria-hidden="true">♥</div><div class="followUpReminderContent"><p class="followUpReminderEyebrow">NHẮC LỊCH TÁI KHÁM</p><h2>Đã đến lịch tái khám</h2><p class="followUpReminderDate">Ngày hẹn: <strong id="followUpReminderDate">—</strong></p><p id="followUpReminderMessage" class="muted">Vui lòng liên hệ phòng khám để được hỗ trợ.</p><button id="acknowledgeFollowUpReminder" type="button" class="primary">Đã xem</button></div></section>
   <h2>Phần 4 · Lịch khám thai</h2>
   <p class="muted">Các mốc khám tham khảo. Bác sĩ có thể điều chỉnh theo tuổi thai, nguy cơ và tình trạng của từng thai phụ; không phải mọi xét nghiệm hay theo dõi đều áp dụng giống nhau.</p>
   <div class="pregnancyScheduleList">
@@ -132,11 +134,13 @@
     <article class="pregnancyScheduleItem"><strong>Quý III</strong><span>Đánh giá tăng trưởng và các xét nghiệm/theo dõi cần thiết tùy nguy cơ.</span></article>
     <article class="pregnancyScheduleItem"><strong>36–37 tuần 6 ngày</strong><span>Trao đổi về sàng lọc liên cầu khuẩn nhóm B (GBS) theo hướng dẫn áp dụng tại cơ sở.</span></article>
   </div>
-  <div class="pregnancySafetyNote">Lịch hẹn tái khám do phòng khám cập nhật vẫn hiển thị tại phần <strong>Lịch hẹn tái khám</strong> bên dưới. Các mốc trên không thay thế lịch hẹn cá nhân hoặc đánh giá trực tiếp.</div>
-</section>
-
+  <div class="pregnancySafetyNote">Các mốc trên chỉ mang tính tham khảo, không thay thế lịch hẹn cá nhân hoặc đánh giá trực tiếp.</div>
 <section class="panel followUpPanel"><h2>Lịch hẹn tái khám</h2><p id="patientNextFollowUp" class="nextFollowUpValue">Chưa có lịch hẹn tái khám được cập nhật.</p><p class="muted">Ngày hẹn do phòng khám cập nhật sau mỗi lần khám.</p></section>
 <section class="panel weeklyPatientSchedule" id="weeklyPatientSchedulePanel" aria-label="Lịch khám tuần này"><h2 class="weeklyPatientScheduleTitle">Lịch khám tuần này</h2><a id="patientScheduleImageLink" href="https://bslenamhung.github.io/#weeklyScheduleWrap" target="_blank" rel="noopener noreferrer" class="patientScheduleImageLink"><img id="patientWeeklyScheduleImage" alt="Ảnh lịch khám hàng tuần của Phòng khám chuyên khoa Phụ sản BS Hùng" loading="lazy"></a></section>
+</section>
+
+
+
 <section id="patientQaPanel" class="panel qaPanel" hidden aria-hidden="true">
   <div class="head"><div><h2>Hỏi đáp cùng trợ lý AI BS Hùng</h2><p class="muted">AI ưu tiên bài viết trên website phòng khám. Bác sĩ có thể đọc và trả lời câu hỏi của bạn trong cổng này.</p></div><button id="newQaConversation" type="button" class="primary">Đặt câu hỏi mới</button></div>
   <p class="note">Không dùng kênh này cho tình huống cấp cứu. AI chỉ hỗ trợ thông tin, không thay thế khám và tư vấn trực tiếp.</p>
@@ -210,4 +214,43 @@
  document.addEventListener('keydown',function(event){if(event.key==='Escape'){closeMenu();button.focus();}});
  menu.querySelectorAll('a').forEach(function(link){link.addEventListener('click',closeMenu);});
 })();
-</script><script type="module" src="app-centiles-fix.js?v=20261014-due-groups-v13"></script></body></html>
+</script><script>
+(function(){
+ const root=document.getElementById('pregnancyTracking');
+ if(!root)return;
+ const profile=root.querySelector(':scope > section.panel');
+ const cards=root.querySelector('.pregnancyFeatureGrid');
+ const details=Array.from(root.children).filter(el=>el!==profile&&el!==cards);
+ const fetal=document.getElementById('fetalWeightSection');
+ const maternal=document.getElementById('maternalWeightSection');
+ const vaccine=document.getElementById('maternalVaccineSection');
+ const visits=document.getElementById('antenatalScheduleSection');
+ const history=Array.from(root.querySelectorAll(':scope > section.panel')).filter(el=>el.querySelector('#patientRows'));
+ const testsPanel=Array.from(root.querySelectorAll(':scope > section.panel')).filter(el=>el.querySelector('#patientTestGallery'));
+ const groups={fetal:[fetal,...history,...testsPanel],maternal:[maternal],vaccine:[vaccine],visits:[visits]};
+ function addBack(panel){
+  if(!panel||panel.querySelector('.pregnancyBackButton'))return;
+  const button=document.createElement('button');
+  button.type='button';button.className='secondary pregnancyBackButton';button.textContent='← Quay lại 4 mục theo dõi';
+  button.addEventListener('click',showHome);panel.insertBefore(button,panel.firstChild);
+ }
+ function showHome(){
+  profile.hidden=false;cards.hidden=false;details.forEach(el=>el.hidden=true);
+  root.querySelectorAll('.pregnancyBackButton').forEach(el=>el.remove());
+  const quick=root.querySelector('.patientQuickNav');if(quick)quick.hidden=true;
+  window.scrollTo({top:0,behavior:'smooth'});
+ }
+ function openFeature(key){
+  profile.hidden=true;cards.hidden=true;details.forEach(el=>el.hidden=true);
+  (groups[key]||[]).forEach(panel=>{if(panel){panel.hidden=false;addBack(panel);}});
+  if(key==='visits'){const reminder=document.getElementById('patientFollowUpReminder');if(reminder)reminder.hidden=false;}
+  window.scrollTo({top:0,behavior:'smooth'});
+ }
+ cards.querySelectorAll('.pregnancyFeatureCard').forEach(link=>link.addEventListener('click',event=>{
+  event.preventDefault();
+  const key=link.classList.contains('fetal')?'fetal':link.classList.contains('maternal')?'maternal':link.classList.contains('vaccine')?'vaccine':'visits';
+  openFeature(key);
+ }));
+ showHome();
+})();
+</script><script type="module" src="app-centiles-fix.js?v=20261014-four-cards-v14"></script></body></html>
