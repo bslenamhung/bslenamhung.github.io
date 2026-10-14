@@ -95,8 +95,8 @@
  
  <section id="fetalWeightSection" class="panel pregnancyDetailSection">
 <div class="stats"><article><small>Lần khám gần nhất</small><strong id="lastVisit">—</strong><small id="lastGa">Chưa có dữ liệu</small></article><article class="pink"><small>EFW gần nhất</small><strong id="lastWeight">—</strong><small>Cân nặng ước tính (gam)</small></article><article><small>Số lần khám</small><strong id="visitCount">0</strong></article></div><div class="head"><div><h2>Theo dõi trọng lượng thai</h2><p class="muted">Biểu đồ cân nặng thai nhi theo tuổi thai và lịch sử siêu âm.</p><h3>Biểu đồ cân nặng thai nhi</h3><small class="muted">Chuẩn INTERGROWTH-21st · bách phân vị P3, P10, P50, P90, P97</small></div></div><div class="chart"><canvas id="weightChart" width="1000" height="420"></canvas><div id="chartEmpty" class="empty">Chưa có lần khám nào được cập nhật.</div></div><p class="note">Các đường P3, P10, P50, P90 và P97 là đường tham chiếu cân nặng ước tính theo tuổi thai của INTERGROWTH-21st (22–40 tuần); các chấm đậm là số đo của bệnh nhân. Đây là công cụ hỗ trợ theo dõi, không thay thế đánh giá lâm sàng.</p></section>
- 
- 
+ <section class="panel pregnancyHistoryPanel"><h2>Lịch sử khám và cân nặng thai nhi</h2><div class="scroll"><table><thead><tr><th>Ngày khám</th><th>Ngày hẹn tái khám</th><th>Tuổi thai</th><th>EFW</th><th>Ghi chú</th></tr></thead><tbody id="patientRows"></tbody></table></div></section>
+ <section class="panel pregnancyTestsPanel"><h2>Phiếu xét nghiệm</h2><div id="patientTestGallery" class="testGallery"></div><p id="patientTestsEmpty" class="emptyInline">Chưa có phiếu xét nghiệm được cập nhật.</p></section>
  <section id="maternalWeightSection" class="panel maternalWeightPanel pregnancyDetailSection"><h2>Phần 2 · Theo dõi trọng lượng mẹ</h2><p class="muted">Bạn có thể tự nhập cân nặng sau mỗi lần cân. Hệ thống lưu lịch sử riêng trong tài khoản của bạn và đối chiếu với BMI trước mang thai, tuổi thai.</p>
  <form id="maternalWeightForm" class="maternalWeightForm">
   <label>Ngày cân<input id="maternalWeightDate" type="date" required></label>
