@@ -11,3 +11,17 @@ footer.clinicFooter{display:flex;flex-direction:column;align-items:center;justif
 .adminPatientCountCard strong{grid-column:2;grid-row:1/3;display:flex;align-items:center;justify-content:center;min-width:76px;height:68px;padding:0 16px;border-radius:18px;background:var(--p);color:#fff;font-size:32px;font-weight:850;font-variant-numeric:tabular-nums}
 .adminPatientCountCard small{grid-column:1;color:var(--muted);font-size:12px;line-height:1.4}
 @media(max-width:600px){.adminPatientCountCard{padding:15px;gap:5px 10px}.adminPatientCountCard strong{min-width:58px;height:58px;font-size:27px;border-radius:15px}}
+
+/* Expandable child postpartum record */
+.patient-detail-trigger{border:0;background:transparent;color:var(--d);font:inherit;font-weight:800;text-align:left;padding:7px 4px;border-radius:8px;cursor:pointer}
+.patient-detail-trigger:hover,.patient-detail-trigger:focus-visible{background:#fff0f6;outline:2px solid #d9a4bc;outline-offset:1px}
+.postpartumPatientRow{cursor:default}
+.patient-detail-row>td{padding:12px!important;background:#fff8fb;border-bottom:1px solid var(--line)}
+.patient-detail-panel{border:1px solid var(--line);border-radius:14px;background:#fff;padding:16px;display:grid;gap:12px}
+.patient-detail-panel h3{margin:4px 0;color:var(--d);font-size:16px}
+.patient-detail-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.patient-detail-field{border:1px solid #eee1e8;border-radius:10px;padding:10px;display:grid;gap:5px;min-width:0}
+.patient-detail-field small{color:var(--muted);font-size:12px}
+.patient-detail-field strong{overflow-wrap:anywhere;font-size:14px}
+.patient-detail-panel .person{margin:0}
+@media(max-width:650px){.patient-detail-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.patient-detail-panel{padding:10px}.patient-detail-row>td{padding:6px!important}}
