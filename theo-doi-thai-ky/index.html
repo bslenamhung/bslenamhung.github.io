@@ -244,6 +244,7 @@
   profile.hidden=true;cards.hidden=true;details.forEach(el=>el.hidden=true);
   (groups[key]||[]).forEach(panel=>{if(panel){panel.hidden=false;if(panel===fetal||panel===maternal||panel===vaccine||panel===visits)addBack(panel);}});
   if(key==='visits'){const reminder=document.getElementById('patientFollowUpReminder');if(reminder)reminder.hidden=false;}
+  window.dispatchEvent(new CustomEvent('pregnancy-feature-open',{detail:{key}}));
   window.scrollTo({top:0,behavior:'smooth'});
  }
  cards.querySelectorAll('.pregnancyFeatureCard').forEach(link=>link.addEventListener('click',event=>{
@@ -253,4 +254,4 @@
  }));
  showHome();
 })();
-</script><script type="module" src="app-centiles-fix.js?v=20261014-login-speed-v1"></script></body></html>
+</script><script type="module" src="app-centiles-fix.js?v=20261014-lazy-feature-v2"></script></body></html>
