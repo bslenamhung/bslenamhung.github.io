@@ -242,7 +242,7 @@
  }
  function openFeature(key){
   profile.hidden=true;cards.hidden=true;details.forEach(el=>el.hidden=true);
-  (groups[key]||[]).forEach(panel=>{if(panel){panel.hidden=false;addBack(panel);}});
+  (groups[key]||[]).forEach(panel=>{if(panel){panel.hidden=false;if(panel===fetal||panel===maternal||panel===vaccine||panel===visits)addBack(panel);}});
   if(key==='visits'){const reminder=document.getElementById('patientFollowUpReminder');if(reminder)reminder.hidden=false;}
   window.scrollTo({top:0,behavior:'smooth'});
  }
