@@ -353,7 +353,7 @@ async function refreshAdminPatientCounts(){
  const activePregnancies=(patientDirectory||[]).filter(p=>p.due_date&&birthMap.get(p.user_id)!=="delivered");
  const obstetric=activePregnancies.filter(p=>{
   const diff=Math.round((Date.parse(p.due_date+"T00:00:00Z")-Date.parse(today+"T00:00:00Z"))/86400000);
-  return diff<0||diff<=21;
+  return diff<0||diff<=35;
  });
  adminPatientCounts={pregnancy:activePregnancies.length,obstetric:obstetric.length,postpartum:(postpartumRows||[]).length};
  const set=(id,n)=>{const el=$(id);if(el)el.textContent=String(n);};
@@ -816,7 +816,7 @@ async function loadDueDateReminders(){
    const diff=Math.round((Date.parse(p.due_date+"T00:00:00Z")-Date.parse(today+"T00:00:00Z"))/86400000);
    return {...p,dueDiff:diff,followup:saved.get(p.user_id)||{birth_status:"pending"}};
   })
-  .filter(p=>p.dueDiff<0||(p.dueDiff>=0&&p.dueDiff<=21))
+  .filter(p=>p.dueDiff<0||(p.dueDiff>=0&&p.dueDiff<=35))
   .sort((a,b)=>a.due_date.localeCompare(b.due_date));
  const groups=[
   {key:"week3",title:"Còn 3 tuần đến ngày sinh",subtitle:"Thai 35 tuần đến 36 tuần 6 ngày",countId:"adminDueWeek3Count",items:pending.filter(p=>p.dueDiff>=22&&p.dueDiff<=35)},
