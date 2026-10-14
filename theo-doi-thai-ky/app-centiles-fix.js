@@ -819,14 +819,14 @@ async function loadDueDateReminders(){
   .filter(p=>p.dueDiff<0||(p.dueDiff>=0&&p.dueDiff<=21))
   .sort((a,b)=>a.due_date.localeCompare(b.due_date));
  const groups=[
-  {key:"week3",title:"Còn 3 tuần đến ngày sinh",subtitle:"Thai 37 tuần đến 37 tuần 6 ngày",countId:"adminDueWeek3Count",items:pending.filter(p=>p.dueDiff>=15&&p.dueDiff<=21)},
-  {key:"week2",title:"Còn 2 tuần đến ngày sinh",subtitle:"Thai 38 tuần đến 38 tuần 6 ngày",countId:"adminDueWeek2Count",items:pending.filter(p=>p.dueDiff>=8&&p.dueDiff<=14)},
-  {key:"birthweek",title:"Tuần sinh",subtitle:"Thai 39 đến 40 tuần",countId:"adminDueBirthWeekCount",items:pending.filter(p=>p.dueDiff>=0&&p.dueDiff<=7)},
+  {key:"week3",title:"Còn 3 tuần đến ngày sinh",subtitle:"Thai 35 tuần đến 36 tuần 6 ngày",countId:"adminDueWeek3Count",items:pending.filter(p=>p.dueDiff>=22&&p.dueDiff<=35)},
+  {key:"week2",title:"Còn 2 tuần đến ngày sinh",subtitle:"Thai 37 tuần đến 37 tuần 6 ngày",countId:"adminDueWeek2Count",items:pending.filter(p=>p.dueDiff>=15&&p.dueDiff<=21)},
+  {key:"birthweek",title:"Tuần sinh",subtitle:"Thai 38 đến 40 tuần",countId:"adminDueBirthWeekCount",items:pending.filter(p=>p.dueDiff>=0&&p.dueDiff<=14)},
   {key:"overdue",title:"Quá ngày, chưa xác nhận sinh",subtitle:"Ngày dự sinh đã qua",countId:"adminOverdueCount",items:pending.filter(p=>p.dueDiff<0)}
  ];
  groups.forEach(g=>$(g.countId).textContent=String(g.items.length));
  if(!pending.length){
-  const empty=document.createElement("p");empty.className="muted";empty.textContent="Hiện chưa có bệnh nhân trong giai đoạn thai 37 tuần trở lên cần theo dõi ngày dự sinh.";
+  const empty=document.createElement("p");empty.className="muted";empty.textContent="Hiện chưa có bệnh nhân trong các giai đoạn từ thai 35 tuần trở lên cần theo dõi ngày dự sinh.";
   list.append(empty);status.textContent="Đã cập nhật lúc "+new Date().toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit"});return;
  }
  groups.forEach(g=>{
@@ -868,7 +868,7 @@ async function loadDueDateReminders(){
   });
   list.append(section);
  });
- status.textContent="Đã cập nhật lúc "+new Date().toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit"})+". Danh sách gồm thai 37 tuần trở lên; bệnh nhân đã xác nhận sinh sẽ không còn trong danh sách nhắc.";
+ status.textContent="Đã cập nhật lúc "+new Date().toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit"})+". Danh sách gồm thai từ 35 tuần trở lên; bệnh nhân đã xác nhận sinh sẽ không còn trong danh sách nhắc.";
 }
 
 $("refreshDueDateReminders")?.addEventListener("click",async()=>{await loadPatients();});
