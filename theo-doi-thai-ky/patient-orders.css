@@ -1,0 +1,16 @@
+/* Patient portal: purchased order history */
+.patientOrdersCard{margin:16px 0 22px;padding:18px;border:1px solid var(--line,#eadde3);border-radius:18px;background:#fff}
+.patientOrdersCard h2{margin:0 0 6px;color:var(--ink,#30232a);font-size:1.2rem}
+.patientOrdersIntro,.patientOrdersMessage{color:var(--muted,#766873);font-size:.92rem}
+.patientOrdersMessage{margin:10px 0}
+.patientOrderList{display:grid;gap:12px}
+.patientOrderItem{border:1px solid var(--line,#eadde3);border-radius:14px;padding:14px;background:#fffafb}
+.patientOrderHead,.patientOrderMeta{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.patientOrderHead strong{overflow-wrap:anywhere;color:var(--dark,#8e3454)}
+.patientOrderHead span,.patientOrderMeta span{color:var(--muted,#766873);font-size:.88rem}
+.patientOrderMeta{margin-top:7px}
+.patientOrderItem ul{padding-left:20px;margin:10px 0;color:var(--ink,#30232a)}
+.patientOrderItem li+li{margin-top:5px}
+.patientReorderButton{border:0;border-radius:10px;background:var(--pink,#b94d72);color:#fff;font:inherit;font-weight:700;padding:10px 16px;cursor:pointer}
+.patientOrderHint{color:var(--muted,#766873);font-size:.85rem}
+@media(max-width:480px){.patientOrdersCard{padding:14px}.patientOrderItem{padding:12px}}
