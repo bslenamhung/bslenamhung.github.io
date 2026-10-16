@@ -14,3 +14,12 @@
 .patientReorderButton{border:0;border-radius:10px;background:var(--pink,#b94d72);color:#fff;font:inherit;font-weight:700;padding:10px 16px;cursor:pointer}
 .patientOrderHint{color:var(--muted,#766873);font-size:.85rem}
 @media(max-width:480px){.patientOrdersCard{padding:14px}.patientOrderItem{padding:12px}}
+
+.patientOrdersDisclosure{margin:16px 0 22px;border:1px solid var(--line,#eadde3);border-radius:18px;background:#fff;overflow:hidden}
+.patientOrdersDisclosure>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px;cursor:pointer;list-style:none;color:var(--ink,#30232a);font-size:1.15rem;font-weight:800}
+.patientOrdersDisclosure>summary::-webkit-details-marker{display:none}
+.patientOrdersDisclosure[open]>summary{border-bottom:1px solid var(--line,#eadde3)}
+.patientOrdersChevron{color:var(--dark,#8e3454);transition:transform .15s ease}
+.patientOrdersDisclosure[open] .patientOrdersChevron{transform:rotate(180deg)}
+.patientOrdersDisclosure .patientOrdersCard{margin:0;border:0;border-radius:0;padding:0 18px 18px}
+@media(max-width:480px){.patientOrdersDisclosure>summary{padding:15px}.patientOrdersDisclosure .patientOrdersCard{padding:0 14px 14px}}
