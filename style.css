@@ -2055,3 +2055,29 @@ img{max-width:100%}
     object-fit:contain!important;
   }
 }
+
+
+/* V60 – Ảnh ở mục Bài viết mới dùng cùng khung ảnh với Bài viết liên quan.
+   Giữ nguyên toàn bộ ảnh, chiều cao đồng nhất, không cắt nội dung. */
+#articleGrid .article-card .body > img {
+  display: block !important;
+  width: 100% !important;
+  height: 140px !important;
+  max-height: 140px !important;
+  min-height: 0 !important;
+  aspect-ratio: auto !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  background: #f4f6f7 !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  margin: 0 0 12px !important;
+}
+@media (max-width: 520px) {
+  #articleGrid .article-card .body > img {
+    height: 140px !important;
+    max-height: 140px !important;
+  }
+}
