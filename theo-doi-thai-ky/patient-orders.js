@@ -7,6 +7,7 @@ const portal = createClient(
 );
 const shopUrl = "https://tufzlxfrtdhestbemcly.supabase.co/functions/v1/patient-shop-order-history";
 const shopKey = "sb_publishable_gsKYsz40vs6iyWqkb6zyqg_OwoM8k87";
+const disclosure = document.getElementById("patientOrdersDisclosure");
 const root = document.getElementById("patientOrdersCard");
 const list = document.getElementById("patientOrdersList");
 const message = document.getElementById("patientOrdersMessage");
@@ -45,7 +46,7 @@ function renderOrders(orders) {
   list._orders = orders;
 }
 async function loadOrders() {
-  if (!root || !list || !message) return;
+  if (!root || !list || !message || !disclosure?.open) return;
   try {
     const { data: { session } } = await portal.auth.getSession();
     if (!session?.access_token) { root.hidden = true; return; }
@@ -81,5 +82,5 @@ document.addEventListener("click", (event) => {
   const params = new URLSearchParams({ reorder: JSON.stringify(items) });
   window.location.href = `https://bslenamhung.github.io/san-pham-me-va-be/?${params.toString()}#cart-panel`;
 });
-portal.auth.onAuthStateChange((_event, session) => { if (session?.access_token) loadOrders(); else if (root) root.hidden = true; });
-loadOrders();
+disclosure?.addEventListener("toggle", () => { if (disclosure.open) loadOrders(); });
+portal.auth.onAuthStateChange((_event, session) => { if (session?.access_token && disclosure?.open) loadOrders(); else if (!session?.access_token && root) { list.innerHTML = ""; message.textContent = "Vui lòng đăng nhập để xem đơn đã mua."; } });
