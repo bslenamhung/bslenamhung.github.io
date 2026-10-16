@@ -48,7 +48,7 @@ async function loadOrders() {
   if (!root || !list || !message) return;
   try {
     const { data: { session } } = await portal.auth.getSession();
-    if (!session?.access_token) return;
+    if (!session?.access_token) { root.hidden = true; return; }
     root.hidden = false;
     message.textContent = "Đang tải lịch sử đơn hàng…";
     const response = await fetch(shopUrl, {
@@ -81,4 +81,5 @@ document.addEventListener("click", (event) => {
   const params = new URLSearchParams({ reorder: JSON.stringify(items) });
   window.location.href = `https://bslenamhung.github.io/san-pham-me-va-be/?${params.toString()}#cart-panel`;
 });
+portal.auth.onAuthStateChange((_event, session) => { if (session?.access_token) loadOrders(); else if (root) root.hidden = true; });
 loadOrders();
