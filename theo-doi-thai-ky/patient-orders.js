@@ -11,6 +11,11 @@ const disclosure = document.getElementById("patientOrdersDisclosure");
 const root = document.getElementById("patientOrdersCard");
 const list = document.getElementById("patientOrdersList");
 const message = document.getElementById("patientOrdersMessage");
+// Keep purchase history at the bottom of the patient view, just before its clinic navigation/footer.
+const patientNav = document.querySelector("#patientView .patientQuickNav");
+const patientView = document.getElementById("patientView");
+const moveOrdersToBottom = () => { if (disclosure && patientNav?.parentNode) patientNav.parentNode.insertBefore(disclosure, patientNav); else if (disclosure && patientView) patientView.appendChild(disclosure); };
+moveOrdersToBottom();
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
 }[c]));
