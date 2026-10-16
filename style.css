@@ -1812,19 +1812,14 @@ img{max-width:100%}
  #articleGrid.article-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;}
 }
 
-/* HOME ARTICLE IMAGES — simplified, full image visible; do not alter related-article styles. */
+/* HOME ARTICLE THUMBNAILS — match the “Bài viết liên quan” image frame exactly. */
 #articleGrid .article-card .body > img {
   display: block;
   width: 100%;
-  max-width: 100%;
-  height: auto;
-  max-height: 220px;
+  height: 140px;
   object-fit: contain;
   object-position: center;
-  background: #fff;
-  border: 1px solid #e5e9ed;
-  border-radius: 12px;
-  padding: 6px;
-  box-sizing: border-box;
-  margin: 0 auto 12px;
+  background: #f4f6f7;
+  border-radius: 8px;
+  margin: 0 0 12px;
 }
