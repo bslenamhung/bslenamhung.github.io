@@ -1823,3 +1823,22 @@ img{max-width:100%}
   border-radius: 8px;
   margin: 0 0 12px;
 }
+
+/* Article pages: one responsive reading layout across desktop and mobile. */
+.article-page{width:100%;max-width:860px;margin:0 auto;min-width:0}
+.article-page h1{font-size:clamp(1.8rem,4.2vw,3.25rem);line-height:1.12;overflow-wrap:anywhere;margin:10px 0 24px}
+.article-page-desc{max-width:100%;margin:0 0 22px;color:#5b6670;font-size:clamp(1.05rem,2.2vw,1.35rem);line-height:1.65}
+.article-full{max-width:100%;min-width:0;margin-top:0;font-size:clamp(1rem,1.8vw,1.12rem);line-height:1.8;overflow-wrap:anywhere}
+.article-full p{margin:0 0 1.15em}
+.article-full h2,.article-full h3{line-height:1.3;margin:1.5em 0 .6em;overflow-wrap:anywhere}
+.article-full ul,.article-full ol{padding-left:1.35em}
+.article-full img,.article-full video,.article-full iframe{max-width:100%}
+@media(max-width:600px){
+ .article-page{max-width:100%}
+ .article-page h1{font-size:clamp(1.65rem,7vw,2.25rem);line-height:1.16;margin:8px 0 18px}
+ .article-page-desc{font-size:1.05rem;line-height:1.65;margin-bottom:18px}
+ .article-full{font-size:1rem;line-height:1.75}
+ .article-full h2{font-size:1.35rem}
+ .article-full h3{font-size:1.15rem}
+ .article-breadcrumb{overflow-wrap:anywhere}
+}
