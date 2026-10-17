@@ -322,6 +322,22 @@ def related_articles(current, published):
     return selected
 
 
+def remove_duplicate_article_intro(content, short_desc):
+    """Remove the first body paragraph when it repeats the separately rendered summary."""
+    if not content or not short_desc:
+        return content
+    match = re.match(r'\s*<p(?:\s[^>]*)?>(.*?)</p>\s*', content, flags=re.IGNORECASE | re.DOTALL)
+    if not match:
+        return content
+    def plain_text(value):
+        value = re.sub(r'<[^>]+>', ' ', str(value or ''))
+        value = html.unescape(value)
+        return re.sub(r'\s+', ' ', value).strip().casefold()
+    if plain_text(match.group(1)) == plain_text(short_desc):
+        return content[match.end():].lstrip()
+    return content
+
+
 def render_article(article, published):
     aid = safe_id(article_id(article))
     title = str(article.get('seoTitle') or article.get('title') or 'Bài viết Sản Phụ khoa').strip()
@@ -332,6 +348,7 @@ def render_article(article, published):
     content = clean_article_heading_structure(linkify_article_content(strip_duplicate_leading_title(article.get('content') or '', article.get('title') or '', article.get('seoTitle') or '')))
     content = add_article_image_alt(content, str(article.get('title') or title))
     short_desc = str(article.get('desc') or '').strip()
+    content = remove_duplicate_article_intro(content, short_desc)
     published_text, raw_date = date_text(article)
     video = youtube_id(article.get('videoUrl') or article.get('video') or '')
 
@@ -469,7 +486,7 @@ def render_article(article, published):
 {f'<meta name="twitter:image" content="{esc(image)}">' if image else ''}
 <script type="application/ld+json">{jsonld}</script>
 <script type="application/ld+json">{breadcrumb_jsonld}</script>
-<link rel="stylesheet" href="../style.css?v=72">\n<link rel="stylesheet" href="../seo-local.css?v=2">
+<link rel="stylesheet" href="../style.css?v=73">\n<link rel="stylesheet" href="../seo-local.css?v=2">
 </head><body>
 <header class="site-header"><div class="container nav-wrap">
 <a class="brand" href="../index.html"><strong>BS<br>Lê Nam Hùng</strong><span>Sản Phụ khoa</span></a>
