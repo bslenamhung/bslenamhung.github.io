@@ -182,7 +182,7 @@ function renderArticles(filter='',keepPage=false){
   const start=(currentArticlePage-1)*perPage;
   const pageRows=rows.slice(start,start+perPage);
   const grid=document.getElementById('articleGrid');
-  grid.innerHTML=pageRows.map((a)=>{const u='bai-viet/'+encodeURIComponent(articleSlug(a))+'.html';return '<article class="article-card"><div class="body">'+((a.image||a.seoImage)?'<img src="'+esc(optimizeImageUrl(a.image||a.seoImage,720,70))+'" alt="'+esc(a.title)+'" loading="lazy" decoding="async">':'')+'<div class="article-tag">'+esc(a.specialty)+'</div><h3>'+esc(a.title)+'</h3><p>'+esc(a.desc)+'</p><a href="'+esc(u)+'">Đọc bài viết →</a></div></article>'}).join('');
+  grid.innerHTML=pageRows.map((a)=>{const u='bai-viet/'+encodeURIComponent(articleSlug(a))+'.html';return '<article class="article-card"><div class="body">'+((a.seoImage||a.image)?'<img src="'+esc(optimizeImageUrl(a.seoImage||a.image,720,70))+'" alt="'+esc(a.title)+'" loading="lazy" decoding="async">':'')+'<div class="article-tag">'+esc(a.specialty)+'</div><h3>'+esc(a.title)+'</h3><p>'+esc(a.desc)+'</p><a href="'+esc(u)+'">Đọc bài viết →</a></div></article>'}).join('');
   document.getElementById('emptyState').hidden=rows.length>0;
   renderPagination(totalPages);
   if(keepPage)document.getElementById('articles')?.scrollIntoView({behavior:'smooth',block:'start'});
