@@ -1462,3 +1462,21 @@ body:has(#adminView:not([hidden])) .portalNavWrap{display:block!important}
 .shopPortalLink{display:flex;align-items:center;gap:13px;margin:8px 0 16px;padding:15px 17px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(120deg,#fff0f6,#fff);color:var(--ink);text-decoration:none;box-shadow:0 4px 16px rgba(132,54,81,.05)}.shopPortalLink>span:first-child{display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;border-radius:13px;background:var(--pale);color:var(--p);font-size:25px}.shopPortalLink>span:nth-child(2){flex:1;min-width:0}.shopPortalLink strong,.shopPortalLink small{display:block}.shopPortalLink strong{font-size:15px;color:var(--d)}.shopPortalLink small{margin-top:3px;color:var(--muted);font-size:12px}.shopPortalLink>span:last-child{font-size:21px;color:var(--p)}
 
 .shopPortalLink{display:flex;align-items:center;gap:13px;margin:8px 0 16px;padding:15px 17px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(120deg,#fff0f6,#fff);color:var(--ink);text-decoration:none;box-shadow:0 4px 16px rgba(132,54,81,.05)}.shopPortalLink>span:first-child{display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;border-radius:13px;background:var(--pale);color:var(--p);font-size:25px}.shopPortalLink>span:nth-child(2){flex:1;min-width:0}.shopPortalLink strong,.shopPortalLink small{display:block}.shopPortalLink strong{font-size:15px;color:var(--d)}.shopPortalLink small{margin-top:3px;color:var(--muted);font-size:12px}.shopPortalLink>span:last-child{font-size:21px;color:var(--p)}
+
+/* Emphasize the two key clinical notes in the pregnancy admin profile. */
+#adminPatientProfile .adminImportantPatientField,
+#patientProfileHistory,
+#patientProfileUltrasoundAbnormalities,
+label:has(#newPatientHistory),
+label:has(#newPatientUltrasoundAbnormalities),
+label:has(#editPatientHistory),
+label:has(#editPatientUltrasoundAbnormalities){
+ font-weight:800;
+}
+#adminPatientProfile .adminImportantPatientField{
+ background:#fff0f6;
+ border:1px solid #e9bfd0;
+ border-radius:8px;
+ padding:8px 10px;
+ color:#843651;
+}
