@@ -291,7 +291,7 @@ document.querySelectorAll('[data-upload-clinic-image]').forEach(b=>b.onclick=()=
   if(go){event.preventDefault();gotoSection(go.dataset.go);return;}
 });
 
-$('closeModal').onclick=closeArticleEditor;$('cancelModal').onclick=closeArticleEditor;$('editorModal').querySelector('.modal-backdrop').onclick=closeArticleEditor;$('saveArticle').onclick=saveArticleFromModal;$('editVideoUrl')?.addEventListener('input',()=>renderArticleVideoPreview($('editVideoUrl').value));document.querySelectorAll('.editor-toolbar button[data-cmd]').forEach(b=>b.onclick=()=>{if(b.dataset.cmd==='formatBlock'){document.execCommand('formatBlock',false,b.dataset.value||'p')}else{document.execCommand(b.dataset.cmd,false,null)}$('editContent').focus()});
+$('closeModal').onclick=closeArticleEditor;$('cancelModal').onclick=closeArticleEditor;$('editorModal').querySelector('.modal-backdrop').onclick=closeArticleEditor;$('saveArticle').onclick=saveArticleFromModal;$('editVideoUrl')?.addEventListener('input',()=>renderArticleVideoPreview($('editVideoUrl').value));document.querySelectorAll('.editor-toolbar button[data-cmd]').forEach(b=>b.onclick=()=>{const editor=$('editContent');editor.focus();if(b.dataset.cmd==='formatBlock'){document.execCommand('formatBlock',false,b.dataset.value||'p')}else{document.execCommand(b.dataset.cmd,false,null)}editor.focus()});
 $('insertArticleImage').onclick=insertArticleInlineImage;
 $('articleInlineImageFile').addEventListener('change',handleInlineImageFile);
 $('uploadArticleCover').onclick=uploadArticleCover;
