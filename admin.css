@@ -59,3 +59,7 @@
 
 /* V52 - contact click statistics */
 .contact-stat{border-color:#e7ded4}.contact-total-stat{border-color:#d8e7ef}.contact-stat-note{margin:0 0 20px;color:#64748b;font-size:13px;line-height:1.6}.contact-stat-note strong{color:#334155}
+
+/* Article editor alignment controls */
+.editor-toolbar button[data-cmd^="justify"]{min-width:88px;font-weight:600}
+.editor-toolbar button[data-cmd^="justify"]:focus-visible{outline:2px solid #8b4966;outline-offset:2px}
