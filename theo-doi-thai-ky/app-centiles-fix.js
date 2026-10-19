@@ -946,6 +946,17 @@ $("refreshDueDateReminders")?.addEventListener("click",async()=>{await loadPatie
 function showAdminView(view){const pregnancy=$("pregnancyAdmin"),obstetric=$("adminDueDatePanel"),pregnancyButton=$("togglePregnancyAdmin"),obstetricButton=$("toggleObstetricTracking");const showPregnancy=view==="pregnancy";pregnancy.hidden=!showPregnancy;obstetric.hidden=showPregnancy;pregnancyButton.classList.toggle("active",showPregnancy);obstetricButton.classList.toggle("active",!showPregnancy);pregnancyButton.setAttribute("aria-expanded",String(showPregnancy));obstetricButton.setAttribute("aria-expanded",String(!showPregnancy));setAdminPatientCount(showPregnancy?"pregnancy":"obstetric",adminPatientCounts);if(!showPregnancy){loadPatients();obstetric.scrollIntoView({behavior:"smooth",block:"start"});}}
 $("togglePregnancyAdmin")?.addEventListener("click",()=>showAdminView("pregnancy"));
 $("toggleObstetricTracking")?.addEventListener("click",()=>showAdminView("obstetric"));
+function toggleAdminPanel(buttonId,panelId){
+ const button=$(buttonId),panel=$(panelId);if(!button||!panel)return;
+ const opening=panel.hidden;
+ panel.hidden=!opening;
+ button.setAttribute("aria-expanded",String(opening));
+ button.classList.toggle("active",opening);
+ if(opening)panel.scrollIntoView({behavior:"smooth",block:"start"});
+}
+$("togglePostpartumAdmin")?.addEventListener("click",()=>toggleAdminPanel("togglePostpartumAdmin","postpartumAdminPanel"));
+$("toggleRegistrationApproval")?.addEventListener("click",()=>{toggleAdminPanel("toggleRegistrationApproval","registrationApprovalPanel");if(!$("registrationApprovalPanel").hidden===false)loadRegistrationRequests();});
+
 // Pending patient registration review queue. Selecting a request prefills the existing
 // secure admin-created-account form; the request is approved only after account creation succeeds.
 function registrationDateInput(iso){if(!iso)return "";const parts=String(iso).split("-");return parts.length===3?parts[2]+"/"+parts[1]+"/"+parts[0]:"";}
