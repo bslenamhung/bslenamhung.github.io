@@ -1511,3 +1511,12 @@ label:has(#editPatientUltrasoundAbnormalities){
 .registrationRequestActions button{min-height:42px}
 .registrationRequestEmpty{padding:15px;text-align:center;color:var(--muted);background:#fcf7fa;border-radius:12px}
 @media(max-width:650px){.registrationRequestMeta{grid-template-columns:1fr}.registrationApprovalBox{padding:16px}}
+
+/* Registration button typography/icon mirrors login button; icon intentionally follows label. */
+#loginView.loginExperience #showRegistrationForm .loginSubmitLabel{font-size:19px!important;font-weight:800!important;line-height:1.2!important}
+#loginView.loginExperience #showRegistrationForm .loginSubmitIcon{width:30px;height:30px;flex:0 0 30px;fill:none;stroke:currentColor;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round}
+@media(max-width:650px){
+ #loginView.loginExperience #showRegistrationForm{min-height:56px!important;padding:11px 14px!important;border-radius:16px!important;gap:12px!important}
+ #loginView.loginExperience #showRegistrationForm .loginSubmitLabel{font-size:17px!important}
+ #loginView.loginExperience #showRegistrationForm .loginSubmitIcon{width:28px;height:28px;flex-basis:28px}
+}
