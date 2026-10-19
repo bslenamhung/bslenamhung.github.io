@@ -272,7 +272,19 @@
  }));
  showHome();
 })();
-</script><script type="module" src="patient-orders.js?v=20261016-collapsible-v2"></script><script type="module" src="app-centiles-fix.js?v=20261019-registration-dob-ddmmyyyy-v1"></script>
+</script><script>
+(function(){
+ const trigger=document.getElementById('showRegistrationForm');
+ const panel=document.getElementById('patientRegistrationPanel');
+ if(!trigger||!panel)return;
+ trigger.addEventListener('click',function(){
+  const open=panel.hidden;
+  panel.hidden=!open;
+  trigger.setAttribute('aria-expanded',String(open));
+  if(open)panel.scrollIntoView({behavior:'smooth',block:'start'});
+ });
+})();
+</script><script type="module" src="patient-orders.js?v=20261016-collapsible-v2"></script><script type="module" src="app-centiles-fix.js?v=20261019-registration-toggle-hotfix-v2"></script>
 <script>
 (function(){
  const target=document.getElementById('adminPatientProfile');
