@@ -10,7 +10,7 @@ const $ = id => document.getElementById(id);
  if(!trigger||!panel||!form)return;
  const dob=form.elements.date_of_birth,due=form.elements.due_date;
  const today=new Date();const localToday=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
- if(dob){dob.max=localToday;initDateCalendar("registrationDateOfBirth");}
+ if(dob){initDateCalendar("registrationDateOfBirth");}
  // The registration button toggle is handled by a small inline handler in index.html,
  // so it still works if this module has a later initialization error.
 
@@ -21,7 +21,8 @@ const $ = id => document.getElementById(id);
   const display_name=String(values.get("display_name")||"").trim();
   const phone=String(values.get("phone")||"").trim();
   const address=String(values.get("address")||"").trim();
-  const date_of_birth_raw=String(values.get("date_of_birth")||"").trim();\n  const date_of_birth=date_of_birth_raw?dueDateIso(date_of_birth_raw):null;
+  const date_of_birth_raw=String(values.get("date_of_birth")||"").trim();
+  const date_of_birth=date_of_birth_raw?dueDateIso(date_of_birth_raw):null;
   const due_date=String(values.get("due_date")||"")||null;
   const medical_history=String(values.get("medical_history")||"").trim()||null;
   if(!display_name||!phone||!address){message.textContent="Vui lòng điền họ tên, số điện thoại và địa chỉ.";return;}
