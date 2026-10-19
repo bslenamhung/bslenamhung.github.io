@@ -257,13 +257,13 @@ function formatDateInput(el){
  // Use the same dd/mm/yyyy formatter for birth date and due date.
  // Keep the caret at the same digit position while slashes are inserted.
  const raw=el.value,caret=el.selectionStart;
- const digits=raw.replace(/\\D/g,"").slice(0,8);
+ const digits=raw.replace(/\D/g,"").slice(0,8);
  const formatted=digits.length>4
   ?digits.slice(0,2)+"/"+digits.slice(2,4)+"/"+digits.slice(4)
   :digits.length>2?digits.slice(0,2)+"/"+digits.slice(2):digits;
  el.value=formatted;
  if(caret!==null){
-  const digitsBefore=raw.slice(0,caret).replace(/\\D/g,"").length;
+  const digitsBefore=raw.slice(0,caret).replace(/\D/g,"").length;
   let nextCaret=digitsBefore;
   if(digitsBefore>2)nextCaret+=1;
   if(digitsBefore>4)nextCaret+=1;
