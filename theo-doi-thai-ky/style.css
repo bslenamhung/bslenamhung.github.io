@@ -1480,3 +1480,11 @@ label:has(#editPatientUltrasoundAbnormalities){
  padding:8px 10px;
  color:#843651;
 }
+
+/* Make the actual profile labels and values for both key notes bold. */
+#adminPatientProfile .profileGrid > div:has(#patientProfileHistory) > small,
+#adminPatientProfile .profileGrid > div:has(#patientProfileUltrasoundAbnormalities) > small,
+#adminPatientProfile .profileGrid > div:has(#patientProfileHistory) > strong,
+#adminPatientProfile .profileGrid > div:has(#patientProfileUltrasoundAbnormalities) > strong {
+  font-weight: 800 !important;
+}
