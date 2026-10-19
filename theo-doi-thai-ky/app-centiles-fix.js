@@ -195,7 +195,7 @@ async function routeUser() {
   try{
     if(user.app_metadata?.role==="admin"){
       view("adminView");
-      await Promise.all([loadPatients(),loadAdminQaThreads(false),loadRegistrationRequests()]);
+      await loadPatients(); // Load the admin patient directory first; secondary queues load only when opened.
     }else{
       view("patientView");
       await Promise.all([loadPatient(),loadPatientQaThreads(false)]);
@@ -946,7 +946,7 @@ document.querySelectorAll(".logout").forEach(button=>button.addEventListener("cl
 }));
 
 (async()=>{const {data}=await db.auth.getSession();if(data.session){user=data.session.user;await routeUser();}})();
-setInterval(()=>{if(user?.app_metadata?.role==="admin"&&!$("adminView").hidden)loadAdminQaThreads(true);},30000);
+setInterval(()=>{const panel=$("adminQaPanel");if(user?.app_metadata?.role==="admin"&&!$("adminView").hidden&&panel&&!panel.hidden)loadAdminQaThreads(true);},30000);
 async function loadDueDateReminders(){
  const panel=$("adminDueDatePanel"),list=$("adminDueDateReminderList"),status=$("adminDueDateReminderStatus");
  if(!panel||!list||!status||user?.app_metadata?.role!=="admin")return;
