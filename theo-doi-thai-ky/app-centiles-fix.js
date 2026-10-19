@@ -408,25 +408,26 @@ let adminPatientCounts={pregnancy:0,obstetric:0,postpartum:0};
 async function refreshAdminPatientCounts(){
  if(user?.app_metadata?.role!=="admin")return;
  const today=todayLocal();
- const [{data:followups,error:followupError},{data:postpartumRows,error:postpartumError}]=await Promise.all([
+ const [followupResult,postpartumResult]=await Promise.all([
   db.from("patient_due_date_followups").select("patient_user_id,birth_status"),
   db.from("patient_postpartum_profiles").select("patient_user_id")
  ]);
- if(followupError||postpartumError){
-  const note=$("adminPatientCountNote");if(note)note.textContent="Chưa tải được toàn bộ số liệu. Vui lòng thử tải lại.";
-  return;
- }
- const birthMap=new Map((followups||[]).map(r=>[r.patient_user_id,r.birth_status]));
+ // A failure in one auxiliary table must not leave all dashboard counters at "—".
+ const followups=followupResult.data||[];
+ const birthMap=new Map(followups.map(r=>[r.patient_user_id,r.birth_status]));
  const activePregnancies=(patientDirectory||[]).filter(p=>p.due_date&&birthMap.get(p.user_id)!=="delivered");
  const obstetric=activePregnancies.filter(p=>{
   const diff=Math.round((Date.parse(p.due_date+"T00:00:00Z")-Date.parse(today+"T00:00:00Z"))/86400000);
   return diff<0||diff<=35;
  });
- adminPatientCounts={pregnancy:activePregnancies.length,obstetric:obstetric.length,postpartum:(postpartumRows||[]).length};
+ adminPatientCounts={pregnancy:activePregnancies.length,obstetric:obstetric.length,postpartum:(postpartumResult.data||[]).length};
  const set=(id,n)=>{const el=$(id);if(el)el.textContent=String(n);};
  set("pregnancyNavCount",adminPatientCounts.pregnancy);
  set("obstetricNavCount",adminPatientCounts.obstetric);
  set("postpartumNavCount",adminPatientCounts.postpartum);
+ if(followupResult.error||postpartumResult.error){
+  const note=$("adminPatientCountNote");if(note)note.textContent="Một nguồn dữ liệu phụ chưa tải được; số đếm đã hiển thị từ dữ liệu truy cập được. Kiểm tra kết nối/bảng theo dõi sau sinh.";
+ }
  const active=$("adminDueDatePanel")&&!$("adminDueDatePanel").hidden?"obstetric":"pregnancy";
  setAdminPatientCount(active,adminPatientCounts);
 }
