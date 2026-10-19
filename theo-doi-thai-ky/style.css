@@ -1488,3 +1488,15 @@ label:has(#editPatientUltrasoundAbnormalities){
 #adminPatientProfile .profileGrid > div:has(#patientProfileUltrasoundAbnormalities) > strong {
   font-weight: 800 !important;
 }
+
+/* Patient self-registration request, reviewed by clinic before account creation. */
+.loginRegisterButton{margin-top:14px;background:#fff;color:#bd2d72;border:2px solid #d84d91;box-shadow:none}
+.loginRegisterButton:hover{background:#fff4f9}
+.patientRegistrationPanel{margin-top:18px;padding:22px;background:#fff;border:1px solid #eadfe5;border-radius:22px}
+.patientRegistrationPanel h2{color:#843651;font-size:clamp(21px,3vw,28px);margin:0 0 8px}
+.registrationIntro{color:#756a75;font-size:14px;margin:0 0 16px}
+.patientRegistrationForm{display:flex;flex-direction:column;gap:13px}
+.patientRegistrationForm label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:#5e4a58}
+.patientRegistrationForm input,.patientRegistrationForm textarea{width:100%;border:1px solid #dcd0d8;border-radius:12px;padding:13px;background:#fff;color:#302630;font:inherit;font-weight:500}
+.patientRegistrationForm textarea{resize:vertical}
+.registrationCancel{min-height:48px;border-radius:999px}
