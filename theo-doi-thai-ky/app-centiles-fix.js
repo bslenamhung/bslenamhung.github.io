@@ -3,6 +3,47 @@ const SUPABASE_URL = "https://ckwhjyzomppsdplnkdeq.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_FmJK_HkQxhoQ04dIzI1mCg_eupXeR48";
 const db = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 const $ = id => document.getElementById(id);
+
+// Public patient registration: create a pending request only; no auth account is created here.
+(function setupPatientRegistration(){
+ const trigger=$("showRegistrationForm"),panel=$("patientRegistrationPanel"),form=$("patientRegistrationForm"),cancel=$("cancelPatientRegistration"),message=$("patientRegistrationMessage"),submit=$("submitPatientRegistration");
+ if(!trigger||!panel||!form)return;
+ const dob=form.elements.date_of_birth,due=form.elements.due_date;
+ const today=new Date();const localToday=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
+ if(dob)dob.max=localToday;
+ trigger.addEventListener("click",()=>{
+  const open=panel.hidden;panel.hidden=!open;trigger.setAttribute("aria-expanded",String(open));
+  if(open){panel.scrollIntoView({behavior:"smooth",block:"start"});form.elements.display_name.focus();}
+ });
+ cancel?.addEventListener("click",()=>{panel.hidden=true;trigger.setAttribute("aria-expanded","false");trigger.focus();});
+ form.addEventListener("submit",async event=>{
+  event.preventDefault();message.textContent="";
+  const values=new FormData(form);
+  const display_name=String(values.get("display_name")||"").trim();
+  const phone=String(values.get("phone")||"").trim();
+  const address=String(values.get("address")||"").trim();
+  const date_of_birth=String(values.get("date_of_birth")||"")||null;
+  const due_date=String(values.get("due_date")||"")||null;
+  const medical_history=String(values.get("medical_history")||"").trim()||null;
+  if(!display_name||!phone||!address){message.textContent="Vui lòng điền họ tên, số điện thoại và địa chỉ.";return;}
+  if(date_of_birth&&date_of_birth>localToday){message.textContent="Ngày sinh không thể ở tương lai.";return;}
+  if(date_of_birth&&due_date&&date_of_birth>due_date){message.textContent="Ngày dự sinh cần sau ngày sinh.";return;}
+  if(submit){submit.disabled=true;submit.querySelector("span").textContent="Đang gửi…";}
+  try{
+   const {error}=await db.from("patient_registration_requests").insert({display_name,phone,address,date_of_birth,due_date,medical_history,status:"pending"});
+   if(error)throw error;
+   form.reset();
+   message.textContent="Đã gửi đăng ký thành công. Vui lòng chờ phòng khám xem xét và cấp thông tin đăng nhập.";
+   message.style.color="#187044";
+  }catch(error){
+   console.error("Patient registration request failed",error);
+   message.textContent="Chưa gửi được đăng ký. Vui lòng thử lại hoặc liên hệ phòng khám.";
+   message.style.color="#a51c51";
+  }finally{
+   if(submit){submit.disabled=false;submit.querySelector("span").textContent="Gửi đăng ký";}
+  }
+ });
+})();
 let user = null, profile = null, records = [], selectedPatient = null, patientDirectory = [];
 const emailFor = username => username.trim().toLowerCase() + "@patients.bs-hung.invalid";
 const fmt = n => new Intl.NumberFormat("vi-VN", { maximumFractionDigits: 0 }).format(n);
