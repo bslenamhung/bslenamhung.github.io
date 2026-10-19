@@ -10,7 +10,7 @@ const $ = id => document.getElementById(id);
  if(!trigger||!panel||!form)return;
  const dob=form.elements.date_of_birth,due=form.elements.due_date;
  const today=new Date();const localToday=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
- if(dob){initDateCalendar("registrationDateOfBirth");}
+ // Date calendars are initialized once below, after all calendar helpers are defined.
  // The registration button toggle is handled by a small inline handler in index.html,
  // so it still works if this module has a later initialization error.
 
