@@ -483,7 +483,7 @@ async function refreshAdminPatientCounts(){
  setAdminPatientCount(active,adminPatientCounts);
 }
 async function loadPatients() {
- const { data, error } = await db.from("profiles").select("user_id,username,display_name,phone,address,para,medical_history,due_date,created_at").order("created_at",{ascending:false});
+ const { data, error } = await db.from("profiles").select("user_id,username,display_name,phone,due_date,created_at").order("created_at",{ascending:false});
  if (error) { toast("Không tải được danh sách hồ sơ."); return; }
  patientDirectory=(data||[]).filter(p=>p.user_id!==user.id);
  renderPatientOptions();
