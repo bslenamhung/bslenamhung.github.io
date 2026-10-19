@@ -72,7 +72,7 @@
       <p class="registrationIntro">Vui lòng gửi thông tin để phòng khám xem xét. Tài khoản chỉ được cấp sau khi bác sĩ duyệt.</p>
       <form id="patientRegistrationForm" class="patientRegistrationForm">
         <label>Họ và tên *<input name="display_name" required maxlength="120" autocomplete="name" placeholder="Họ và tên đầy đủ"></label>
-        <label>Ngày sinh<input name="date_of_birth" type="date" max="todayRegistration"></label>
+        <label>Ngày tháng năm sinh (dd/mm/yyyy)<span class="dateControl"><input name="date_of_birth" id="registrationDateOfBirth" type="text" inputmode="numeric" placeholder="dd/mm/yyyy" autocomplete="bday" maxlength="10"><button type="button" class="calendarToggle" data-calendar="registrationDateOfBirth" aria-label="Chọn ngày sinh">▦</button></span><span id="calendar-registrationDateOfBirth" class="dateCalendar" hidden></span></label>
         <label>Số điện thoại *<input name="phone" required type="tel" maxlength="30" autocomplete="tel" placeholder="Số điện thoại liên hệ"></label>
         <label>Địa chỉ *<input name="address" required maxlength="300" autocomplete="street-address" placeholder="Địa chỉ hiện tại"></label>
         <label>Ngày dự sinh (nếu đã biết)<input name="due_date" type="date"></label>
@@ -272,7 +272,7 @@
  }));
  showHome();
 })();
-</script><script type="module" src="patient-orders.js?v=20261016-collapsible-v2"></script><script type="module" src="app-centiles-fix.js?v=20261019-admin-exclusive-sections-v3"></script>
+</script><script type="module" src="patient-orders.js?v=20261016-collapsible-v2"></script><script type="module" src="app-centiles-fix.js?v=20261019-registration-dob-ddmmyyyy-v1"></script>
 <script>
 (function(){
  const target=document.getElementById('adminPatientProfile');
