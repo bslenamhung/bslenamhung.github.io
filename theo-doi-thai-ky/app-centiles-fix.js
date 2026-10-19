@@ -26,7 +26,8 @@ const $ = id => document.getElementById(id);
   const due_date=String(values.get("due_date")||"")||null;
   const medical_history=String(values.get("medical_history")||"").trim()||null;
   if(!display_name||!phone||!address){message.textContent="Vui lòng điền họ tên, số điện thoại và địa chỉ.";return;}
-  if(date_of_birth_raw&&!date_of_birth){message.textContent="Ngày sinh không hợp lệ. Vui lòng nhập theo dạng dd/mm/yyyy.";return;}\n  if(date_of_birth&&date_of_birth>localToday){message.textContent="Ngày sinh không thể ở tương lai.";return;}
+  if(date_of_birth_raw&&!date_of_birth){message.textContent="Ngày sinh không hợp lệ. Vui lòng nhập theo dạng dd/mm/yyyy.";return;}
+  if(date_of_birth&&date_of_birth>localToday){message.textContent="Ngày sinh không thể ở tương lai.";return;}
   if(date_of_birth&&due_date&&date_of_birth>due_date){message.textContent="Ngày dự sinh cần sau ngày sinh.";return;}
   if(submit){submit.disabled=true;submit.querySelector("span").textContent="Đang gửi…";}
   try{
