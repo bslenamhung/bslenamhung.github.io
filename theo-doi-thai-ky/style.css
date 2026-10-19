@@ -1587,3 +1587,8 @@ label:has(#editPatientUltrasoundAbnormalities){
  #adminView .adminExpandablePanel .head{align-items:flex-start;flex-direction:column}
  #adminView .adminPanelAction{white-space:normal;width:100%;box-sizing:border-box}
 }
+
+/* Keep the registration DOB field and calendar button inside the form, matching the admin patient-creation date control. */
+.patientRegistrationForm .dateControl{width:100%;min-width:0;box-sizing:border-box}
+.patientRegistrationForm .dateControl input{width:auto;flex:1 1 0;min-width:0;box-sizing:border-box}
+.patientRegistrationForm .dateControl .calendarToggle{flex:0 0 auto;min-width:48px}
