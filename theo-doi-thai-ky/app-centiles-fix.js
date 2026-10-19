@@ -562,12 +562,15 @@ function initDateCalendar(inputId){
  document.querySelector('[data-calendar="'+inputId+'"]').addEventListener("click",e=>{e.preventDefault();e.stopPropagation();popup.hidden=!popup.hidden;if(!popup.hidden){const iso=dueDateIso(input.value);if(iso)shown=new Date(Number(iso.slice(0,4)),Number(iso.slice(5,7))-1,1);else{const now=new Date();shown=new Date(now.getFullYear(),now.getMonth(),1);}render();}});
  input.addEventListener("input",()=>{
   formatDateInput(input);
-  if(inputId==="newPatientDueDate"){
+  if(inputId==="registrationDateOfBirth"){
+   if(input.value.length===10&&!dueDateIso(input.value)){input.value="";toast("Ngày sinh không hợp lệ. Vui lòng nhập lại theo dd/mm/yyyy.");}
+  }else if(inputId==="newPatientDueDate"){
    if(input.value.length===10&&!dueDateIso(input.value)){input.value="";refreshNewPatientGestation();toast("Ngày dự sinh không hợp lệ. Vui lòng nhập lại theo dd/mm/yyyy.");return;}
    refreshNewPatientGestation();
   }else refreshRecordGestation();
  });
  input.addEventListener("blur",()=>{
+  if(inputId==="registrationDateOfBirth"&&input.value&&!dueDateIso(input.value)){input.value="";toast("Ngày sinh không hợp lệ. Vui lòng nhập lại theo dd/mm/yyyy.");}
   if(inputId==="newPatientDueDate"&&input.value&&!dueDateIso(input.value)){input.value="";refreshNewPatientGestation();toast("Ngày dự sinh không hợp lệ. Vui lòng nhập lại theo dd/mm/yyyy.");}
  });
  input.addEventListener("change",()=>{if(inputId==="scanDate")refreshRecordGestation();});
