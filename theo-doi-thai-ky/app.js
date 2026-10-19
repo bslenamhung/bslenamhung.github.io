@@ -68,19 +68,42 @@ try{const remembered=localStorage.getItem(rememberedLoginKey);if(remembered){$("
 $("rememberLogin").addEventListener("change",()=>{if(!$("rememberLogin").checked){try{localStorage.removeItem(rememberedLoginKey);}catch(_){}}});
 $("loginForm").addEventListener("submit", async e => {
   e.preventDefault(); fail("loginError", "");
+  const submit=$("loginForm").querySelector('button[type="submit"]');
+  if(submit)submit.disabled=true;
   const raw = $("username").value.trim();
   try{if($("rememberLogin").checked)localStorage.setItem(rememberedLoginKey,raw);else localStorage.removeItem(rememberedLoginKey);}catch(_){}
-  const email = raw.includes("@") ? raw : emailFor(raw);
-  const { data, error } = await db.auth.signInWithPassword({ email, password: $("password").value });
-  if (error) { fail("loginError", "Đăng nhập không thành công. Vui lòng kiểm tra thông tin hoặc liên hệ phòng khám."); return; }
-  user = data.user; await routeUser();
+  try {
+    const email = raw.includes("@") ? raw : emailFor(raw);
+    const { data, error } = await db.auth.signInWithPassword({ email, password: $("password").value });
+    if (error) { fail("loginError", "Đăng nhập không thành công. Vui lòng kiểm tra thông tin hoặc liên hệ phòng khám."); return; }
+    user = data.user;
+    await routeUser();
+  } catch (error) {
+    console.error("Lỗi đăng nhập/cấp quyền cổng thai kỳ:", error);
+    fail("loginError", "Đã xác thực nhưng chưa mở được cổng. Vui lòng tải lại trang; nếu vẫn lỗi, liên hệ phòng khám.");
+  } finally {
+    if(submit)submit.disabled=false;
+  }
 });
 async function routeUser() {
+  // Admins do not need a patient profile to enter the admin dashboard.
+  // Route by the trusted app_metadata role before reading the patient's profile.
+  if (user?.app_metadata?.role === "admin") {
+    profile = null;
+    view("adminView");
+    await loadPatients();
+    return;
+  }
   const { data, error } = await db.from("profiles").select("user_id,username,display_name,phone,address,para,medical_history,due_date,date_of_birth").eq("user_id", user.id).single();
-  if (error || !data) { await db.auth.signOut(); view("loginView"); fail("loginError", "Không đọc được hồ sơ. Vui lòng liên hệ quản trị viên."); return; }
+  if (error || !data) {
+    console.error("Không đọc được hồ sơ bệnh nhân:", error);
+    view("loginView");
+    fail("loginError", "Tài khoản đã xác thực nhưng không đọc được hồ sơ. Vui lòng liên hệ quản trị viên (mã: " + (error?.code || "PROFILE_READ") + ").");
+    return;
+  }
   profile = data;
-  if (user.app_metadata?.role === "admin") { view("adminView"); await loadPatients(); }
-  else { view("patientView"); await loadPatient(); }
+  view("patientView");
+  await loadPatient();
 }
 async function loadWeeklyClinicSchedule(){
  const hours=$("patientClinicHours"),img=$("patientWeeklyScheduleImage"),imgLink=$("patientScheduleImageLink"),empty=$("patientScheduleEmpty"),updated=$("patientScheduleUpdated");
