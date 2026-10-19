@@ -944,24 +944,27 @@ async function loadDueDateReminders(){
 
 $("refreshDueDateReminders")?.addEventListener("click",async()=>{await loadPatients();});
 function showAdminView(view){
- const sections={
-  pregnancy:{panel:$("pregnancyAdmin"),button:$("togglePregnancyAdmin")},
-  obstetric:{panel:$("adminDueDatePanel"),button:$("toggleObstetricTracking")},
-  postpartum:{panel:$("postpartumAdminPanel"),button:$("togglePostpartumAdmin")},
-  registration:{panel:$("registrationApprovalPanel"),button:$("toggleRegistrationApproval")}
+ const panels={
+  pregnancy:$("pregnancyAdmin"),
+  obstetric:$("adminDueDatePanel"),
+  postpartum:$("postpartumAdminPanel"),
+  registration:$("registrationApprovalPanel")
  };
- // Show only the selected area; hide all other admin sections.
- Object.entries(sections).forEach(([key,item])=>{
-  if(!item.panel||!item.button)return;
-  const selected=key===view;
-  item.panel.hidden=!selected;
-  item.button.classList.toggle("active",selected);
-  item.button.setAttribute("aria-expanded",String(selected));
+ // Also close secondary admin work areas so only the chosen dashboard section remains.
+ ["recordEntryPanel","adminQaPanel","testUploadPanel"].forEach(id=>{const el=$(id);if(el)el.hidden=true;});
+ Object.entries(panels).forEach(([key,panel])=>{
+  if(panel)panel.hidden=(key!==view);
+ });
+ ["togglePregnancyAdmin","toggleObstetricTracking","togglePostpartumAdmin","toggleRegistrationApproval"].forEach((id,index)=>{
+  const button=$(id);if(!button)return;
+  const selected=["pregnancy","obstetric","postpartum","registration"][index]===view;
+  button.classList.toggle("active",selected);
+  button.setAttribute("aria-expanded",String(selected));
  });
  if(view==="pregnancy")setAdminPatientCount("pregnancy",adminPatientCounts);
  if(view==="obstetric"){setAdminPatientCount("obstetric",adminPatientCounts);loadPatients();}
  if(view==="registration")loadRegistrationRequests();
- const active=sections[view]?.panel;
+ const active=panels[view];
  if(active)active.scrollIntoView({behavior:"smooth",block:"start"});
 }
 $("togglePregnancyAdmin")?.addEventListener("click",()=>showAdminView("pregnancy"));
