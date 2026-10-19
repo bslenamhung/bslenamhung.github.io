@@ -40,7 +40,15 @@ const $ = id => document.getElementById(id);
    message.style.color="#187044";
   }catch(error){
    console.error("Patient registration request failed",error);
-   message.textContent="Chưa gửi được đăng ký. Vui lòng thử lại hoặc liên hệ phòng khám.";
+   const code=String(error?.code||"");
+   const detail=String(error?.message||"");
+   let friendly="Chưa gửi được đăng ký.";
+   if(code==="42501")friendly="Cơ sở dữ liệu đang từ chối quyền gửi đăng ký (RLS).";
+   else if(code==="23502")friendly="Thiếu trường bắt buộc. Vui lòng kiểm tra họ tên, số điện thoại và địa chỉ.";
+   else if(code==="23514")friendly="Thông tin chưa đúng định dạng. Số điện thoại cần ít nhất 6 ký tự; hãy kiểm tra lại các trường.";
+   else if(code==="23505")friendly="Yêu cầu này đã tồn tại. Vui lòng liên hệ phòng khám.";
+   else if(/fetch|network|load failed|timeout/i.test(detail))friendly="Kết nối mạng không ổn định. Hãy kiểm tra Internet rồi gửi lại.";
+   message.textContent=friendly+" Mã lỗi: "+(code||"NETWORK/UNKNOWN")+".";
    message.style.color="#a51c51";
   }finally{
    if(submit){submit.disabled=false;submit.querySelector("span").textContent="Gửi đăng ký";}
