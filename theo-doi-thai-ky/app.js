@@ -254,8 +254,21 @@ function dueDateIso(value){
  return year+"-"+String(month).padStart(2,"0")+"-"+String(day).padStart(2,"0");
 }
 function formatDateInput(el){
- const digits=el.value.split("").filter(ch=>ch>="0"&&ch<="9").join("").slice(0,8);
- el.value=digits.length>4?digits.slice(0,2)+"/"+digits.slice(2,4)+"/"+digits.slice(4):digits.length>2?digits.slice(0,2)+"/"+digits.slice(2):digits;
+ // Use the same dd/mm/yyyy formatter for birth date and due date.
+ // Keep the caret at the same digit position while slashes are inserted.
+ const raw=el.value,caret=el.selectionStart;
+ const digits=raw.replace(/\\D/g,"").slice(0,8);
+ const formatted=digits.length>4
+  ?digits.slice(0,2)+"/"+digits.slice(2,4)+"/"+digits.slice(4)
+  :digits.length>2?digits.slice(0,2)+"/"+digits.slice(2):digits;
+ el.value=formatted;
+ if(caret!==null){
+  const digitsBefore=raw.slice(0,caret).replace(/\\D/g,"").length;
+  let nextCaret=digitsBefore;
+  if(digitsBefore>2)nextCaret+=1;
+  if(digitsBefore>4)nextCaret+=1;
+  el.setSelectionRange(Math.min(nextCaret,formatted.length),Math.min(nextCaret,formatted.length));
+ }
 }
 function isoToDateVi(iso){return iso?iso.slice(8,10)+"/"+iso.slice(5,7)+"/"+iso.slice(0,4):"";}
 function initDateCalendar(inputId){
