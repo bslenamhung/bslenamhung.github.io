@@ -1592,3 +1592,15 @@ label:has(#editPatientUltrasoundAbnormalities){
 .patientRegistrationForm .dateControl{width:100%;min-width:0;box-sizing:border-box}
 .patientRegistrationForm .dateControl input{width:auto;flex:1 1 0;min-width:0;box-sizing:border-box}
 .patientRegistrationForm .dateControl .calendarToggle{flex:0 0 auto;min-width:48px}
+
+
+/* Registration button: lighter pink than the primary login button. */
+#loginView.loginExperience #showRegistrationForm.loginRegisterButton{
+  background:#fbe3ee!important;
+  color:#a92763!important;
+  border:1px solid #f3c2d8!important;
+  box-shadow:none!important;
+}
+#loginView.loginExperience #showRegistrationForm.loginRegisterButton:hover{
+  background:#f7d5e6!important;
+}
