@@ -1571,3 +1571,19 @@ label:has(#editPatientUltrasoundAbnormalities){
  #adminView .head .adminDashboardTiles .patientAreaSwitchLink,
  #adminView .head .adminDashboardTiles .registrationApprovalSummary{min-height:78px!important}
 }
+
+/* Admin tiles activate their own full-width panel beneath the tile grid */
+#adminView .adminDashboardTiles{display:block!important}
+#adminView .adminDashboardTiles .adminAreaSwitch{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+#adminView .adminDashboardTiles .patientAreaSwitchLink{width:100%;min-height:82px;box-sizing:border-box}
+#adminView .adminExpandablePanel{margin:18px 0 24px;width:100%;box-sizing:border-box}
+#adminView .adminExpandablePanel[hidden]{display:none!important}
+#adminView .adminExpandablePanel .head{display:flex;align-items:center;justify-content:space-between;gap:14px}
+#adminView .adminPanelAction{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;padding:12px 18px;border-radius:14px;white-space:nowrap}
+#adminView #registrationApprovalPanel .registrationApprovalContent{padding:0}
+@media(max-width:650px){
+ #adminView .adminDashboardTiles .adminAreaSwitch{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+ #adminView .adminDashboardTiles .patientAreaSwitchLink{min-height:78px;padding:11px 8px;font-size:14px}
+ #adminView .adminExpandablePanel .head{align-items:flex-start;flex-direction:column}
+ #adminView .adminPanelAction{white-space:normal;width:100%;box-sizing:border-box}
+}
