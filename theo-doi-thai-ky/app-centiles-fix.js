@@ -147,20 +147,63 @@ if(togglePasswordButton)togglePasswordButton.addEventListener("click",()=>{
   togglePasswordButton.setAttribute("aria-label",showing?"Hiện mật khẩu":"Ẩn mật khẩu");
 });
 $("loginForm").addEventListener("submit", async e => {
-  e.preventDefault(); fail("loginError", "");
-  const raw = $("username").value.trim();
-  try{if($("rememberLogin").checked)localStorage.setItem(rememberedLoginKey,raw);else localStorage.removeItem(rememberedLoginKey);}catch(_){}
-  const email = raw.includes("@") ? raw : emailFor(raw);
-  const { data, error } = await db.auth.signInWithPassword({ email, password: $("password").value });
-  if (error) { fail("loginError", "Đăng nhập không thành công. Vui lòng kiểm tra thông tin hoặc liên hệ phòng khám."); return; }
-  user = data.user; await routeUser();
+  e.preventDefault();
+  const form=$("loginForm"), submit=form.querySelector('button[type="submit"]');
+  if(submit?.disabled)return;
+  fail("loginError", "Đang kiểm tra thông tin đăng nhập…");
+  if(submit){submit.disabled=true;submit.dataset.originalText=submit.textContent;submit.textContent="Đang đăng nhập…";}
+  const raw=$("username").value.trim();
+  try{
+    try{if($("rememberLogin").checked)localStorage.setItem(rememberedLoginKey,raw);else localStorage.removeItem(rememberedLoginKey);}catch(_){}
+    const email=raw.includes("@")?raw:emailFor(raw);
+    const {data,error}=await db.auth.signInWithPassword({email,password:$("password").value});
+    if(error)throw error;
+    if(!data?.user)throw new Error("Supabase không trả về tài khoản sau đăng nhập.");
+    user=data.user;
+    await routeUser();
+  }catch(error){
+    console.error("Portal login failed",error);
+    const detail=String(error?.message||"");
+    let message="Đăng nhập chưa hoàn tất. Vui lòng thử lại.";
+    if(/invalid login credentials|invalid email or password/i.test(detail))message="Tên đăng nhập hoặc mật khẩu không đúng.";
+    else if(/network|fetch|timeout|load failed/i.test(detail))message="Không kết nối được máy chủ. Hãy kiểm tra mạng và thử lại.";
+    else if(detail)message="Không thể hoàn tất đăng nhập: "+detail;
+    fail("loginError",message);
+  }finally{
+    if(submit){submit.disabled=false;submit.textContent=submit.dataset.originalText||"Đăng nhập";delete submit.dataset.originalText;}
+  }
 });
 async function routeUser() {
-  const { data, error } = await db.from("profiles").select("user_id,username,display_name,phone,address,para,medical_history,pre_pregnancy_weight_kg,height_cm,ultrasound_abnormalities,due_date,date_of_birth").eq("user_id", user.id).single();
-  if (error || !data) { await db.auth.signOut(); view("loginView"); fail("loginError", "Không đọc được hồ sơ. Vui lòng liên hệ quản trị viên."); return; }
-  profile = data;
-  if (user.app_metadata?.role === "admin") { view("adminView"); await Promise.all([loadPatients(), loadAdminQaThreads(false), loadRegistrationRequests()]); }
-  else { view("patientView"); await Promise.all([loadPatient(), loadPatientQaThreads(false)]); }
+  if(!user?.id){view("loginView");fail("loginError","Phiên đăng nhập chưa có thông tin tài khoản. Vui lòng đăng nhập lại.");return;}
+  let data,error;
+  try{
+    const result=await db.from("profiles").select("user_id,username,display_name,phone,address,para,medical_history,pre_pregnancy_weight_kg,height_cm,ultrasound_abnormalities,due_date,date_of_birth").eq("user_id",user.id).maybeSingle();
+    data=result.data;error=result.error;
+  }catch(err){error=err;}
+  if(error){
+    console.error("Profile lookup after login failed",error);
+    view("loginView");
+    fail("loginError","Đăng nhập đã được xác thực nhưng chưa tải được hồ sơ. Phiên đăng nhập được giữ lại; hãy tải lại trang hoặc liên hệ quản trị viên.");
+    return;
+  }
+  if(!data){
+    view("loginView");
+    fail("loginError","Tài khoản đã xác thực nhưng chưa có hồ sơ bệnh nhân tương ứng. Phiên đăng nhập được giữ lại; vui lòng liên hệ quản trị viên.");
+    return;
+  }
+  profile=data;
+  try{
+    if(user.app_metadata?.role==="admin"){
+      view("adminView");
+      await Promise.all([loadPatients(),loadAdminQaThreads(false),loadRegistrationRequests()]);
+    }else{
+      view("patientView");
+      await Promise.all([loadPatient(),loadPatientQaThreads(false)]);
+    }
+  }catch(err){
+    console.error("Portal post-login data loading failed",err);
+    toast("Đã đăng nhập, nhưng một số dữ liệu chưa tải được. Vui lòng tải lại trang.");
+  }
 }
 async function loadWeeklyClinicSchedule(){
  const panel=$("weeklyPatientSchedulePanel"),img=$("patientWeeklyScheduleImage"),imgLink=$("patientScheduleImageLink");
