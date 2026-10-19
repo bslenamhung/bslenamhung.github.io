@@ -148,7 +148,7 @@ async function routeUser() {
   const { data, error } = await db.from("profiles").select("user_id,username,display_name,phone,address,para,medical_history,pre_pregnancy_weight_kg,height_cm,ultrasound_abnormalities,due_date,date_of_birth").eq("user_id", user.id).single();
   if (error || !data) { await db.auth.signOut(); view("loginView"); fail("loginError", "Không đọc được hồ sơ. Vui lòng liên hệ quản trị viên."); return; }
   profile = data;
-  if (user.app_metadata?.role === "admin") { view("adminView"); await Promise.all([loadPatients(), loadAdminQaThreads(false)]); }
+  if (user.app_metadata?.role === "admin") { view("adminView"); await Promise.all([loadPatients(), loadAdminQaThreads(false), loadRegistrationRequests()]); }
   else { view("patientView"); await Promise.all([loadPatient(), loadPatientQaThreads(false)]); }
 }
 async function loadWeeklyClinicSchedule(){
