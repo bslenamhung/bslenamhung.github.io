@@ -10,7 +10,7 @@ const $ = id => document.getElementById(id);
  if(!trigger||!panel||!form)return;
  const dob=form.elements.date_of_birth,due=form.elements.due_date;
  const today=new Date();const localToday=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
- if(dob)dob.max=localToday;
+ if(dob){dob.max=localToday;initDateCalendar("registrationDateOfBirth");}
  trigger.addEventListener("click",()=>{
   const open=panel.hidden;panel.hidden=!open;trigger.setAttribute("aria-expanded",String(open));
   if(open){panel.scrollIntoView({behavior:"smooth",block:"start"});form.elements.display_name.focus();}
@@ -22,11 +22,11 @@ const $ = id => document.getElementById(id);
   const display_name=String(values.get("display_name")||"").trim();
   const phone=String(values.get("phone")||"").trim();
   const address=String(values.get("address")||"").trim();
-  const date_of_birth=String(values.get("date_of_birth")||"")||null;
+  const date_of_birth_raw=String(values.get("date_of_birth")||"").trim();\n  const date_of_birth=date_of_birth_raw?dueDateIso(date_of_birth_raw):null;
   const due_date=String(values.get("due_date")||"")||null;
   const medical_history=String(values.get("medical_history")||"").trim()||null;
   if(!display_name||!phone||!address){message.textContent="Vui lòng điền họ tên, số điện thoại và địa chỉ.";return;}
-  if(date_of_birth&&date_of_birth>localToday){message.textContent="Ngày sinh không thể ở tương lai.";return;}
+  if(date_of_birth_raw&&!date_of_birth){message.textContent="Ngày sinh không hợp lệ. Vui lòng nhập theo dạng dd/mm/yyyy.";return;}\n  if(date_of_birth&&date_of_birth>localToday){message.textContent="Ngày sinh không thể ở tương lai.";return;}
   if(date_of_birth&&due_date&&date_of_birth>due_date){message.textContent="Ngày dự sinh cần sau ngày sinh.";return;}
   if(submit){submit.disabled=true;submit.querySelector("span").textContent="Đang gửi…";}
   try{
