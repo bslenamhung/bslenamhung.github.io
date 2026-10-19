@@ -94,7 +94,7 @@ async function routeUser() {
     await loadPatients();
     return;
   }
-  const { data, error } = await db.from("profiles").select("user_id,username,display_name,phone,address,para,medical_history,due_date,date_of_birth").eq("user_id", user.id).single();
+  const { data, error } = await db.from("profiles").select("user_id,username,display_name,phone,address,para,medical_history,pre_pregnancy_weight_kg,height_cm,ultrasound_abnormalities,due_date,date_of_birth").eq("user_id", user.id).single();
   if (error || !data) {
     console.error("Không đọc được hồ sơ bệnh nhân:", error);
     view("loginView");
