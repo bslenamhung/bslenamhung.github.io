@@ -23,10 +23,12 @@ const $ = id => document.getElementById(id);
   const address=String(values.get("address")||"").trim();
   const date_of_birth_raw=String(values.get("date_of_birth")||"").trim();
   const date_of_birth=date_of_birth_raw?dueDateIso(date_of_birth_raw):null;
-  const due_date=String(values.get("due_date")||"")||null;
+  const due_date_raw=String(values.get("due_date")||"").trim();
+  const due_date=due_date_raw?dueDateIso(due_date_raw):null;
   const medical_history=String(values.get("medical_history")||"").trim()||null;
   if(!display_name||!phone||!address){message.textContent="Vui lòng điền họ tên, số điện thoại và địa chỉ.";return;}
   if(date_of_birth_raw&&!date_of_birth){message.textContent="Ngày sinh không hợp lệ. Vui lòng nhập theo dạng dd/mm/yyyy.";return;}
+  if(due_date_raw&&!due_date){message.textContent="Ngày dự sinh không hợp lệ. Vui lòng nhập theo dạng dd/mm/yyyy.";return;}
   if(date_of_birth&&date_of_birth>localToday){message.textContent="Ngày sinh không thể ở tương lai.";return;}
   if(date_of_birth&&due_date&&date_of_birth>due_date){message.textContent="Ngày dự sinh cần sau ngày sinh.";return;}
   if(submit){submit.disabled=true;submit.querySelector("span").textContent="Đang gửi…";}
@@ -579,7 +581,7 @@ function initDateCalendar(inputId){
  render();
 }
 document.addEventListener("click",e=>{if(!e.target.closest(".dateControl")&&!e.target.closest(".dateCalendar"))document.querySelectorAll(".dateCalendar").forEach(el=>el.hidden=true);});
-["newPatientDob","editPatientDob","registrationDateOfBirth"].forEach(initDateCalendar);
+["newPatientDob","editPatientDob","registrationDateOfBirth","registrationDueDate"].forEach(initDateCalendar);
 function refreshNewPatientGestation(){
  const raw=$("newPatientDueDate").value.trim(),d=dueDateIso(raw),g=gestationAt(d,todayLocal());
  $("newPatientGestation").textContent=!raw?"Nhập ngày dự sinh theo dạng ngày/tháng/năm (dd/mm/yyyy) để tự tính tuổi thai.":!d?"Nhập ngày hợp lệ theo dạng dd/mm/yyyy, ví dụ 25/04/2027.":"Tuổi thai hôm nay: "+gestationText(g);
