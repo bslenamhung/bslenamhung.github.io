@@ -108,12 +108,12 @@ async function attachmentsFor(testIds) {
     .select("id,test_record_id,storage_path,file_name,mime_type,size_bytes")
     .in("test_record_id", testIds).order("created_at");
   if (error) throw error;
-  const out = [];
-  for (const file of data || []) {
+  // Sign attachment URLs concurrently instead of waiting for each file in sequence.
+  const signedFiles = await Promise.all((data || []).map(async file => {
     const { data: signed, error: signError } = await db.storage.from("patient-lab-files").createSignedUrl(file.storage_path, 600);
-    if (!signError && signed?.signedUrl) out.push({...file, signedUrl:signed.signedUrl});
-  }
-  return out;
+    return !signError && signed?.signedUrl ? {...file, signedUrl:signed.signedUrl} : null;
+  }));
+  return signedFiles.filter(Boolean);
 }
 function renderPatientFiles(rows, files) {
   const gallery = $("patientTestGallery"); gallery.replaceChildren();
