@@ -574,7 +574,7 @@ function initDateCalendar(inputId){
  render();
 }
 document.addEventListener("click",e=>{if(!e.target.closest(".dateControl")&&!e.target.closest(".dateCalendar"))document.querySelectorAll(".dateCalendar").forEach(el=>el.hidden=true);});
-["newPatientDob","editPatientDob"].forEach(initDateCalendar);
+["newPatientDob","editPatientDob","registrationDateOfBirth"].forEach(initDateCalendar);
 function refreshNewPatientGestation(){
  const raw=$("newPatientDueDate").value.trim(),d=dueDateIso(raw),g=gestationAt(d,todayLocal());
  $("newPatientGestation").textContent=!raw?"Nhập ngày dự sinh theo dạng ngày/tháng/năm (dd/mm/yyyy) để tự tính tuổi thai.":!d?"Nhập ngày hợp lệ theo dạng dd/mm/yyyy, ví dụ 25/04/2027.":"Tuổi thai hôm nay: "+gestationText(g);
