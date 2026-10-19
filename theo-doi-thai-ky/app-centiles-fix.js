@@ -1041,7 +1041,7 @@ async function loadRegistrationRequests(){
    $("newUsername").focus();
    $("pregnancyAdmin").hidden=false;$("adminDueDatePanel").hidden=true;
    $("togglePregnancyAdmin").classList.add("active");$("toggleObstetricTracking").classList.remove("active");
-   $("registrationApprovalBox").scrollIntoView({behavior:"smooth",block:"start"});
+   $("registrationApprovalPanel")?.scrollIntoView({behavior:"smooth",block:"start"});
    form.scrollIntoView({behavior:"smooth",block:"start"});
   });
   const reject=document.createElement("button");reject.type="button";reject.className="secondary";reject.textContent="Từ chối";
