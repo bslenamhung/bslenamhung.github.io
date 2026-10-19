@@ -11,10 +11,9 @@ const $ = id => document.getElementById(id);
  const dob=form.elements.date_of_birth,due=form.elements.due_date;
  const today=new Date();const localToday=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
  if(dob){dob.max=localToday;initDateCalendar("registrationDateOfBirth");}
- trigger.addEventListener("click",()=>{
-  const open=panel.hidden;panel.hidden=!open;trigger.setAttribute("aria-expanded",String(open));
-  if(open){panel.scrollIntoView({behavior:"smooth",block:"start"});form.elements.display_name.focus();}
- });
+ // The registration button toggle is handled by a small inline handler in index.html,
+ // so it still works if this module has a later initialization error.
+
  cancel?.addEventListener("click",()=>{panel.hidden=true;trigger.setAttribute("aria-expanded","false");trigger.focus();});
  form.addEventListener("submit",async event=>{
   event.preventDefault();message.textContent="";
