@@ -1520,3 +1520,22 @@ label:has(#editPatientUltrasoundAbnormalities){
  #loginView.loginExperience #showRegistrationForm .loginSubmitLabel{font-size:17px!important}
  #loginView.loginExperience #showRegistrationForm .loginSubmitIcon{width:28px;height:28px;flex-basis:28px}
 }
+
+/* Collapsible review queue: compact like the admin navigation tabs */
+.registrationApprovalBox{padding:0!important;overflow:hidden}
+.registrationApprovalSummary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 22px;cursor:pointer;font-weight:800;color:var(--d);font-size:clamp(18px,2.5vw,24px)}
+.registrationApprovalSummary::-webkit-details-marker{display:none}
+.registrationApprovalTitle{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.registrationApprovalChevron{display:grid;place-items:center;flex:0 0 38px;width:38px;height:38px;border-radius:12px;background:#f5eaf0;color:#843b59;font-size:25px;line-height:1;transition:transform .18s ease}
+.registrationApprovalBox[open] .registrationApprovalChevron{transform:rotate(180deg)}
+.registrationApprovalContent{padding:0 22px 20px}
+.registrationApprovalIntro{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.registrationApprovalIntro p{margin:0}
+.registrationApprovalIntro button{flex:0 0 auto}
+@media(max-width:650px){
+ .registrationApprovalSummary{padding:15px 16px;font-size:18px}
+ .registrationApprovalContent{padding:0 16px 16px}
+ .registrationApprovalIntro{align-items:flex-start}
+ .registrationApprovalIntro p{font-size:14px;line-height:1.45}
+ .registrationApprovalChevron{width:34px;height:34px;flex-basis:34px}
+}
