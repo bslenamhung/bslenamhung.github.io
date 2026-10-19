@@ -630,6 +630,13 @@ $("createPatientForm").addEventListener("submit", async e => {
   if (createdProfileLookupError || !createdProfile) { fail("createMessage", "Tài khoản đã tạo, nhưng chưa xác minh được hồ sơ để lưu các thông tin bổ sung. Hãy chọn bệnh nhân và cập nhật lại hồ sơ."); return; }
   const { error: extraProfileError } = await db.from("profiles").update({ pre_pregnancy_weight_kg, height_cm, ultrasound_abnormalities: ultrasound_abnormalities || null }).eq("user_id", createdProfile.user_id);
   if (extraProfileError) { fail("createMessage", "Tài khoản đã tạo, nhưng 3 thông tin bổ sung chưa lưu được. Hãy chọn bệnh nhân vừa tạo, nhập lại các trường này trong phần Sửa / cập nhật hồ sơ. Lỗi: " + extraProfileError.message); return; }
+  const registrationRequestId=$("registrationRequestId")?.value;
+  if(registrationRequestId){
+    const {error:reviewError}=await db.from("patient_registration_requests").update({status:"approved",reviewed_by:user.id,reviewed_at:new Date().toISOString()}).eq("id",registrationRequestId).eq("status","pending");
+    if(reviewError){fail("createMessage","Tài khoản đã tạo, nhưng chưa cập nhật được trạng thái duyệt hồ sơ. Hãy kiểm tra mục Duyệt hồ sơ mới.");console.error(reviewError);return;}
+    $("registrationRequestId").value="";
+    await loadRegistrationRequests();
+  }
   fail("createMessage", "Đã tạo tài khoản " + username + ". Tuổi thai hôm nay: " + gestationText(newGa) + ". Hãy trao mật khẩu riêng cho bệnh nhân.");
   $("createPatientForm").reset(); $("newPatientGestation").textContent="Nhập ngày dự sinh để tự tính tuổi thai."; await loadPatients();
 });
@@ -939,3 +946,58 @@ $("refreshDueDateReminders")?.addEventListener("click",async()=>{await loadPatie
 function showAdminView(view){const pregnancy=$("pregnancyAdmin"),obstetric=$("adminDueDatePanel"),pregnancyButton=$("togglePregnancyAdmin"),obstetricButton=$("toggleObstetricTracking");const showPregnancy=view==="pregnancy";pregnancy.hidden=!showPregnancy;obstetric.hidden=showPregnancy;pregnancyButton.classList.toggle("active",showPregnancy);obstetricButton.classList.toggle("active",!showPregnancy);pregnancyButton.setAttribute("aria-expanded",String(showPregnancy));obstetricButton.setAttribute("aria-expanded",String(!showPregnancy));setAdminPatientCount(showPregnancy?"pregnancy":"obstetric",adminPatientCounts);if(!showPregnancy){loadPatients();obstetric.scrollIntoView({behavior:"smooth",block:"start"});}}
 $("togglePregnancyAdmin")?.addEventListener("click",()=>showAdminView("pregnancy"));
 $("toggleObstetricTracking")?.addEventListener("click",()=>showAdminView("obstetric"));
+// Pending patient registration review queue. Selecting a request prefills the existing
+// secure admin-created-account form; the request is approved only after account creation succeeds.
+function registrationDateInput(iso){if(!iso)return "";const parts=String(iso).split("-");return parts.length===3?parts[2]+"/"+parts[1]+"/"+parts[0]:"";}
+async function loadRegistrationRequests(){
+ const list=$("registrationRequestsList"),status=$("registrationRequestsStatus"),count=$("registrationRequestCount");
+ if(!list||!status)return;
+ if(user?.app_metadata?.role!=="admin"){status.textContent="Đăng nhập bằng tài khoản bác sĩ để xem yêu cầu đăng ký.";list.replaceChildren();if(count)count.textContent="—";return;}
+ status.textContent="Đang tải yêu cầu đăng ký…";list.replaceChildren();
+ const {data,error}=await db.from("patient_registration_requests").select("id,display_name,date_of_birth,phone,address,due_date,medical_history,status,created_at").eq("status","pending").order("created_at",{ascending:true});
+ if(error){status.textContent="Không tải được yêu cầu. Vui lòng bấm Làm mới.";console.error(error);return;}
+ count.textContent=String(data?.length||0);
+ if(!data?.length){status.textContent="Không có hồ sơ đăng ký nào đang chờ duyệt.";list.innerHTML='<div class="registrationRequestEmpty">Danh sách đang trống.</div>';return;}
+ status.textContent="Có "+data.length+" hồ sơ đang chờ bác sĩ xem xét.";
+ data.forEach(request=>{
+  const card=document.createElement("article");card.className="registrationRequestCard";
+  const title=document.createElement("h3");title.textContent=request.display_name||"Chưa có họ tên";
+  const meta=document.createElement("div");meta.className="registrationRequestMeta";
+  const fields=[["Số điện thoại",request.phone],["Địa chỉ",request.address],["Ngày sinh",request.date_of_birth?dateVi(request.date_of_birth):"Chưa cung cấp"],["Ngày dự sinh",request.due_date?dateVi(request.due_date):"Chưa cung cấp"],["Tiền sử / thông tin",request.medical_history||"Chưa cung cấp"],["Ngày gửi",request.created_at?new Date(request.created_at).toLocaleString("vi-VN"):"—"]];
+  fields.forEach(([label,value])=>{const row=document.createElement("div");row.textContent=label+": "+value;meta.append(row);});
+  const actions=document.createElement("div");actions.className="registrationRequestActions";
+  const accept=document.createElement("button");accept.type="button";accept.className="primary";accept.textContent="Tiếp nhận và tạo tài khoản";
+  accept.addEventListener("click",()=>{
+   if(user?.app_metadata?.role!=="admin"){alert("Bạn cần quyền quản trị.");return;}
+   const form=$("createPatientForm"),toggle=$("toggleCreatePatient");
+   if(!form||!toggle){alert("Không tìm thấy biểu mẫu tạo tài khoản.");return;}
+   $("newPatientName").value=(request.display_name||"").toLocaleUpperCase("vi-VN");
+   $("newPatientDob").value=registrationDateInput(request.date_of_birth);
+   $("newPatientPhone").value=request.phone||"";
+   $("newPatientAddress").value=(request.address||"").toLocaleUpperCase("vi-VN");
+   $("newPatientHistory").value=request.medical_history||"";
+   $("newPatientDueDate").value=registrationDateInput(request.due_date);
+   let hidden=$("registrationRequestId");
+   if(!hidden){hidden=document.createElement("input");hidden.type="hidden";hidden.id="registrationRequestId";hidden.name="registrationRequestId";form.append(hidden);}
+   hidden.value=request.id;
+   if(form.hidden){form.hidden=false;toggle.setAttribute("aria-expanded","true");toggle.textContent="Đóng biểu mẫu tạo tài khoản";}
+   $("createMessage").textContent="Đã điền thông tin từ hồ sơ đăng ký. Bác sĩ hãy chọn tên đăng nhập và mật khẩu ban đầu, sau đó bấm Tạo tài khoản.";
+   $("newUsername").focus();
+   $("pregnancyAdmin").hidden=false;$("adminDueDatePanel").hidden=true;
+   $("togglePregnancyAdmin").classList.add("active");$("toggleObstetricTracking").classList.remove("active");
+   $("registrationApprovalBox").scrollIntoView({behavior:"smooth",block:"start"});
+   form.scrollIntoView({behavior:"smooth",block:"start"});
+  });
+  const reject=document.createElement("button");reject.type="button";reject.className="secondary";reject.textContent="Từ chối";
+  reject.addEventListener("click",async()=>{
+   if(user?.app_metadata?.role!=="admin"){alert("Bạn cần quyền quản trị.");return;}
+   if(!confirm("Từ chối yêu cầu đăng ký của "+(request.display_name||"bệnh nhân")+"?"))return;
+   const {error:updateError}=await db.from("patient_registration_requests").update({status:"rejected",reviewed_by:user.id,reviewed_at:new Date().toISOString()}).eq("id",request.id).eq("status","pending");
+   if(updateError){alert("Không cập nhật được yêu cầu. Vui lòng thử lại.");console.error(updateError);return;}
+   await loadRegistrationRequests();
+  });
+  actions.append(accept,reject);card.append(title,meta,actions);list.append(card);
+ });
+}
+$("refreshRegistrationRequests")?.addEventListener("click",loadRegistrationRequests);
+
