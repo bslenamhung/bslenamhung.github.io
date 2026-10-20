@@ -1879,3 +1879,24 @@ img{max-width:100%}
 .article-page-desc {
   display: none !important;
 }
+
+
+/* Responsive tables across every article: keep columns readable and allow horizontal scrolling on narrow screens. */
+.article-full table {
+  display: block !important;
+  width: max-content !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  border-collapse: collapse;
+  box-sizing: border-box;
+}
+.article-full table th,
+.article-full table td {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.article-full table img {
+  max-width: 100%;
+}
