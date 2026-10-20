@@ -717,8 +717,8 @@ $("createPatientForm").addEventListener("submit", async e => {
   if (extraProfileError) { fail("createMessage", "Tài khoản đã tạo, nhưng 3 thông tin bổ sung chưa lưu được. Hãy chọn bệnh nhân vừa tạo, nhập lại các trường này trong phần Sửa / cập nhật hồ sơ. Lỗi: " + extraProfileError.message); return; }
   const registrationRequestId=$("registrationRequestId")?.value;
   if(registrationRequestId){
-    const {error:reviewError}=await db.from("patient_registration_requests").update({status:"approved",reviewed_by:user.id,reviewed_at:new Date().toISOString()}).eq("id",registrationRequestId).eq("status","pending");
-    if(reviewError){fail("createMessage","Tài khoản đã tạo, nhưng chưa cập nhật được trạng thái duyệt hồ sơ. Hãy kiểm tra mục Duyệt hồ sơ mới.");console.error(reviewError);return;}
+    const {error:reviewError}=await db.from("patient_registration_requests").delete().eq("id",registrationRequestId).eq("status","pending");
+    if(reviewError){fail("createMessage","Tài khoản đã tạo thành công, nhưng chưa xóa được yêu cầu đăng ký. Vui lòng kiểm tra quyền DELETE của bảng patient_registration_requests.");console.error(reviewError);return;}
     $("registrationRequestId").value="";
     await loadRegistrationRequests();
   }
@@ -1102,8 +1102,8 @@ async function loadRegistrationRequests(){
   reject.addEventListener("click",async()=>{
    if(user?.app_metadata?.role!=="admin"){alert("Bạn cần quyền quản trị.");return;}
    if(!confirm("Từ chối yêu cầu đăng ký của "+(request.display_name||"bệnh nhân")+"?"))return;
-   const {error:updateError}=await db.from("patient_registration_requests").update({status:"rejected",reviewed_by:user.id,reviewed_at:new Date().toISOString()}).eq("id",request.id).eq("status","pending");
-   if(updateError){alert("Không cập nhật được yêu cầu. Vui lòng thử lại.");console.error(updateError);return;}
+   const {error:updateError}=await db.from("patient_registration_requests").delete().eq("id",request.id).eq("status","pending");
+   if(updateError){alert("Không xóa được yêu cầu đăng ký. Vui lòng kiểm tra quyền DELETE của bảng patient_registration_requests.");console.error(updateError);return;}
    await loadRegistrationRequests();
   });
   actions.append(accept,reject);card.append(title,meta,actions);list.append(card);
