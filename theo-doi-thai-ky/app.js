@@ -302,7 +302,20 @@ function initDateCalendar(inputId){
   today.addEventListener("click",()=>{const now=new Date(),iso=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0");input.value=isoToDateVi(iso);shown=new Date(now.getFullYear(),now.getMonth(),1);popup.hidden=true;input.dispatchEvent(new Event("input",{bubbles:true}));input.dispatchEvent(new Event("change",{bubbles:true}));});
   foot.append(clear,today);popup.append(foot);
  }
- document.querySelector('[data-calendar="'+inputId+'"]').addEventListener("click",e=>{e.preventDefault();e.stopPropagation();popup.hidden=!popup.hidden;if(!popup.hidden){const iso=dueDateIso(input.value);if(iso)shown=new Date(Number(iso.slice(0,4)),Number(iso.slice(5,7))-1,1);else{const now=new Date();shown=new Date(now.getFullYear(),now.getMonth(),1);}render();}});
+ const trigger=document.querySelector('[data-calendar="'+inputId+'"]');
+ function placeCalendar(){
+  const rect=trigger.getBoundingClientRect(),vw=document.documentElement.clientWidth,vh=document.documentElement.clientHeight;
+  const width=Math.min(340,vw-16);
+  popup.style.position="fixed";popup.style.width=width+"px";popup.style.maxWidth="calc(100vw - 16px)";
+  popup.style.left=Math.max(8,Math.min(rect.left,vw-width-8))+"px";
+  popup.style.zIndex="9999";
+  const height=popup.getBoundingClientRect().height||300;
+  const below=vh-rect.bottom-8,above=rect.top-8;
+  popup.style.top=(below>=Math.min(height,300)||below>=above?Math.min(vh-height-8,rect.bottom+6):Math.max(8,rect.top-height-6))+"px";
+ }
+ trigger.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();popup.hidden=!popup.hidden;if(!popup.hidden){const iso=dueDateIso(input.value);if(iso)shown=new Date(Number(iso.slice(0,4)),Number(iso.slice(5,7))-1,1);else{const now=new Date();shown=new Date(now.getFullYear(),now.getMonth(),1);}render();placeCalendar();}});
+ window.addEventListener("resize",()=>{if(!popup.hidden)placeCalendar();});
+ window.addEventListener("scroll",()=>{if(!popup.hidden)placeCalendar();},true);
  input.addEventListener("input",()=>{
   formatDateInput(input);
   if(inputId==="newPatientDueDate"){
