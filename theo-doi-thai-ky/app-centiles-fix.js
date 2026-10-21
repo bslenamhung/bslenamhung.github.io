@@ -494,7 +494,7 @@ async function loadSelectedPatient() {
   $("recordEntryPanel").hidden = !selectedPatient;
   $("testUploadPanel").hidden = !selectedPatient;
   $("adminPatientHistory").replaceChildren(); $("adminTestHistory").replaceChildren(); $("adminPatientProfile").replaceChildren(); drawChart([], "adminWeightChart", "adminWeightChartEmpty");
-  $("editPatientForm").hidden=true; $("editPatientButton").hidden=true;
+  $("editPatientForm").hidden=true; $("editPatientButton").hidden=true; $("deletePatientButton").hidden=true;
   fail("recordMessage",""); fail("testMessage",""); fail("editPatientMessage","");
   if (!selectedPatient) return;
   const { data: p, error: pError } = await db.from("profiles").select("username,display_name,phone,address,para,medical_history,pre_pregnancy_weight_kg,height_cm,ultrasound_abnormalities,due_date,date_of_birth").eq("user_id",selectedPatient).single();
@@ -504,7 +504,7 @@ async function loadSelectedPatient() {
   });
   $("editPatientName").value=p.display_name||""; $("editPatientDob").value=isoToDateVi(p.date_of_birth); $("editPatientPhone").value=p.phone||""; $("editPatientAddress").value=p.address||"";
   $("editPatientPara").value=p.para||""; $("editPatientHistory").value=p.medical_history||""; $("editPatientPreWeight").value=p.pre_pregnancy_weight_kg??""; $("editPatientHeight").value=p.height_cm??""; $("editPatientUltrasoundAbnormalities").value=p.ultrasound_abnormalities||""; $("editPatientDueDate").value=isoToDateVi(p.due_date||"");
-  $("editPatientButton").hidden=false;
+  $("editPatientButton").hidden=false; $("deletePatientButton").hidden=false;
   const { data, error } = await db.from("fetal_weight_records").select("id,scan_date,follow_up_date,ga_weeks,ga_days,efw_grams,note").eq("patient_user_id", selectedPatient).order("scan_date", { ascending:false });
   if (error) { toast("Không tải được lịch sử bệnh nhân."); return; }
   (data || []).forEach(r => {
