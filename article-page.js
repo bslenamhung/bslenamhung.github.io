@@ -99,7 +99,7 @@ function relatedArticlesPage(current,list){
 function renderRelatedPage(current,list){
  const rel=relatedArticlesPage(current,list);
  if(!rel.length) return '';
- const cards=rel.map(a=>`<a class="related-card" href="${escPage(articleUrlPage(a))}"><div class="related-tag">${escPage(a.specialty||'')}</div><h3>${escPage(a.title||'')}</h3><p>${escPage(String(a.desc||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,150))}</p><span>Đọc bài viết →</span></a>`).join('');
+ const cards=rel.map(a=>{const image=String(a.image||a.seoImage||'').trim();return `<a class="related-card" href="${escPage(articleUrlPage(a))}">${image?`<img class="related-card-image" src="${escPage(image)}" alt="${escPage(a.title||'')}" loading="lazy" decoding="async">`:''}<div class="related-tag">${escPage(a.specialty||'')}</div><h3>${escPage(a.title||'')}</h3><p>${escPage(String(a.desc||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,150))}</p><span>Đọc bài viết →</span></a>`}).join('');
  return `<section class="related-articles" aria-labelledby="relatedTitle"><div class="related-head"><div><p class="article-tag">GỢI Ý ĐỌC THÊM</p><h2 id="relatedTitle">Bài viết liên quan</h2></div><a class="text-link" href="index.html#articles">Xem tất cả bài viết →</a></div><div class="related-grid">${cards}</div></section>`;
 }
 
@@ -222,7 +222,7 @@ function setMeta(a){
  const data=await loadSite(); const list=Array.isArray(data.articles)?data.articles:[];
  const a=list.find(x=>x&&x.published!==false&&(articleIdPage(x)===id||String(x.id||'')===id));
  if(!a){root.innerHTML='<div class="empty"><h2>Không tìm thấy bài viết</h2><p>Bài viết có thể đã được thay đổi hoặc đường dẫn không còn hợp lệ.</p><p><a class="btn primary" href="index.html#articles">← Quay lại bài viết</a></p></div>';return}
- const publishedDate=formatPublishedDate(a); const cleanContent=linkifyArticleContentPage(stripDuplicateLeadingTitlePage(a.content,a.title,a.seoTitle)); setMeta(a); root.innerHTML=`<article><div class="article-tag">${escPage(a.specialty||'')}</div><h1>${escPage(a.title||'')}</h1>${a.image?`<img class="article-page-cover" src="${escPage(a.image)}" alt="${escPage(a.title||'')}" loading="eager">`:''}${renderArticleVideoPage(a)}<p class="article-page-desc">${escPage(a.desc||'')}</p><div class="article-full">${cleanContent}</div>${publishedDate?`<div class="article-published-date">📅 Ngày xuất bản: <strong>${publishedDate}</strong></div>`:''}<p style="margin-top:32px"><a class="btn secondary" href="index.html#articles">← Xem các bài viết khác</a></p>${renderRelatedPage(a,list)}</article>`;
+ const publishedDate=formatPublishedDate(a); const coverImage=String(a.image||a.seoImage||'').trim(); const cleanContent=linkifyArticleContentPage(stripDuplicateLeadingTitlePage(a.content,a.title,a.seoTitle)); setMeta(a); root.innerHTML=`<article><div class="article-tag">${escPage(a.specialty||'')}</div><h1>${escPage(a.title||'')}</h1>${coverImage?`<img class="article-page-cover" src="${escPage(coverImage)}" alt="${escPage(a.title||'')}" loading="eager">`:''}${renderArticleVideoPage(a)}<p class="article-page-desc">${escPage(a.desc||'')}</p><div class="article-full">${cleanContent}</div>${publishedDate?`<div class="article-published-date">📅 Ngày xuất bản: <strong>${publishedDate}</strong></div>`:''}<p style="margin-top:32px"><a class="btn secondary" href="index.html#articles">← Xem các bài viết khác</a></p>${renderRelatedPage(a,list)}</article>`;
  normalizeNumberedArticleHeadings(root);
  recordArticleViewPage(a);
 })();
