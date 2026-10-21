@@ -1881,29 +1881,56 @@ img{max-width:100%}
 }
 
 
-/* ARTICLE TABLES — keep column widths readable and scroll wide tables on phones. */
+/* ARTICLE TABLES — real horizontal scroll frame for wide comparison tables. */
+.article-table-wrap {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  margin: 1em 0;
+}
+.article-table-wrap > table {
+  display: table !important;
+  width: max-content !important;
+  min-width: 100% !important;
+  max-width: none !important;
+  border-collapse: collapse !important;
+  table-layout: auto !important;
+}
+.article-table-wrap th,
+.article-table-wrap td {
+  min-width: 150px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  vertical-align: top;
+}
+.article-table-wrap th:first-child,
+.article-table-wrap td:first-child { min-width: 170px; }
+.article-table-wrap img { max-width: 100%; }
+/* Fallback for article pages not yet regenerated with the wrapper. */
+.article-full { max-width: 100%; min-width: 0; }
 .article-full table {
   display: block !important;
-  width: 100% !important;
-  max-width: 100% !important;
+  width: max-content !important;
+  min-width: 100% !important;
+  max-width: none !important;
   overflow-x: auto !important;
   overflow-y: hidden !important;
   -webkit-overflow-scrolling: touch !important;
   border-collapse: collapse !important;
   table-layout: auto !important;
-  box-sizing: border-box !important;
 }
 .article-full table th,
 .article-full table td {
   min-width: 150px;
   white-space: normal;
-  overflow-wrap: normal;
+  overflow-wrap: anywhere;
   word-break: normal;
 }
 .article-full table th:first-child,
-.article-full table td:first-child {
-  min-width: 170px;
-}
-.article-full table img {
-  max-width: 100%;
-}
+.article-full table td:first-child { min-width: 170px; }
+.article-full table img { max-width: 100%; }
