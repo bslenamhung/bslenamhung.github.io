@@ -7,7 +7,7 @@ async function loadSite(){
     if(c){const r=await c.from('site_content_public').select('content').eq('id',1).maybeSingle();if(!r.error&&r.data?.content)remote=r.data.content;}
   }catch(e){}
   try{
-    const r=await fetch('../data.json?v=81',{cache:'no-store'});
+    const r=await fetch('./data.json?v=81',{cache:'no-store'});
     if(r.ok){
       const local=await r.json();
       if(local&&typeof local==='object'){
@@ -33,7 +33,7 @@ function upsertLink(rel,href){let l=document.head.querySelector(`link[rel="${rel
 
 function articleUrlPage(a){
  const id=articleIdPage(a);
- return `bai-viet/${encodeURIComponent(id)}.html`;
+ return `bai-viet.html?id=${encodeURIComponent(id)}`;
 }
 function normWords(s){
  return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').split(/[^a-z0-9]+/).filter(w=>w.length>=3);
