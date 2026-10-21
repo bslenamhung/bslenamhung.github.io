@@ -182,12 +182,12 @@ function renderArticles(filter='',keepPage=false){
   const start=(currentArticlePage-1)*perPage;
   const pageRows=rows.slice(start,start+perPage);
   const grid=document.getElementById('articleGrid');
-  grid.innerHTML=pageRows.map((a)=>{const u='bai-viet/'+encodeURIComponent(articleSlug(a))+'.html';return '<article class="article-card"><div class="body">'+((a.image||a.seoImage)?'<img src="'+esc(optimizeImageUrl(a.image||a.seoImage,720,70,'contain'))+'" alt="'+esc(a.title)+'" loading="lazy" decoding="async">':'')+'<div class="article-tag">'+esc(a.specialty)+'</div><h3>'+esc(a.title)+'</h3><p>'+esc(a.desc)+'</p><a href="'+esc(u)+'">Đọc bài viết →</a></div></article>'}).join('');
+  grid.innerHTML=pageRows.map((a)=>{const u='bai-viet.html?id='+encodeURIComponent(articleId(a));return '<article class="article-card"><div class="body">'+((a.image||a.seoImage)?'<img src="'+esc(optimizeImageUrl(a.image||a.seoImage,720,70,'contain'))+'" alt="'+esc(a.title)+'" loading="lazy" decoding="async">':'')+'<div class="article-tag">'+esc(a.specialty)+'</div><h3>'+esc(a.title)+'</h3><p>'+esc(a.desc)+'</p><a href="'+esc(u)+'">Đọc bài viết →</a></div></article>'}).join('');
   document.getElementById('emptyState').hidden=rows.length>0;
   renderPagination(totalPages);
   if(keepPage)document.getElementById('articles')?.scrollIntoView({behavior:'smooth',block:'start'});
 }
-function openArticle(a){const slug=articleSlug(a);if(!slug)return;window.location.href='bai-viet/'+encodeURIComponent(slug)+'.html';}
+function openArticle(a){const slug=articleSlug(a);if(!slug)return;window.location.href='bai-viet.html?id='+encodeURIComponent(articleId(a));}
 function bindSpecialties(){document.querySelectorAll('.specialty-card').forEach(el=>el.addEventListener('click',()=>{const f=el.dataset.specialty;setTimeout(()=>renderArticles(f),50)}));}
 bindContactTracking();document.getElementById('searchInput')?.addEventListener('input',()=>renderArticles());document.getElementById('navToggle')?.addEventListener('click',()=>{const n=document.getElementById('mainNav'),b=document.getElementById('navToggle');const open=n?.classList.toggle('open');if(b)b.setAttribute('aria-expanded',String(!!open));});document.querySelectorAll('#mainNav a').forEach(a=>a.addEventListener('click',()=>{document.getElementById('mainNav')?.classList.remove('open');document.getElementById('navToggle')?.setAttribute('aria-expanded','false')}));render();
 
