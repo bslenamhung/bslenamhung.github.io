@@ -12,7 +12,14 @@ async function loadSite(){
       const local=await r.json();
       if(local&&typeof local==='object'){
         if(!remote)return local;
-        return {...remote,articles:Array.isArray(local.articles)&&local.articles.length?local.articles:(remote.articles||[])};
+        // Combine published Supabase articles with the static fallback instead of
+        // replacing remote articles with the older local snapshot.
+        const remoteArticles=Array.isArray(remote.articles)?remote.articles:[];
+        const localArticles=Array.isArray(local.articles)?local.articles:[];
+        const byId=new Map();
+        for(const a of localArticles) if(a) byId.set(articleIdPage(a),a);
+        for(const a of remoteArticles) if(a) byId.set(articleIdPage(a),a);
+        return {...local,...remote,articles:Array.from(byId.values())};
       }
     }
   }catch(e){}
