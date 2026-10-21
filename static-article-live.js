@@ -11,6 +11,17 @@
   };
   const slugOf=a=>{const raw=String(a?.slug||a?.title||'').trim();const id=idOf(a);if(!raw)return id;const slug=raw.normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,120);return slug||id;};
   const norm=s=>String(s||'').replace(/<[^>]*>/g,' ').replace(/&nbsp;|&#160;/gi,' ').replace(/&amp;/gi,'&').replace(/\s+/g,' ').trim().toLowerCase();
+  function normalizeNumberedArticleHeadings(container){
+    if(!container) return;
+    const bodies = container.matches?.('.article-full') ? [container] : Array.from(container.querySelectorAll?.('.article-full')||[]);
+    for(const body of bodies){
+      for(const p of body.querySelectorAll(':scope > p')){
+        if(p.classList.contains('article-numbered-heading')) continue;
+        const text=String(p.textContent||'').replace(/\\s+/g,' ').trim();
+        if(text.length<=180 && /^\\d{1,2}(?:\\.\\d+)*[.)]\\s+\\S/.test(text)) p.classList.add('article-numbered-heading');
+      }
+    }
+  }
   function stripLeading(content,title,seoTitle){
     let out=String(content||'');
     const targets=new Set([norm(title),norm(seoTitle)].filter(Boolean));
@@ -111,7 +122,9 @@ function linkifyArticleContentStatic(html){
     const safeContent=contentHost.innerHTML;
     const d=String(a.desc||'').trim(); const date=dateText(a);
     root.innerHTML=`<div class="article-tag">${esc(a.specialty||'')}</div><h1>${esc(title)}</h1>${image?`<img class="article-page-cover" src="${esc(image)}" alt="${esc(title)}" loading="eager">`:''}${videoHtml(a)}${d?`<p class="article-page-desc">${esc(d)}</p>`:''}<div class="article-full">${safeContent}</div>${date?`<div class="article-published-date">📅 Ngày xuất bản: <strong>${esc(date)}</strong></div>`:''}<p style="margin-top:32px"><a class="btn secondary" href="../index.html#articles">← Xem các bài viết khác</a></p>${relatedHtml(a,list)}`;
+    normalizeNumberedArticleHeadings(root);
   }
+  normalizeNumberedArticleHeadings(document);
   async function run(){
     const root=document.getElementById('articleLiveRoot'); if(!root)return;
     const id=root.dataset.articleId||''; if(!id)return;
