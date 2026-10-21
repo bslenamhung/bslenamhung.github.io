@@ -7,7 +7,7 @@ async function loadSite(){
     if(c){const r=await c.from('site_content_public').select('content').eq('id',1).maybeSingle();if(!r.error&&r.data?.content)remote=r.data.content;}
   }catch(e){}
   try{
-    const r=await fetch('./data.json?v=81',{cache:'no-store'});
+    const r=await fetch('./data-home.json?v=4',{cache:'no-store'});
     if(r.ok){
       const local=await r.json();
       if(local&&typeof local==='object'){
