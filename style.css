@@ -1947,3 +1947,7 @@ img{max-width:100%}
 .article-full ol > li::marker {
   font-weight: 800 !important;
 }
+
+/* Numbered section headings stored as paragraphs (including nested spans) */
+.article-full p.article-numbered-heading,
+.article-full p.article-numbered-heading * { font-weight: 800 !important; }
