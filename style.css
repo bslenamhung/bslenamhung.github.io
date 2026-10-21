@@ -1951,3 +1951,7 @@ img{max-width:100%}
 /* Numbered section headings stored as paragraphs (including nested spans) */
 .article-full p.article-numbered-heading,
 .article-full p.article-numbered-heading * { font-weight: 800 !important; }
+
+/* Cover images on related article cards */
+.related-card-image{display:block;width:100%;aspect-ratio:16/9;height:auto;object-fit:cover;border-radius:10px;margin:0 0 14px;background:#f4f6f8}
+@media(max-width:700px){.related-card-image{aspect-ratio:16/9;border-radius:8px;margin-bottom:8px}}
