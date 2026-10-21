@@ -551,6 +551,27 @@ async function loadSelectedPatient() {
   if (!(tests || []).length) addHistoryLine($("adminTestHistory"),"Chưa có phiếu xét nghiệm được cập nhật.");
 }
 $("editPatientButton").addEventListener("click",()=>{if(!selectedPatient)return;$("editPatientForm").hidden=false;$("editPatientMessage").textContent="";});
+$("deletePatientButton").addEventListener("click",async()=>{
+ if(user?.app_metadata?.role!=="admin"||!selectedPatient){toast("Vui lòng chọn hồ sơ bệnh nhân.");return;}
+ const patient=patientDirectory.find(p=>p.user_id===selectedPatient);
+ const label=patient?.display_name||"bệnh nhân này";
+ const confirmed=window.confirm("XÓA VĨNH VIỄN hồ sơ "+label+"?\\n\\nThao tác này sẽ xóa tài khoản và dữ liệu liên quan như lịch khám, biểu đồ, xét nghiệm, dữ liệu sau sinh. Không thể khôi phục.");
+ if(!confirmed)return;
+ const button=$("deletePatientButton");button.disabled=true;button.textContent="Đang xóa…";
+ try{
+  const {data:{session}}=await db.auth.getSession();
+  if(!session?.access_token)throw new Error("Phiên đăng nhập đã hết hạn.");
+  const {data,error}=await db.functions.invoke("admin-delete-patient",{body:{patient_user_id:selectedPatient}});
+  if(error)throw error;
+  if(!data?.ok)throw new Error(data?.error||"Không xóa được hồ sơ.");
+  selectedPatient=null;
+  await loadPatients();
+  $("patientSelect").value="";
+  await loadSelectedPatient();
+  toast("Đã xóa hồ sơ bệnh nhân.");
+ }catch(err){console.error(err);alert(err?.message||"Không xóa được hồ sơ. Vui lòng thử lại.");}
+ finally{button.disabled=false;button.textContent="Xóa hồ sơ";}
+});
 $("cancelEditPatient").addEventListener("click",()=>{$("editPatientForm").hidden=true;$("editPatientMessage").textContent="";});
 $("editPatientPara").addEventListener("input",()=>{const v=$("editPatientPara").value;if(v&&!/^\d{0,4}$/.test(v)){$("editPatientPara").value=v.replace(/\D/g,"").slice(0,4);}});
 $("editPatientDueDate").addEventListener("input",()=>{const iso=dueDateIso($("editPatientDueDate").value);const g=gestationAt(iso,todayLocal());$("editPatientGestation").textContent=iso?"Tuổi thai hôm nay: "+gestationText(g):"Nhập ngày dự sinh theo dd/mm/yyyy.";});
