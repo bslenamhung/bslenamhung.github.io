@@ -24,39 +24,53 @@ function bindContactTracking(){
 }
 async function loadArticleViewTotal(){try{if(!window.supabase||!window.SUPABASE_URL)return;const c=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_PUBLISHABLE_KEY||window.SUPABASE_ANON_KEY);const r=await c.from('article_view_stats').select('view_count');if(!r.error){const total=(r.data||[]).reduce((n,x)=>n+Number(x.view_count||0),0);const el=document.getElementById('articleViewsTotal');if(el)el.textContent=total.toLocaleString('vi-VN')}}catch(e){}}
 async function loadData(){
-  // Ưu tiên dữ liệu mới nhất từ nơi quản trị đang lưu; JSON chỉ là bản dự phòng.
-  let snapshot=null;
+  // Render the lightweight published snapshot first; Supabase refreshes it in the background.
+  let localSnapshot=null;
   try{
-    if(window.supabase&&window.SUPABASE_URL&&window.SUPABASE_ANON_KEY){
+    const response=await fetch('./data-home.json?v=4',{cache:'default'});
+    if(response.ok){
+      const json=await response.json();
+      if(json&&typeof json==='object') localSnapshot=json;
+    }
+  }catch(e){
+    console.warn('Không đọc được data-home.json:',e?.message||e);
+  }
+
+  // Do not hold up the first render on the admin content query.
+  const remoteRefresh=(async()=>{
+    if(!(window.supabase&&window.SUPABASE_URL&&window.SUPABASE_ANON_KEY)) return null;
+    try{
       const client=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
       const query=client.from('site_content_public').select('content,updated_at').eq('id',1).maybeSingle();
       const timeout=new Promise((_,reject)=>setTimeout(()=>reject(new Error('Supabase read timeout')),3500));
       const {data,error}=await Promise.race([query,timeout]);
-      if(!error&&data?.content&&typeof data.content==='object'){
-        snapshot=data.content;
-      }else if(error){
-        console.warn('Không đọc được site_content; dùng bản JSON dự phòng:',error.message);
+      if(error||!data?.content||typeof data.content!=='object'){
+        if(error) console.warn('Không đọc được site_content:',error.message);
+        return null;
       }
+      return data.content;
+    }catch(e){
+      console.warn('Supabase chưa khả dụng:',e?.message||e);
+      return null;
     }
-  }catch(e){
-    console.warn('Supabase chưa khả dụng; dùng bản JSON dự phòng:',e?.message||e);
+  })();
+
+  // Preserve the existing data merge and precedence, while returning the local
+  // published snapshot immediately when available.
+  if(localSnapshot){
+    remoteRefresh.then(snapshot=>{
+      if(!snapshot) return;
+      const latest={...localSnapshot,...snapshot,
+        articles:Array.isArray(snapshot.articles)?snapshot.articles:
+          (Array.isArray(localSnapshot.articles)?localSnapshot.articles:[])};
+      window.__clinicRemoteSnapshot=latest;
+      // Existing initial rendering is not disrupted; refresh only if app exposes
+      // its established render callback.
+      if(typeof window.__refreshClinicContent==='function') window.__refreshClinicContent(latest);
+    });
+    return localSnapshot;
   }
-  // Bài viết trên trang chủ vẫn dùng bản metadata nhẹ; nội dung khác lấy trực tiếp từ quản trị.
-  try{
-    const controller=new AbortController();
-    const timer=setTimeout(()=>controller.abort(),2500);
-    const local=await fetch('./data-home.json?v=4',{cache:'no-store',signal:controller.signal});
-    clearTimeout(timer);
-    if(local.ok){
-      const json=await local.json();
-      if(json&&typeof json==='object'){
-        if(!snapshot)return json;
-        return {...json,...snapshot,articles:Array.isArray(snapshot.articles)?snapshot.articles:(Array.isArray(json.articles)?json.articles:[])};
-      }
-    }
-  }catch(e){
-    console.warn('Không đọc được data-home.json:',e);
-  }
+  const snapshot=await remoteRefresh;
   return snapshot||DEFAULT_DATA;
 }
 function mergeWithDefaults(remote){
