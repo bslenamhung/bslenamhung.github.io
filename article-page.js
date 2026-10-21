@@ -148,8 +148,8 @@ function linkifyArticleContentPage(html){
     for(const body of bodies){
       for(const p of body.querySelectorAll(':scope > p')){
         if(p.classList.contains('article-numbered-heading')) continue;
-        const text=String(p.textContent||'').replace(/\\s+/g,' ').trim();
-        if(text.length<=180 && /^\\d{1,2}(?:\\.\\d+)*[.)]\\s+\\S/.test(text)) p.classList.add('article-numbered-heading');
+        const text=String(p.textContent||'').replace(/\s+/g,' ').trim();
+        if(text.length<=180 && /^\d{1,2}(?:\.\d+)*[.)]\s+\S/.test(text)) p.classList.add('article-numbered-heading');
       }
     }
   }
