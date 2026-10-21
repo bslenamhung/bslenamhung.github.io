@@ -98,8 +98,19 @@ function linkifyArticleContentStatic(html){
     const title=String(a.title||a.seoTitle||'Bài viết Sản Phụ khoa');
     const image=String(a.seoImage||a.image||'').trim();
     const content=linkifyArticleContentStatic(stripLeading(a.content,a.title,a.seoTitle));
+    const contentHost=document.createElement('div'); contentHost.innerHTML=content;
+    contentHost.querySelectorAll('table').forEach(table=>{
+      if(table.parentElement?.classList.contains('article-table-wrap'))return;
+      const wrap=document.createElement('div');
+      wrap.className='article-table-wrap';
+      wrap.setAttribute('role','region');
+      wrap.setAttribute('aria-label','Bảng nội dung, vuốt ngang để xem đầy đủ');
+      table.parentNode.insertBefore(wrap,table);
+      wrap.appendChild(table);
+    });
+    const safeContent=contentHost.innerHTML;
     const d=String(a.desc||'').trim(); const date=dateText(a);
-    root.innerHTML=`<div class="article-tag">${esc(a.specialty||'')}</div><h1>${esc(title)}</h1>${image?`<img class="article-page-cover" src="${esc(image)}" alt="${esc(title)}" loading="eager">`:''}${videoHtml(a)}${d?`<p class="article-page-desc">${esc(d)}</p>`:''}<div class="article-full">${content}</div>${date?`<div class="article-published-date">📅 Ngày xuất bản: <strong>${esc(date)}</strong></div>`:''}<p style="margin-top:32px"><a class="btn secondary" href="../index.html#articles">← Xem các bài viết khác</a></p>${relatedHtml(a,list)}`;
+    root.innerHTML=`<div class="article-tag">${esc(a.specialty||'')}</div><h1>${esc(title)}</h1>${image?`<img class="article-page-cover" src="${esc(image)}" alt="${esc(title)}" loading="eager">`:''}${videoHtml(a)}${d?`<p class="article-page-desc">${esc(d)}</p>`:''}<div class="article-full">${safeContent}</div>${date?`<div class="article-published-date">📅 Ngày xuất bản: <strong>${esc(date)}</strong></div>`:''}<p style="margin-top:32px"><a class="btn secondary" href="../index.html#articles">← Xem các bài viết khác</a></p>${relatedHtml(a,list)}`;
   }
   async function run(){
     const root=document.getElementById('articleLiveRoot'); if(!root)return;
