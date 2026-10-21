@@ -1881,28 +1881,29 @@ img{max-width:100%}
 }
 
 
-/* Responsive tables across every article: keep columns readable and allow horizontal scrolling on narrow screens. */
+/* ARTICLE TABLES — keep column widths readable and scroll wide tables on phones. */
 .article-full table {
   display: block !important;
-  width: max-content !important;
+  width: 100% !important;
   max-width: 100% !important;
   overflow-x: auto !important;
   overflow-y: hidden !important;
   -webkit-overflow-scrolling: touch !important;
-  border-collapse: collapse;
-  box-sizing: border-box;
+  border-collapse: collapse !important;
+  table-layout: auto !important;
+  box-sizing: border-box !important;
 }
 .article-full table th,
 .article-full table td {
+  min-width: 150px;
   white-space: normal;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+.article-full table th:first-child,
+.article-full table td:first-child {
+  min-width: 170px;
 }
 .article-full table img {
   max-width: 100%;
 }
-
-
-/* Responsive tables across every article: allow horizontal scrolling on narrow screens. */
-.article-full table { display:block !important; width:max-content !important; max-width:100% !important; overflow-x:auto !important; overflow-y:hidden !important; -webkit-overflow-scrolling:touch !important; box-sizing:border-box; }
-.article-full table th, .article-full table td { white-space:normal; overflow-wrap:anywhere; }
-.article-full table img { max-width:100%; }
