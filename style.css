@@ -1812,13 +1812,13 @@ img{max-width:100%}
  #articleGrid.article-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;}
 }
 
-/* HOME ARTICLE THUMBNAILS — show the complete image with white letterboxing. */
+/* HOME ARTICLE THUMBNAILS — prevent Supabase's default cover crop; show full image. */
 #articleGrid .article-card .body > img {
   display: block;
   width: 100%;
   height: 140px;
-  object-fit: contain;
-  object-position: center;
+  object-fit: contain !important;
+  object-position: center !important;
   background: #fff !important;
   border-radius: 8px;
   margin: 0 0 12px;
