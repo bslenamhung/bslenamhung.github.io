@@ -486,7 +486,7 @@ def render_article(article, published):
 {f'<meta name="twitter:image" content="{esc(image)}">' if image else ''}
 <script type="application/ld+json">{jsonld}</script>
 <script type="application/ld+json">{breadcrumb_jsonld}</script>
-<link rel="stylesheet" href="../style.css?v=77">\n<link rel="stylesheet" href="../seo-local.css?v=2">
+<link rel="stylesheet" href="../style.css?v=78">\n<link rel="stylesheet" href="../seo-local.css?v=2">
 </head><body>
 <header class="site-header"><div class="container nav-wrap">
 <a class="brand" href="../index.html"><strong>BS<br>Lê Nam Hùng</strong><span>Sản Phụ khoa</span></a>
@@ -517,7 +517,7 @@ btn?.addEventListener('click',()=>{{const open=nav?.classList.toggle('open');btn
 document.querySelectorAll('#mainNav a').forEach(a=>a.addEventListener('click',()=>{{nav?.classList.remove('open');btn?.setAttribute('aria-expanded','false')}}));
 </script>
 <script src="../site-visit.js?v=66"></script>
-<script src="../static-article-live.js?v=67"></script>
+<script src="../static-article-live.js?v=68"></script>
 </body></html>'''
 
 
