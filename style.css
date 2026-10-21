@@ -1936,10 +1936,14 @@ img{max-width:100%}
 .article-full table img { max-width: 100%; }
 
 
-/* Article section headings and numbering: bold for existing and future articles */
+/* Article headings: bold page title and headings inside article content */
+.article-page > h1,
+.article-full h1,
 .article-full h2,
 .article-full h3,
 .article-full h4,
+.article-full h5,
+.article-full h6,
 .article-full ol > li::marker {
   font-weight: 800 !important;
 }
