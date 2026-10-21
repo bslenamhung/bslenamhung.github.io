@@ -142,6 +142,17 @@ function linkifyArticleContentPage(html){
   return host.innerHTML;
 }
 
+  function normalizeNumberedArticleHeadings(container){
+    if(!container) return;
+    const bodies = container.matches?.('.article-full') ? [container] : Array.from(container.querySelectorAll?.('.article-full')||[]);
+    for(const body of bodies){
+      for(const p of body.querySelectorAll(':scope > p')){
+        if(p.classList.contains('article-numbered-heading')) continue;
+        const text=String(p.textContent||'').replace(/\\s+/g,' ').trim();
+        if(text.length<=180 && /^\\d{1,2}(?:\\.\\d+)*[.)]\\s+\\S/.test(text)) p.classList.add('article-numbered-heading');
+      }
+    }
+  }
 function normalizeArticleTextPage(s){
  return String(s||'').replace(/<[^>]*>/g,' ').replace(/&nbsp;|&#160;/gi,' ').replace(/&amp;/gi,'&').replace(/\s+/g,' ').trim().toLowerCase();
 }
@@ -205,5 +216,6 @@ function setMeta(a){
  const a=list.find(x=>x&&x.published!==false&&(articleIdPage(x)===id||String(x.id||'')===id));
  if(!a){root.innerHTML='<div class="empty"><h2>Không tìm thấy bài viết</h2><p>Bài viết có thể đã được thay đổi hoặc đường dẫn không còn hợp lệ.</p><p><a class="btn primary" href="index.html#articles">← Quay lại bài viết</a></p></div>';return}
  const publishedDate=formatPublishedDate(a); const cleanContent=linkifyArticleContentPage(stripDuplicateLeadingTitlePage(a.content,a.title,a.seoTitle)); setMeta(a); root.innerHTML=`<article><div class="article-tag">${escPage(a.specialty||'')}</div><h1>${escPage(a.title||'')}</h1>${a.image?`<img class="article-page-cover" src="${escPage(a.image)}" alt="${escPage(a.title||'')}" loading="eager">`:''}${renderArticleVideoPage(a)}<p class="article-page-desc">${escPage(a.desc||'')}</p><div class="article-full">${cleanContent}</div>${publishedDate?`<div class="article-published-date">📅 Ngày xuất bản: <strong>${publishedDate}</strong></div>`:''}<p style="margin-top:32px"><a class="btn secondary" href="index.html#articles">← Xem các bài viết khác</a></p>${renderRelatedPage(a,list)}</article>`;
+ normalizeNumberedArticleHeadings(root);
  recordArticleViewPage(a);
 })();
