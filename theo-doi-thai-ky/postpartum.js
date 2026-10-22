@@ -194,7 +194,7 @@ function lmsAt(sex,key,monthFloat){
  const a=arr[idx][field],b=arr[idx+1][field];return a.map((v,i)=>v+(b[i]-v)*t);
 }
 function lmsValue(lms,z){const [L,M,S]=lms;return Math.abs(L)<1e-8?M*Math.exp(S*z):M*Math.pow(1+L*S*z,1/L);}
-function drawChart(id,key,label,min,max){const c=$(id),ctx=c.getContext("2d"),W=1000,H=460,x0=76,x1=930,y0=35,y1=380;c.width=W;c.height=H;ctx.clearRect(0,0,W,H);const xp=d=>x0+d/730*(x1-x0),yp=v=>y1-(v-min)/(max-min)*(y1-y0);ctx.font="15px Arial";ctx.fillStyle="#756a75";ctx.strokeStyle="#eadfe5";ctx.lineWidth=1;
+function drawChart(id,key,label,min,max){const chartId=document.getElementById("postpartumAdminEmbedRoot")&&id==="weightChart"?"postpartumWeightChart":id;const c=$(chartId),ctx=c.getContext("2d"),W=1000,H=460,x0=76,x1=930,y0=35,y1=380;c.width=W;c.height=H;ctx.clearRect(0,0,W,H);const xp=d=>x0+d/730*(x1-x0),yp=v=>y1-(v-min)/(max-min)*(y1-y0);ctx.font="15px Arial";ctx.fillStyle="#756a75";ctx.strokeStyle="#eadfe5";ctx.lineWidth=1;
  for(let mo=0;mo<=24;mo+=2){const x=x0+mo/24*(x1-x0);ctx.beginPath();ctx.moveTo(x,y0);ctx.lineTo(x,y1);ctx.stroke();ctx.textAlign="center";ctx.fillText(mo+" th",x,y1+25);}
  for(let v=min;v<=max+0.001;v+=(max-min)/5){const y=yp(v);ctx.beginPath();ctx.moveTo(x0,y);ctx.lineTo(x1,y);ctx.stroke();ctx.textAlign="right";ctx.fillText(String(Math.round(v*10)/10),x0-10,y+4);}
  ctx.textAlign="left";ctx.fillStyle="#302630";ctx.font="bold 15px Arial";ctx.fillText(label,x0,y0-12);
