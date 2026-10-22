@@ -1020,12 +1020,40 @@ async function loadDueDateReminders(){
    const diff=p.dueDiff;
    const card=document.createElement("article");card.className="dueReminderItem";
    const details=document.createElement("div");details.className="dueReminderDetails";
-   const name=document.createElement("strong");name.textContent=p.display_name||p.username||"Bệnh nhân";
+   const name=document.createElement("button");name.type="button";name.className="dueReminderPatientName";name.textContent=p.display_name||p.username||"Bệnh nhân";name.setAttribute("aria-expanded","false");
+   const patientDetail=document.createElement("div");patientDetail.className="dueReminderPatientProfile";patientDetail.hidden=true;
+   let detailLoaded=false;
+   name.addEventListener("click",async()=>{
+    const opening=patientDetail.hidden;
+    patientDetail.hidden=!opening;name.setAttribute("aria-expanded",String(opening));
+    if(!opening||detailLoaded)return;
+    patientDetail.textContent="Đang tải thông tin hồ sơ…";
+    const {data:profileData,error:profileError}=await db.from("profiles").select("username,display_name,date_of_birth,phone,address,para,medical_history,pre_pregnancy_weight_kg,height_cm,ultrasound_abnormalities,due_date").eq("user_id",p.user_id).maybeSingle();
+    if(profileError||!profileData){patientDetail.textContent="Không tải được thông tin hồ sơ. Vui lòng thử lại.";return;}
+    patientDetail.replaceChildren();
+    const fields=[
+     ["Họ tên",profileData.display_name],
+     ["Ngày sinh",profileData.date_of_birth?dateVi(profileData.date_of_birth):null],
+     ["Tên đăng nhập",profileData.username],
+     ["Số điện thoại",profileData.phone],
+     ["Địa chỉ",profileData.address],
+     ["PARA",profileData.para],
+     ["Tiền sử bệnh",profileData.medical_history],
+     ["Cân nặng trước mang thai",profileData.pre_pregnancy_weight_kg!=null?String(profileData.pre_pregnancy_weight_kg).replace(".",",")+" kg":null],
+     ["Chiều cao",profileData.height_cm!=null?String(profileData.height_cm).replace(".",",")+" cm":null],
+     ["BMI trước mang thai",(()=>{const w=Number(profileData.pre_pregnancy_weight_kg),h=Number(profileData.height_cm);if(profileData.pre_pregnancy_weight_kg==null||profileData.height_cm==null||!Number.isFinite(w)||!Number.isFinite(h)||w<=0||h<=0)return "Chưa đủ dữ liệu cân nặng và chiều cao trước mang thai";const bmi=w/Math.pow(h/100,2),category=bmi<18.5?"thiếu cân":bmi<23?"bình thường":bmi<25?"thừa cân":"béo phì";return bmi.toLocaleString("vi-VN",{minimumFractionDigits:1,maximumFractionDigits:1})+" kg/m² ("+category+" theo ngưỡng tham khảo châu Á)"})()],
+     ["Chú ý thai kỳ lần này",profileData.ultrasound_abnormalities],
+     ["Ngày dự sinh",profileData.due_date?dateVi(profileData.due_date):null],
+     ["Tuổi thai theo ngày khám",profileData.due_date?gestationText(gestationAt(profileData.due_date,todayLocal())):null]
+    ];
+    fields.forEach(([label,value])=>{const line=document.createElement("div");const strong=document.createElement("strong");strong.textContent=label+": ";line.append(strong,document.createTextNode(value||"Chưa cập nhật"));patientDetail.append(line);});
+    detailLoaded=true;
+   });
    const meta=document.createElement("p");meta.className="muted";
    meta.textContent="Ngày dự sinh: "+dateVi(p.due_date)+(p.phone?" · SĐT: "+p.phone:"");
    const urgency=document.createElement("span");urgency.className="dueReminderBadge "+(diff<0?"overdue":diff<=7?"today":"soon");
    urgency.textContent=diff<0?"Quá ngày dự sinh "+Math.abs(diff)+" ngày":diff===0?"Đến ngày dự sinh hôm nay":"Còn "+diff+" ngày đến dự sinh";
-   details.append(name,meta,urgency);
+   details.append(name,meta,urgency,patientDetail);
    const controls=document.createElement("div");controls.className="dueReminderControls";
    const label=document.createElement("label");label.textContent="Kết quả liên hệ";
    const select=document.createElement("select");select.className="dueReminderStatusSelect";
