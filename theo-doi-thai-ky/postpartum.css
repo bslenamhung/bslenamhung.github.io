@@ -47,3 +47,12 @@ footer.clinicFooter{display:flex;flex-direction:column;align-items:center;justif
 
 .serviceScheduleTabs{margin-top:10px}
 #serviceScheduleSection[hidden],#expandedScheduleSection[hidden]{display:none!important}
+
+/* Compact postpartum admin patient directory */
+#adminList .scroll table{table-layout:fixed;width:100%;}
+#adminList .scroll th,#adminList .scroll td{padding:8px 7px;font-size:13px;}
+#adminList .scroll th:first-child,#adminList .scroll td:first-child{width:48%;}
+#adminList .scroll th:nth-child(2),#adminList .scroll td:nth-child(2){width:24%;}
+#adminList .scroll th:last-child,#adminList .scroll td:last-child{width:28%;}
+#adminList .patient-detail-row td{padding:8px!important;}
+@media(max-width:650px){#adminList .scroll th,#adminList .scroll td{padding:6px 4px;font-size:12px;}#adminList .scroll th:first-child,#adminList .scroll td:first-child{width:45%;}#adminList .scroll th:nth-child(2),#adminList .scroll td:nth-child(2){width:25%;}#adminList .scroll th:last-child,#adminList .scroll td:last-child{width:30%;}}
