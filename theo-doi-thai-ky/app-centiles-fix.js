@@ -979,6 +979,7 @@ document.querySelectorAll(".logout").forEach(button=>button.addEventListener("cl
 
 (async()=>{const {data}=await db.auth.getSession();if(data.session){user=data.session.user;await routeUser();}})();
 setInterval(()=>{const panel=$("adminQaPanel");if(user?.app_metadata?.role==="admin"&&!$("adminView").hidden&&panel&&!panel.hidden)loadAdminQaThreads(true);},30000);
+let activeDueReminderGroup=null;
 async function loadDueDateReminders(){
  const panel=$("adminDueDatePanel"),list=$("adminDueDateReminderList"),status=$("adminDueDateReminderStatus");
  if(!panel||!list||!status||user?.app_metadata?.role!=="admin")return;
@@ -1002,11 +1003,23 @@ async function loadDueDateReminders(){
   {key:"overdue",title:"Quá ngày, chưa xác nhận sinh",subtitle:"Ngày dự sinh đã qua",countId:"adminOverdueCount",items:pending.filter(p=>p.dueDiff<0)}
  ];
  groups.forEach(g=>$(g.countId).textContent=String(g.items.length));
+ const summaryCards=[["week3","adminDueWeek3Count"],["week2","adminDueWeek2Count"],["birthweek","adminDueBirthWeekCount"],["overdue","adminOverdueCount"]];
+ summaryCards.forEach(([key,countId])=>{
+  const card=$(countId)?.closest(".dueSummaryCard");
+  if(!card)return;
+  card.setAttribute("role","button");card.tabIndex=0;
+  card.setAttribute("aria-pressed",String(activeDueReminderGroup===key));
+  card.classList.toggle("activeDueSummary",activeDueReminderGroup===key);
+  const toggle=()=>{activeDueReminderGroup=activeDueReminderGroup===key?null:key;loadDueDateReminders();};
+  if(card.dataset.dueFilterBound!=="1"){card.addEventListener("click",toggle);card.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();toggle();}});card.dataset.dueFilterBound="1";}
+ });
+ if(!activeDueReminderGroup){status.textContent="Đã cập nhật lúc "+new Date().toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit"})+". Bấm một ô thống kê để xem bệnh nhân thuộc nhóm đó.";return;}
+ const visibleGroups=groups.filter(g=>g.key===activeDueReminderGroup);
  if(!pending.length){
   const empty=document.createElement("p");empty.className="muted";empty.textContent="Hiện chưa có bệnh nhân trong các giai đoạn từ thai 35 tuần trở lên cần theo dõi ngày dự sinh.";
   list.append(empty);status.textContent="Đã cập nhật lúc "+new Date().toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit"});return;
  }
- groups.forEach(g=>{
+ visibleGroups.forEach(g=>{
   const section=document.createElement("section");section.className="dueReminderGroup "+g.key;
   const heading=document.createElement("div");heading.className="dueReminderGroupHead";
   const title=document.createElement("h3");title.textContent=g.title;
