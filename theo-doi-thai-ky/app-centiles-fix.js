@@ -1164,8 +1164,9 @@ async function loadRegistrationRequests(){
   reject.addEventListener("click",async()=>{
    if(user?.app_metadata?.role!=="admin"){alert("Bạn cần quyền quản trị.");return;}
    if(!confirm("Từ chối yêu cầu đăng ký của "+(request.display_name||"bệnh nhân")+"?"))return;
-   const {error:updateError}=await db.from("patient_registration_requests").delete().eq("id",request.id).eq("status","pending");
-   if(updateError){alert("Không xóa được yêu cầu đăng ký. Vui lòng kiểm tra quyền DELETE của bảng patient_registration_requests.");console.error(updateError);return;}
+   const {data:reviewedRequest,error:updateError}=await db.from("patient_registration_requests").update({status:"rejected",reviewed_by:user.id,reviewed_at:new Date().toISOString()}).eq("id",request.id).eq("status","pending").select("id").maybeSingle();
+   if(updateError){alert("Không từ chối được yêu cầu đăng ký. Vui lòng kiểm tra quyền UPDATE của bảng patient_registration_requests.");console.error(updateError);return;}
+   if(!reviewedRequest){alert("Yêu cầu này đã được xử lý hoặc không còn ở trạng thái chờ. Bấm Làm mới để cập nhật danh sách.");await loadRegistrationRequests();return;}
    await loadRegistrationRequests();
   });
   actions.append(accept,reject);card.append(title,meta,actions);list.append(card);
