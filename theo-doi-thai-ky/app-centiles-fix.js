@@ -1074,13 +1074,53 @@ async function loadDueDateReminders(){
    select.value=p.followup.birth_status||"pending";label.append(select);
    const save=document.createElement("button");save.type="button";save.className="primary dueReminderSave";save.textContent="Lưu trạng thái";
    save.addEventListener("click",async()=>{
-    save.disabled=true;save.textContent="Đang lưu…";
-    const payload={patient_user_id:p.user_id,birth_status:select.value,updated_by:user.id,updated_at:new Date().toISOString()};
-    const {error:saveError}=await db.from("patient_due_date_followups").upsert(payload,{onConflict:"patient_user_id"});
-    save.disabled=false;save.textContent="Lưu trạng thái";
-    if(saveError){status.textContent="Không lưu được trạng thái của "+(p.display_name||p.username)+". Vui lòng thử lại.";return;}
-    status.textContent="Đã lưu trạng thái của "+(p.display_name||p.username)+".";
-    await loadDueDateReminders();
+    if(user?.app_metadata?.role!=="admin"){status.textContent="Bạn cần quyền quản trị để cập nhật trạng thái.";return;}
+    const nextStatus=select.value;
+    let birthDetails=null,previousPostpartum=null;
+    if(nextStatus==="delivered"){
+     const {data:existing,error:existingError}=await db.from("patient_postpartum_profiles").select("*").eq("patient_user_id",p.user_id).maybeSingle();
+     if(existingError){status.textContent="Không đọc được hồ sơ sau sinh của "+(p.display_name||p.username)+". Chưa thay đổi trạng thái.";return;}
+     previousPostpartum=existing||null;
+     const enteredDate=prompt("Nhập ngày sinh thực tế của bé (dd/mm/yyyy):",isoToDateVi(existing?.birth_date||todayLocal()));
+     if(enteredDate===null)return;
+     const birth_date=dueDateIso(enteredDate.trim());
+     if(!birth_date||birth_date>todayLocal()){alert("Ngày sinh không hợp lệ. Nhập theo dd/mm/yyyy và không chọn ngày tương lai.");return;}
+     const sexDefault=existing?.sex==="male"?"1":existing?.sex==="female"?"2":"";
+     const enteredSex=prompt("Chọn giới tính của bé:\nNhập 1 = Bé trai; 2 = Bé gái.",sexDefault);
+     if(enteredSex===null)return;
+     const sexChoice=enteredSex.trim();
+     if(!["1","2"].includes(sexChoice)){alert("Vui lòng nhập 1 (bé trai) hoặc 2 (bé gái).");return;}
+     const weightRaw=prompt("Cân nặng lúc sinh (gram, có thể để trống):",existing?.birth_weight_g!=null?String(existing.birth_weight_g):"");
+     if(weightRaw===null)return;
+     const lengthRaw=prompt("Chiều dài lúc sinh (cm, có thể để trống):",existing?.birth_length_cm!=null?String(existing.birth_length_cm):"");
+     if(lengthRaw===null)return;
+     const weightText=weightRaw.trim(),lengthText=lengthRaw.trim();
+     const weight=weightText===""?(existing?.birth_weight_g??null):Number(weightText);
+     const length=lengthText===""?(existing?.birth_length_cm??null):Number(lengthText);
+     if(weight!==null&&(!Number.isFinite(weight)||weight<300||weight>8000)){alert("Cân nặng lúc sinh phải từ 300 đến 8000 gram.");return;}
+     if(length!==null&&(!Number.isFinite(length)||length<20||length>70)){alert("Chiều dài lúc sinh phải từ 20 đến 70 cm.");return;}
+     birthDetails={patient_user_id:p.user_id,birth_date,sex:sexChoice==="1"?"male":"female",birth_weight_g:weight,birth_length_cm:length,status:"confirmed",source:"doctor",confirmed_by:user.id,confirmed_at:new Date().toISOString(),updated_at:new Date().toISOString()};
+    }
+    save.disabled=true;select.disabled=true;save.textContent="Đang lưu…";
+    status.textContent=nextStatus==="delivered"?"Đang lưu thông tin sinh và chuyển hồ sơ…":"Đang lưu trạng thái…";
+    if(birthDetails){
+     const {error:birthError}=await db.from("patient_postpartum_profiles").upsert(birthDetails,{onConflict:"patient_user_id"});
+     if(birthError){save.disabled=false;select.disabled=false;save.textContent="Lưu trạng thái";status.textContent="Không lưu được thông tin sinh: "+birthError.message;return;}
+    }
+    const followupPayload={patient_user_id:p.user_id,birth_status:nextStatus,actual_birth_date:birthDetails?.birth_date??null,updated_by:user.id,updated_at:new Date().toISOString()};
+    const {error:saveError}=await db.from("patient_due_date_followups").upsert(followupPayload,{onConflict:"patient_user_id"});
+    if(saveError){
+     if(birthDetails){
+      if(previousPostpartum){const rollback=await db.from("patient_postpartum_profiles").upsert(previousPostpartum,{onConflict:"patient_user_id"});if(rollback.error)console.error("Postpartum rollback failed",rollback.error);}
+      else{const rollback=await db.from("patient_postpartum_profiles").delete().eq("patient_user_id",p.user_id);if(rollback.error)console.error("Postpartum rollback failed",rollback.error);}
+     }
+     save.disabled=false;select.disabled=false;save.textContent="Lưu trạng thái";
+     status.textContent="Không lưu được trạng thái theo dõi sản khoa: "+saveError.message+". Hệ thống đã thử khôi phục hồ sơ sau sinh; vui lòng kiểm tra lại.";
+     return;
+    }
+    save.disabled=false;select.disabled=false;save.textContent="Lưu trạng thái";
+    status.textContent=nextStatus==="delivered"?"Đã xác nhận sinh. Hồ sơ đã được chuyển sang Quản trị sau sinh.":"Đã lưu trạng thái của "+(p.display_name||p.username)+".";
+    await loadPatients();
    });
    controls.append(label,save);card.append(details,controls);section.append(card);
   });
