@@ -1,6 +1,7 @@
 import {createClient} from "https://esm.sh/@supabase/supabase-js@2";
-// Use the Supabase SDK's default auth coordination; custom locks can re-enable legacy lock behavior.
-const db=createClient("https://ckwhjyzomppsdplnkdeq.supabase.co","sb_publishable_FmJK_HkQxhoQ04dIzI1mCg_eupXeR48");
+// Reuse the portal client to share the same Auth state and browser lock.
+const db=window.__BSHUNG_SUPABASE_CLIENT__ || createClient("https://ckwhjyzomppsdplnkdeq.supabase.co","sb_publishable_FmJK_HkQxhoQ04dIzI1mCg_eupXeR48");
+if(!window.__BSHUNG_SUPABASE_CLIENT__) console.warn("[Theo dõi sau sinh] Main Supabase client not found; using fallback client.");
 const $=id=>document.getElementById(id);let user=null,profile=null,postpartum=null,measurements=[],directory=[];
 const today=()=>{const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10)};
 function dateToISO(value){
