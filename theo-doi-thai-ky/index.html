@@ -388,9 +388,26 @@
   const quick=root.querySelector('.patientQuickNav');if(quick)quick.hidden=true;
   window.scrollTo({top:0,behavior:'smooth'});
  }
+ let activeFeature=null;
  function openFeature(key){
-  profile.hidden=true;cards.hidden=true;details.forEach(el=>el.hidden=true);
+  if(activeFeature===key){
+   activeFeature=null;
+   showHome();
+   cards.querySelectorAll('.pregnancyFeatureCard').forEach(card=>{
+    card.setAttribute('aria-expanded','false');
+    const arrow=card.querySelector('.pregnancyFeatureArrow');if(arrow)arrow.textContent='↓';
+   });
+   return;
+  }
+  activeFeature=key;
+  profile.hidden=true;cards.hidden=false;details.forEach(el=>el.hidden=true);
   (groups[key]||[]).forEach(panel=>{if(panel){panel.hidden=false;if(panel===fetal||panel===maternal||panel===vaccine||panel===visits)addBack(panel);}});
+  cards.querySelectorAll('.pregnancyFeatureCard').forEach(card=>{
+   const cardKey=card.classList.contains('fetal')?'fetal':card.classList.contains('maternal')?'maternal':card.classList.contains('vaccine')?'vaccine':'visits';
+   const expanded=cardKey===key;
+   card.setAttribute('aria-expanded',String(expanded));
+   const arrow=card.querySelector('.pregnancyFeatureArrow');if(arrow)arrow.textContent=expanded?'↑':'↓';
+  });
   if(key==='visits'){const reminder=document.getElementById('patientFollowUpReminder');if(reminder)reminder.hidden=false;}
   window.dispatchEvent(new CustomEvent('pregnancy-feature-open',{detail:{key}}));
   window.scrollTo({top:0,behavior:'smooth'});
