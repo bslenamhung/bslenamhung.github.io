@@ -36,7 +36,55 @@
 .postpartumAdminEmbed .person small{color:var(--muted)}
 @media(max-width:650px){.postpartumAdminEmbed .adminPatientCountCard{padding:14px;gap:5px 10px}.postpartumAdminEmbed nav.tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.postpartumAdminEmbed .tab{font-size:13px;padding:10px 6px}.postpartumAdminEmbed .panel{padding:14px 10px}.postpartumAdminEmbed .milestoneGrid,.postpartumAdminEmbed .patient-detail-summary{grid-template-columns:1fr 1fr}.postpartumAdminEmbed .patient-detail-panel{padding:10px}}
 </style>
-<style>.patientProfileDisclosure{padding:0;overflow:hidden}.patientProfileDisclosure>summary{list-style:none;cursor:pointer;padding:18px 20px;display:flex;flex-direction:column;gap:6px}.patientProfileDisclosure>summary::-webkit-details-marker{display:none}.profileDisclosureTitle{font-size:1.15rem;font-weight:800}.profileDisclosureGestation{font-size:1rem;color:var(--accent,#a94470)}.profileDisclosureGestation strong{font-weight:800}.profileDisclosureHint{font-size:.82rem;color:var(--muted,#756a75)}.patientProfileDetails{padding:0 20px 20px;border-top:1px solid #eadfe5}.patientProfileDetails h2{margin-top:18px}@media(max-width:600px){.patientProfileDisclosure>summary{padding:15px}.patientProfileDetails{padding:0 12px 15px}}</style><style>[hidden]{display:none!important}.patientProfileDisclosure:not([open]) .patientProfileDetails{display:none!important}</style><style>[hidden]{display:none!important}.pregnancyDetailSection[hidden]{display:none!important}.pregnancyDetailBack{margin:0 0 16px}</style></head>
+<style>.patientProfileDisclosure{padding:0;overflow:hidden}.patientProfileDisclosure>summary{list-style:none;cursor:pointer;padding:18px 20px;display:flex;flex-direction:column;gap:6px}.patientProfileDisclosure>summary::-webkit-details-marker{display:none}.profileDisclosureTitle{font-size:1.15rem;font-weight:800}.profileDisclosureGestation{font-size:1rem;color:var(--accent,#a94470)}.profileDisclosureGestation strong{font-weight:800}.profileDisclosureHint{font-size:.82rem;color:var(--muted,#756a75)}.patientProfileDetails{padding:0 20px 20px;border-top:1px solid #eadfe5}.patientProfileDetails h2{margin-top:18px}@media(max-width:600px){.patientProfileDisclosure>summary{padding:15px}.patientProfileDetails{padding:0 12px 15px}}</style><style>[hidden]{display:none!important}.patientProfileDisclosure:not([open]) .patientProfileDetails{display:none!important}</style><style>[hidden]{display:none!important}.pregnancyDetailSection[hidden]{display:none!important}.pregnancyDetailBack{margin:0 0 16px}</style>
+<style id="pregnancy-feature-redesign-20261025">
+/* Dashboard redesign: four pregnancy-tracking functions */
+.pregnancyFeatureGrid{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px!important;
+ margin:18px 0 22px!important;align-items:stretch
+}
+.pregnancyFeatureGrid .pregnancyFeatureCard{
+ position:relative;display:flex!important;flex-direction:column;align-items:flex-start;justify-content:flex-start;
+ gap:12px;min-height:168px;padding:20px!important;border:1px solid #eadfe8!important;
+ border-radius:20px!important;background:linear-gradient(145deg,#fff 0%,#fff9fc 100%)!important;
+ box-shadow:0 5px 18px rgba(93,48,72,.055);text-decoration:none!important;overflow:hidden;
+ transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease
+}
+.pregnancyFeatureGrid .pregnancyFeatureCard:before{
+ content:"";position:absolute;right:-22px;bottom:-30px;width:100px;height:100px;border-radius:50%;
+ background:var(--feature-tint,#f8e4ee);opacity:.62;pointer-events:none
+}
+.pregnancyFeatureGrid .pregnancyFeatureCard:hover{
+ transform:translateY(-2px);box-shadow:0 10px 24px rgba(93,48,72,.11);border-color:var(--feature-color,#c15b87)!important
+}
+.pregnancyFeatureGrid .pregnancyFeatureCard:focus-visible{outline:3px solid #9d426b;outline-offset:3px}
+.pregnancyFeatureGrid .pregnancyFeatureIcon{
+ display:flex!important;align-items:center;justify-content:center;width:48px;height:48px;flex:0 0 48px;
+ border-radius:16px;background:var(--feature-tint,#f8e4ee);color:var(--feature-color,#a53f70);
+ font-size:25px;font-weight:800;position:relative;z-index:1
+}
+.pregnancyFeatureGrid .pregnancyFeatureText{display:flex;flex-direction:column;gap:6px;min-width:0;position:relative;z-index:1}
+.pregnancyFeatureGrid .pregnancyFeatureText strong{font-size:15px;line-height:1.45;color:#332530;font-weight:800}
+.pregnancyFeatureGrid .pregnancyFeatureText small{font-size:12px;line-height:1.55;color:#756875}
+.pregnancyFeatureGrid .pregnancyFeatureArrow{
+ position:absolute!important;right:16px;top:16px;z-index:2;width:28px;height:28px;border-radius:50%;
+ display:flex;align-items:center;justify-content:center;background:#fff9fc;color:var(--feature-color,#a53f70);font-size:15px
+}
+.pregnancyFeatureGrid .pregnancyFeatureCard.fetal{--feature-color:#b34f7b;--feature-tint:#f9e5ee}
+.pregnancyFeatureGrid .pregnancyFeatureCard.maternal{--feature-color:#238b7a;--feature-tint:#e0f4ef}
+.pregnancyFeatureGrid .pregnancyFeatureCard.vaccine{--feature-color:#8056b5;--feature-tint:#eee6fb}
+.pregnancyFeatureGrid .pregnancyFeatureCard.visits{--feature-color:#3975bf;--feature-tint:#e4efff}
+@media(max-width:520px){
+ .pregnancyFeatureGrid{gap:10px!important;margin:14px 0 18px!important}
+ .pregnancyFeatureGrid .pregnancyFeatureCard{min-height:158px;padding:14px!important;gap:10px;border-radius:17px!important}
+ .pregnancyFeatureGrid .pregnancyFeatureIcon{width:42px;height:42px;flex-basis:42px;border-radius:14px;font-size:22px}
+ .pregnancyFeatureGrid .pregnancyFeatureText strong{font-size:13px}
+ .pregnancyFeatureGrid .pregnancyFeatureText small{font-size:11px}
+ .pregnancyFeatureGrid .pregnancyFeatureArrow{right:10px;top:10px;width:24px;height:24px}
+}
+@media(prefers-reduced-motion:reduce){.pregnancyFeatureGrid .pregnancyFeatureCard{transition:none}}
+</style>
+</head>
 <body>
 <header class="clinicHeader"><img class="logo" src="https://bslenamhung.github.io/theo-doi-thai-ky/clinic-logo-bs-hung.jpg?v=20261011-official-logo" alt="Logo Phòng khám chuyên khoa Phụ sản Ths.BSNT Lê Nam Hùng"><div class="clinicHeaderBrand"><strong>PHÒNG KHÁM CHUYÊN KHOA PHỤ SẢN</strong><b>Ths.BSNT Lê Nam Hùng</b><small>Đồng hành cùng mẹ trong thai kỳ</small></div><div class="portalNavWrap"><button type="button" id="portalMenuToggle" class="portalMenuToggle" aria-label="Mở menu điều hướng" aria-expanded="false" aria-controls="portalQuickMenu"><span></span><span></span><span></span></button><nav id="portalQuickMenu" class="portalQuickMenu" aria-label="Điều hướng cổng thông tin" hidden><a href="https://bslenamhung.github.io/" target="_blank" rel="noopener noreferrer">Trang web BS Lê Nam Hùng</a><a href="index.html#patientView">Theo dõi thai kỳ</a><a href="postpartum.html">Theo dõi sau sinh</a><a href="https://bslenamhung.github.io/san-pham-me-va-be/" target="_blank" rel="noopener noreferrer">Cửa hàng mẹ và bé</a></nav></div></header>
 <main>
