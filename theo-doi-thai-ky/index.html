@@ -382,26 +382,28 @@
   button.type='button';button.className='secondary pregnancyBackButton';button.textContent='← Quay lại trang chính';
   button.addEventListener('click',showHome);panel.insertBefore(button,panel.firstChild);
  }
+ let activeFeature=null;
+ function resetFeatureCards(){
+  cards.querySelectorAll('.pregnancyFeatureCard').forEach(card=>{
+   card.setAttribute('aria-expanded','false');
+   const arrow=card.querySelector('.pregnancyFeatureArrow');if(arrow)arrow.textContent='↓';
+  });
+ }
  function showHome(){
+  activeFeature=null;
   profile.hidden=false;cards.hidden=false;details.forEach(el=>el.hidden=true);
   root.querySelectorAll('.pregnancyBackButton').forEach(el=>el.remove());
   const quick=root.querySelector('.patientQuickNav');if(quick)quick.hidden=true;
+  resetFeatureCards();
   window.scrollTo({top:0,behavior:'smooth'});
  }
- let activeFeature=null;
  function openFeature(key){
-  if(activeFeature===key){
-   activeFeature=null;
-   showHome();
-   cards.querySelectorAll('.pregnancyFeatureCard').forEach(card=>{
-    card.setAttribute('aria-expanded','false');
-    const arrow=card.querySelector('.pregnancyFeatureArrow');if(arrow)arrow.textContent='↓';
-   });
-   return;
-  }
+  const panels=groups[key]||[];
+  const alreadyOpen=activeFeature===key&&panels.some(panel=>panel&&!panel.hidden);
+  if(alreadyOpen){showHome();return;}
   activeFeature=key;
   profile.hidden=true;cards.hidden=false;details.forEach(el=>el.hidden=true);
-  (groups[key]||[]).forEach(panel=>{if(panel){panel.hidden=false;if(panel===fetal||panel===maternal||panel===vaccine||panel===visits)addBack(panel);}});
+  panels.forEach(panel=>{if(panel){panel.hidden=false;if(panel===fetal||panel===maternal||panel===vaccine||panel===visits)addBack(panel);}});
   cards.querySelectorAll('.pregnancyFeatureCard').forEach(card=>{
    const cardKey=card.classList.contains('fetal')?'fetal':card.classList.contains('maternal')?'maternal':card.classList.contains('vaccine')?'vaccine':'visits';
    const expanded=cardKey===key;
