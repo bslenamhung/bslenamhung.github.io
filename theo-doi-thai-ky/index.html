@@ -396,13 +396,6 @@
   const quick=root.querySelector('.patientQuickNav');if(quick)quick.hidden=true;
   resetFeatureCards();
  }
- let activeFeature=null;
- function resetFeatureCards(){
-  cards.querySelectorAll('.pregnancyFeatureCard').forEach(card=>{
-   card.setAttribute('aria-expanded','false');
-   const arrow=card.querySelector('.pregnancyFeatureArrow');if(arrow)arrow.textContent='↓';
-  });
- }
  function openFeature(key,link){
   const panels=(groups[key]||[]).filter(Boolean);
   const isOpen=link.getAttribute('aria-expanded')==='true' && panels.length>0 && panels.every(panel=>!panel.hidden);
