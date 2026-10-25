@@ -197,7 +197,7 @@
  </section>
 <nav class="patientQuickNav" aria-label="Liên kết phòng khám"><a href="https://bslenamhung.github.io/" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">⌂</span> Trang web phòng khám BS Hùng <span aria-hidden="true">↗</span></a></nav>
  </div>
- <section id="postpartumInlinePanel" class="panel" hidden style="padding:0;overflow:hidden"><iframe id="postpartumInlineFrame" title="Theo dõi sau sinh" src="about:blank" loading="lazy" style="display:block;width:100%;min-height:900px;height:1200px;border:0;background:transparent"></iframe></section>
+ <section id="postpartumInlinePanel" class="panel" hidden style="padding:0;overflow:hidden"><iframe id="postpartumInlineFrame" title="Theo dõi sau sinh" src="about:blank" loading="lazy" style="display:block;width:100%;height:420px;border:0;background:transparent"></iframe></section>
 </section>
  <a id="floatingPatientQaButton" class="floatingPatientQaButton" hidden aria-label="Mở trợ lý hỏi đáp AI" href="https://bslenamhung.github.io/theo-doi-thai-ky/tro-ly-ai.html?refresh=20261011chatroutefix">
   <span class="floatingQaIcon" aria-hidden="true"><img src="https://bslenamhung.github.io/theo-doi-thai-ky/clinic-logo-bs-hung.jpg?v=20261011-official-logo" alt="" decoding="async" loading="eager"></span><span>Trợ lý hỏi đáp AI</span>
@@ -425,6 +425,6 @@ document.addEventListener("DOMContentLoaded",function(){
  link.addEventListener("click",function(e){e.preventDefault();tracking.hidden=true;panel.hidden=false;document.querySelectorAll(".patientAreaSwitchLink").forEach(a=>a.classList.toggle("active",a===link));if(frame.getAttribute("src")==="about:blank")frame.src="postpartum.html?embed=patient";panel.scrollIntoView({behavior:"smooth",block:"start"});});
  const pregnancyLink=document.querySelector('.patientAreaSwitchLink[href="#pregnancyTracking"]');
  if(pregnancyLink)pregnancyLink.addEventListener("click",function(e){e.preventDefault();panel.hidden=true;tracking.hidden=false;document.querySelectorAll(".patientAreaSwitchLink").forEach(a=>a.classList.toggle("active",a===pregnancyLink));});
- frame.addEventListener("load",function(){try{const doc=frame.contentDocument;if(!doc)return;const resize=()=>{frame.style.height=Math.max(900,doc.documentElement.scrollHeight,doc.body.scrollHeight)+"px";};resize();if(frame._resizeObserver)frame._resizeObserver.disconnect();frame._resizeObserver=new ResizeObserver(resize);frame._resizeObserver.observe(doc.documentElement);if(doc.body)frame._resizeObserver.observe(doc.body);}catch(e){}});
+ frame.addEventListener("load",function(){try{const doc=frame.contentDocument;if(!doc)return;const resize=()=>{frame.style.height=Math.max(320,doc.documentElement.scrollHeight,doc.body.scrollHeight)+"px";};resize();if(frame._resizeObserver)frame._resizeObserver.disconnect();frame._resizeObserver=new ResizeObserver(resize);frame._resizeObserver.observe(doc.documentElement);if(doc.body)frame._resizeObserver.observe(doc.body);}catch(e){}});
 });
 </script></body></html>
