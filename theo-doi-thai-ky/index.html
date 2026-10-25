@@ -398,16 +398,7 @@ document.addEventListener("DOMContentLoaded",function(){
    cards[index].setAttribute("aria-expanded","true");
    if(!section.querySelector(".pregnancyDetailBack")){
      const back=document.createElement("button");
-     back.type="button";
-     back.className="primary pregnancyDetailBack";
-     back.textContent="← Quay lại 4 mục";
-     back.style.marginBottom="14px";
-     back.addEventListener("click",function(){
-       section.hidden=true;
-       cards[index].setAttribute("aria-expanded","false");
-       grid.scrollIntoView({behavior:"smooth",block:"start"});
-     });
-     section.insertBefore(back,section.firstChild);
+     /* Keep the detail panel focused on its content; no extra return button. */
    }
  }
  cards.forEach((card,index)=>{
