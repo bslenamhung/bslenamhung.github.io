@@ -382,7 +382,6 @@
   button.type='button';button.className='secondary pregnancyBackButton';button.textContent='← Quay lại trang chính';
   button.addEventListener('click',showHome);panel.insertBefore(button,panel.firstChild);
  }
- let activeFeature=null;
  function resetFeatureCards(){
   cards.querySelectorAll('.pregnancyFeatureCard').forEach(card=>{
    card.setAttribute('aria-expanded','false');
@@ -390,7 +389,6 @@
   });
  }
  function showHome(){
-  activeFeature=null;
   details.forEach(el=>el.hidden=true);
   root.querySelectorAll('.pregnancyBackButton').forEach(el=>el.remove());
   const quick=root.querySelector('.patientQuickNav');if(quick)quick.hidden=true;
@@ -398,23 +396,23 @@
  }
  function openFeature(key,link){
   const panels=(groups[key]||[]).filter(Boolean);
-  const isOpen=link.getAttribute('aria-expanded')==='true' && panels.length>0 && panels.every(panel=>!panel.hidden);
-  if(isOpen){showHome();return;}
-  activeFeature=key;
+  const shouldOpen=panels.length>0 && panels.some(panel=>panel.hidden);
+  /* Mirror the proven postpartum behavior: decide open/close from the panel's real hidden state. */
   details.forEach(el=>el.hidden=true);
   root.querySelectorAll('.pregnancyBackButton').forEach(el=>el.remove());
-  panels.forEach(panel=>{
-   panel.hidden=false;
-   if(panel===fetal||panel===maternal||panel===vaccine||panel===visits)addBack(panel);
-  });
+  if(shouldOpen){
+   panels.forEach(panel=>{
+    panel.hidden=false;
+    if(panel===fetal||panel===maternal||panel===vaccine||panel===visits)addBack(panel);
+   });
+   if(key==='visits'){const reminder=document.getElementById('patientFollowUpReminder');if(reminder)reminder.hidden=false;}
+   window.dispatchEvent(new CustomEvent('pregnancy-feature-open',{detail:{key}}));
+  }
   cards.querySelectorAll('.pregnancyFeatureCard').forEach(card=>{
-   const cardKey=card.classList.contains('fetal')?'fetal':card.classList.contains('maternal')?'maternal':card.classList.contains('vaccine')?'vaccine':'visits';
-   const expanded=card===link;
+   const expanded=shouldOpen&&card===link;
    card.setAttribute('aria-expanded',String(expanded));
    const arrow=card.querySelector('.pregnancyFeatureArrow');if(arrow)arrow.textContent=expanded?'↑':'↓';
   });
-  if(key==='visits'){const reminder=document.getElementById('patientFollowUpReminder');if(reminder)reminder.hidden=false;}
-  window.dispatchEvent(new CustomEvent('pregnancy-feature-open',{detail:{key}}));
  }
  cards.querySelectorAll('.pregnancyFeatureCard').forEach(link=>link.addEventListener('click',event=>{
   event.preventDefault();
