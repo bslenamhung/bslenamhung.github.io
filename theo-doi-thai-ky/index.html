@@ -365,7 +365,7 @@
   if(open)panel.scrollIntoView({behavior:'smooth',block:'start'});
  });
 })();
-</script><!-- app-centiles-fix.js is the single portal controller; loading app.js as well duplicated auth and form handlers. --><script type="module" src="patient-orders.js?v=20261016-collapsible-v2"></script><script type="module" src="app-centiles-fix.js?v=20261025-profile-disclosure-fix2-v1"></script>
+</script><!-- app-centiles-fix.js is the single portal controller; loading app.js as well duplicated auth and form handlers. --><script type="module" src="patient-orders.js?v=20261016-collapsible-v2"></script><script type="module" src="app-centiles-fix.js?v=20261025-inline-pregnancy-panels-v2"></script>
 <script>
 (function(){
  const target=document.getElementById('adminPatientProfile');
@@ -380,23 +380,44 @@
 <script type="module" src="postpartum.js?v=20261025-fix-regex-v1"></script>
 <script>
 document.addEventListener("DOMContentLoaded",function(){
- const cards=[...document.querySelectorAll(".pregnancyFeatureGrid .pregnancyFeatureCard")];
+ const grid=document.querySelector(".pregnancyFeatureGrid");
+ if(!grid)return;
+ const cards=[...grid.querySelectorAll(".pregnancyFeatureCard")];
  const ids=["fetalWeightSection","maternalWeightSection","maternalVaccineSection","antenatalScheduleSection"];
  const sections=ids.map(id=>document.getElementById(id));
- function closeDetails(){sections.forEach(s=>{if(s)s.hidden=true;});cards.forEach(a=>a.setAttribute("aria-expanded","false"));}
- cards.forEach((card,i)=>card.addEventListener("click",function(event){
-   if(!sections[i])return;
-   event.preventDefault();
+ function closeDetails(){
+   sections.forEach(s=>{if(s)s.hidden=true;});
+   cards.forEach(a=>a.setAttribute("aria-expanded","false"));
+ }
+ function openDetail(index){
+   const section=sections[index];
+   if(!section)return;
    closeDetails();
-   sections[i].hidden=false;
-   card.setAttribute("aria-expanded","true");
-   if(!sections[i].querySelector(".pregnancyDetailBack")){
+   grid.insertAdjacentElement("afterend",section);
+   section.hidden=false;
+   cards[index].setAttribute("aria-expanded","true");
+   if(!section.querySelector(".pregnancyDetailBack")){
      const back=document.createElement("button");
-     back.type="button";back.className="primary pregnancyDetailBack";back.textContent="← Quay lại 4 mục";
-     back.addEventListener("click",function(){sections[i].hidden=true;card.setAttribute("aria-expanded","false");document.querySelector(".pregnancyFeatureGrid")?.scrollIntoView({behavior:"smooth",block:"start"});});
-     sections[i].insertBefore(back,sections[i].firstChild);
+     back.type="button";
+     back.className="primary pregnancyDetailBack";
+     back.textContent="← Quay lại 4 mục";
+     back.style.marginBottom="14px";
+     back.addEventListener("click",function(){
+       section.hidden=true;
+       cards[index].setAttribute("aria-expanded","false");
+       grid.scrollIntoView({behavior:"smooth",block:"start"});
+     });
+     section.insertBefore(back,section.firstChild);
    }
- }));
+ }
+ cards.forEach((card,index)=>{
+   card.setAttribute("aria-expanded","false");
+   card.addEventListener("click",function(event){
+     event.preventDefault();
+     event.stopImmediatePropagation();
+     openDetail(index);
+   },true);
+ });
  closeDetails();
 });
 </script></body></html>
