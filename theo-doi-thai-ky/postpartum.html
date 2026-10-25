@@ -1,10 +1,20 @@
 <!doctype html>
 <html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Theo dõi sau sinh | BS Hùng</title><link rel="icon" href="clinic-logo-bs-hung.jpg"><link rel="stylesheet" href="postpartum.css?v=20261014-performance-v2"><style>[hidden]{display:none!important}nav.tabs>.shopTab{text-decoration:none;display:block!important;box-sizing:border-box}</style></head>
+<title>Theo dõi sau sinh | BS Hùng</title><link rel="icon" href="clinic-logo-bs-hung.jpg"><link rel="stylesheet" href="postpartum.css?v=20261014-performance-v2"><style>[hidden]{display:none!important}nav.tabs>.shopTab{text-decoration:none;display:block!important;box-sizing:border-box}</style><style>
+.postpartumAreaSwitch{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 16px}
+.postpartumAreaSwitch .patientAreaSwitchLink{display:block;text-align:center;text-decoration:none;border-radius:14px;padding:13px 10px;font-weight:800;border:1px solid #eadfe5;color:#7b3e58;background:#fff}
+.postpartumAreaSwitch .patientAreaSwitchLink.active{background:#b34e79;color:#fff;border-color:#b34e79}
+.postpartumCompactProfile{margin:0 0 16px;padding:16px}
+.postpartumCompactProfile h2{margin:6px 0;font-size:1.35rem}
+.postpartumCompactProfile p{margin:4px 0 0}
+#patientArea nav.tabs{margin-top:0}
+</style></head>
 <body><header><a href="index.html" class="back">← Cổng thông tin thai kỳ</a><div><strong>PHÒNG KHÁM CHUYÊN KHOA PHỤ SẢN</strong><b>Ths.BSNT Lê Nam Hùng</b></div></header>
 <main><section class="hero"><p class="eyebrow">CỔNG THÔNG TIN BS HÙNG</p><h1>Theo dõi sau sinh</h1><p>Đồng hành cùng mẹ và bé trong 1000 ngày vàng đầu đời.</p><p id="sessionStatus" role="status">Đang kiểm tra đăng nhập…</p></section>
 <div id="loginNotice" class="panel" hidden><h2>Vui lòng đăng nhập</h2><p>Đăng nhập cổng thông tin thai kỳ trước, sau đó mở lại mục Theo dõi sau sinh.</p><a class="btn" href="index.html">Đến trang đăng nhập</a></div>
 <section id="patientArea" hidden>
+<nav class="patientAreaSwitch postpartumAreaSwitch" aria-label="Khu vực theo dõi"><a class="patientAreaSwitchLink" href="index.html#pregnancyTracking">Theo dõi thai kỳ</a><a class="patientAreaSwitchLink active" href="postpartum.html" aria-current="page">Theo dõi sau sinh</a></nav>
+<div class="panel postpartumCompactProfile"><span class="eyebrow">HỒ SƠ CÁ NHÂN</span><h2 id="postpartumPatientGreeting">Theo dõi sau sinh</h2><p class="muted">Chọn một trong bốn ô bên dưới để mở nội dung tương ứng.</p></div>
 <nav class="tabs"><button class="tab" data-tab="babyArea">Theo dõi em bé</button><button class="tab" data-tab="vaccineArea">Lịch tiêm chủng</button><button class="tab" data-tab="motherArea">Theo dõi sức khỏe mẹ</button><a class="tab shopTab" href="https://bslenamhung.github.io/san-pham-me-va-be/" target="_blank" rel="noopener noreferrer">Cửa hàng Mẹ và Bé ↗</a></nav>
 <section id="babyArea" class="panel" hidden><h2>Thông tin khi sinh</h2><p class="muted">Nếu tự khai, hồ sơ sẽ mang trạng thái chờ bác sĩ xác nhận. Bạn vẫn có thể lưu các lần cân và đo chiều dài.</p>
 <div id="birthSummary" class="panel inset" hidden><p id="birthSummaryText" class="message"></p><div style="display:flex;gap:10px;flex-wrap:wrap"><button id="editBirthInfo" class="btn" type="button">Sửa thông tin sinh</button></div></div>
