@@ -2,6 +2,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const SUPABASE_URL = "https://ckwhjyzomppsdplnkdeq.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_FmJK_HkQxhoQ04dIzI1mCg_eupXeR48";
 const db = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+window.__BSHUNG_SUPABASE_CLIENT__ = db; // Shared Auth client for the postpartum module.
 const $ = id => document.getElementById(id);
 
 // Public patient registration: create a pending request only; no auth account is created here.
