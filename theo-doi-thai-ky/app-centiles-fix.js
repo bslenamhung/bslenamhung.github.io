@@ -372,7 +372,9 @@ async function loadPatient() {
   $("patientProfileBMI").textContent=patientBmi?patientBmi.text:"Chưa đủ dữ liệu cân nặng và chiều cao trước mang thai";
   $("patientProfileUltrasoundAbnormalities").textContent = profile.ultrasound_abnormalities || "Chưa cập nhật";
   $("patientProfileDueDate").textContent = profile.due_date ? dateVi(profile.due_date) : "Chưa cập nhật";
-  $("patientProfileGestation").textContent = profile.due_date ? gestationText(gestationAt(profile.due_date,todayLocal())) : "Chưa cập nhật";
+  const profileGestation = profile.due_date ? gestationText(gestationAt(profile.due_date,todayLocal())) : "Chưa cập nhật";
+  $("patientProfileGestation").textContent = profileGestation;
+  const compactGestation = $("patientProfileGestationCompact"); if (compactGestation) compactGestation.textContent = profileGestation;
   $("lastVisit").textContent = "Mở mục theo dõi để tải dữ liệu";
   $("lastGa").textContent = "—";
   $("lastWeight").textContent = "—";
