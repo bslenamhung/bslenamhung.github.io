@@ -390,17 +390,23 @@ document.addEventListener("DOMContentLoaded",function(){
    sections.forEach(s=>{if(s)s.hidden=true;});
    cards.forEach(a=>a.setAttribute("aria-expanded","false"));
  }
+ const historyPanel=document.querySelector(".pregnancyHistoryPanel");
+ const testsPanel=document.querySelector(".pregnancyTestsPanel");
  function openDetail(index){
    const section=sections[index];
    if(!section)return;
    closeDetails();
+   if(historyPanel)historyPanel.hidden=true;
+   if(testsPanel)testsPanel.hidden=true;
    grid.insertAdjacentElement("afterend",section);
    section.hidden=false;
-   cards[index].setAttribute("aria-expanded","true");
-   if(!section.querySelector(".pregnancyDetailBack")){
-     const back=document.createElement("button");
-     /* Keep the detail panel focused on its content; no extra return button. */
+   if(index===0){
+     section.insertAdjacentElement("afterend",historyPanel);
+     if(historyPanel)historyPanel.hidden=false;
+     if(testsPanel){historyPanel.insertAdjacentElement("afterend",testsPanel);testsPanel.hidden=false;}
    }
+   cards[index].setAttribute("aria-expanded","true");
+   window.dispatchEvent(new CustomEvent("pregnancy-feature-open",{detail:{key:["fetal","maternal","vaccine","visits"][index]}}));
  }
  cards.forEach((card,index)=>{
    card.setAttribute("aria-expanded","false");
