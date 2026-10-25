@@ -38,9 +38,13 @@ async function recordArticleViewPage(a){
 function upsertMeta(name,content,attr='name'){let m=document.head.querySelector(`meta[${attr}="${name}"]`);if(!m){m=document.createElement('meta');m.setAttribute(attr,name);document.head.appendChild(m)}m.setAttribute('content',content||'')}
 function upsertLink(rel,href){let l=document.head.querySelector(`link[rel="${rel}"]`);if(!l){l=document.createElement('link');l.rel=rel;document.head.appendChild(l)}l.href=href}
 
+function articleSlugPage(a){
+ const raw=String(a?.slug||a?.title||'').trim();
+ const slug=raw.normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,120);
+ return slug||articleIdPage(a);
+}
 function articleUrlPage(a){
- const id=articleIdPage(a);
- return `bai-viet.html?id=${encodeURIComponent(id)}`;
+ return `bai-viet/${encodeURIComponent(articleSlugPage(a))}.html`;
 }
 function normWords(s){
  return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').split(/[^a-z0-9]+/).filter(w=>w.length>=3);
@@ -201,7 +205,7 @@ function setMeta(a){
  const fallbackDesc=String(a.desc||a.content||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,160);
  const desc=String(a.seoDescription||fallbackDesc||'Kiến thức Sản Phụ khoa của Th.BSNT Lê Nam Hùng.').trim().slice(0,160);
  const canonical=new URL(articleUrlPage(a),location.href).href;
- upsertMeta('description',desc); upsertMeta('robots','noindex,follow');
+ upsertMeta('description',desc); upsertMeta('robots','index,follow');
  upsertMeta('og:title',title,'property'); upsertMeta('og:description',desc,'property'); upsertMeta('og:type','article','property'); upsertMeta('og:url',canonical,'property');
  const image=String(a.seoImage||a.image||'').trim(); if(image)upsertMeta('og:image',image,'property');
  if(a.keywords)upsertMeta('keywords',String(a.keywords).trim());
@@ -218,9 +222,10 @@ function setMeta(a){
 }
 (async()=>{
  document.getElementById('year').textContent=new Date().getFullYear();
- const root=document.getElementById('articlePage'); const params=new URLSearchParams(location.search); const id=params.get('id')||'';
+ const root=document.getElementById('articlePage'); const params=new URLSearchParams(location.search); const id=params.get('id')||''; const requestedSlug=params.get('slug')||((location.pathname.match(/\\/bai-viet\\/([^/]+)\\.html$/)||[])[1]||'');
  const data=await loadSite(); const list=Array.isArray(data.articles)?data.articles:[];
- const a=list.find(x=>x&&x.published!==false&&(articleIdPage(x)===id||String(x.id||'')===id));
+ const normalizedRequestedSlug=decodeURIComponent(requestedSlug).toLowerCase();
+ const a=list.find(x=>x&&x.published!==false&&(articleIdPage(x)===id||String(x.id||'')===id||(requestedSlug&&articleSlugPage(x).toLowerCase()===normalizedRequestedSlug)));
  if(!a){root.innerHTML='<div class="empty"><h2>Không tìm thấy bài viết</h2><p>Bài viết có thể đã được thay đổi hoặc đường dẫn không còn hợp lệ.</p><p><a class="btn primary" href="index.html#articles">← Quay lại bài viết</a></p></div>';return}
  const publishedDate=formatPublishedDate(a); const coverImage=String(a.image||a.seoImage||'').trim(); const cleanContent=linkifyArticleContentPage(stripDuplicateLeadingTitlePage(a.content,a.title,a.seoTitle)); setMeta(a); root.innerHTML=`<article><div class="article-tag">${escPage(a.specialty||'')}</div><h1>${escPage(a.title||'')}</h1>${coverImage?`<img class="article-page-cover" src="${escPage(coverImage)}" alt="${escPage(a.title||'')}" loading="eager">`:''}${renderArticleVideoPage(a)}<p class="article-page-desc">${escPage(a.desc||'')}</p><div class="article-full">${cleanContent}</div>${publishedDate?`<div class="article-published-date">📅 Ngày xuất bản: <strong>${publishedDate}</strong></div>`:''}<p style="margin-top:32px"><a class="btn secondary" href="index.html#articles">← Xem các bài viết khác</a></p>${renderRelatedPage(a,list)}</article>`;
  normalizeNumberedArticleHeadings(root);
