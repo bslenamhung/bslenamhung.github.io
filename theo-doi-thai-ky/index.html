@@ -123,7 +123,7 @@
  
 
  <div class="head"><div><span class="eyebrow">HỒ SƠ CÁ NHÂN</span><h1>Xin chào, <span id="patientName"></span></h1></div><button class="secondary logout" onclick="event.stopImmediatePropagation();try{localStorage.removeItem('sb-ckwhjyzomppsdplnkdeq-auth-token');localStorage.removeItem('sb-ckwhjyzomppsdplnkdeq-auth-token-code-verifier')}catch(e){}window.location.replace('index.html?refresh=logoutdirect20261011')">Đăng xuất</button></div>
- <nav class="patientAreaSwitch" aria-label="Khu vực theo dõi"><a class="patientAreaSwitchLink active" href="#pregnancyTracking">Theo dõi thai kỳ</a><a class="patientAreaSwitchLink" href="postpartum.html">Theo dõi sau sinh</a></nav>
+ <nav class="patientAreaSwitch" aria-label="Khu vực theo dõi"><a class="patientAreaSwitchLink active" href="#pregnancyTracking">Theo dõi thai kỳ</a><a class="patientAreaSwitchLink" id="openPostpartumInline" href="#postpartumInlinePanel">Theo dõi sau sinh</a></nav>
  <a class="shopPortalLink" href="https://bslenamhung.github.io/san-pham-me-va-be/" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">♡</span><span><strong>Sản phẩm cho mẹ và bé</strong><small>Mở cửa hàng và đặt hàng — thông tin hồ sơ có thể được điền sẵn</small></span><span aria-hidden="true">↗</span></a>
  <details id="patientOrdersDisclosure" class="patientOrdersDisclosure"><summary><span>Đơn đã mua</span><span class="patientOrdersChevron" aria-hidden="true">⌄</span></summary><section id="patientOrdersCard" class="patientOrdersCard"><p class="patientOrdersIntro">Xem lại các đơn hàng đã đặt và chọn mua lại khi cần.</p><p id="patientOrdersMessage" class="patientOrdersMessage" role="status">Nhấn mở để tải lịch sử đơn hàng…</p><div id="patientOrdersList" class="patientOrderList"></div></section></details>
  <div id="pregnancyTracking">
@@ -197,6 +197,7 @@
  </section>
 <nav class="patientQuickNav" aria-label="Liên kết phòng khám"><a href="https://bslenamhung.github.io/" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">⌂</span> Trang web phòng khám BS Hùng <span aria-hidden="true">↗</span></a></nav>
  </div>
+ <section id="postpartumInlinePanel" class="panel" hidden style="padding:0;overflow:hidden"><iframe id="postpartumInlineFrame" title="Theo dõi sau sinh" src="about:blank" loading="lazy" style="display:block;width:100%;min-height:900px;height:1200px;border:0;background:transparent"></iframe></section>
 </section>
  <a id="floatingPatientQaButton" class="floatingPatientQaButton" hidden aria-label="Mở trợ lý hỏi đáp AI" href="https://bslenamhung.github.io/theo-doi-thai-ky/tro-ly-ai.html?refresh=20261011chatroutefix">
   <span class="floatingQaIcon" aria-hidden="true"><img src="https://bslenamhung.github.io/theo-doi-thai-ky/clinic-logo-bs-hung.jpg?v=20261011-official-logo" alt="" decoding="async" loading="eager"></span><span>Trợ lý hỏi đáp AI</span>
@@ -410,5 +411,14 @@ document.addEventListener("DOMContentLoaded",function(){
    },true);
  });
  closeDetails();
+});
+</script><script>
+document.addEventListener("DOMContentLoaded",function(){
+ const link=document.getElementById("openPostpartumInline"),panel=document.getElementById("postpartumInlinePanel"),frame=document.getElementById("postpartumInlineFrame"),tracking=document.getElementById("pregnancyTracking");
+ if(!link||!panel||!frame||!tracking)return;
+ link.addEventListener("click",function(e){e.preventDefault();tracking.hidden=true;panel.hidden=false;document.querySelectorAll(".patientAreaSwitchLink").forEach(a=>a.classList.toggle("active",a===link));if(frame.getAttribute("src")==="about:blank")frame.src="postpartum.html?embed=patient";panel.scrollIntoView({behavior:"smooth",block:"start"});});
+ const pregnancyLink=document.querySelector('.patientAreaSwitchLink[href="#pregnancyTracking"]');
+ if(pregnancyLink)pregnancyLink.addEventListener("click",function(e){e.preventDefault();panel.hidden=true;tracking.hidden=false;document.querySelectorAll(".patientAreaSwitchLink").forEach(a=>a.classList.toggle("active",a===pregnancyLink));});
+ frame.addEventListener("load",function(){try{const doc=frame.contentDocument;if(!doc)return;const resize=()=>{frame.style.height=Math.max(900,doc.documentElement.scrollHeight,doc.body.scrollHeight)+"px";};resize();if(frame._resizeObserver)frame._resizeObserver.disconnect();frame._resizeObserver=new ResizeObserver(resize);frame._resizeObserver.observe(doc.documentElement);if(doc.body)frame._resizeObserver.observe(doc.body);}catch(e){}});
 });
 </script></body></html>
