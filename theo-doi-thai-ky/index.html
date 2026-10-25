@@ -399,7 +399,8 @@
  }
  function openFeature(key){
   const panels=groups[key]||[];
-  const alreadyOpen=activeFeature===key&&panels.some(panel=>panel&&!panel.hidden);
+  const alreadyOpen=panels.length>0&&panels.every(panel=>!panel||!panel.hidden) &&
+   cards.querySelector('.pregnancyFeatureCard.'+key)?.getAttribute('aria-expanded')==='true';
   if(alreadyOpen){showHome();return;}
   activeFeature=key;
   profile.hidden=true;cards.hidden=false;details.forEach(el=>el.hidden=true);
