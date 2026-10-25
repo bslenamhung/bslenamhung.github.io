@@ -1,6 +1,12 @@
 name: Sync published articles and sitemap
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/generate-articles.mjs'
+      - '.github/workflows/sync-published-articles.yml'
+      - 'supabase-config.js'
   workflow_dispatch:
   schedule:
     - cron: "17 */6 * * *"
