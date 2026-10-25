@@ -317,7 +317,7 @@
 (function(){
  const root=document.getElementById('pregnancyTracking');
  if(!root)return;
- const profile=root.querySelector(':scope > section.panel');
+ const profile=root.querySelector(':scope > #patientProfileDisclosure');
  const cards=root.querySelector('.pregnancyFeatureGrid');
  const details=Array.from(root.children).filter(el=>el!==profile&&el!==cards);
  const fetal=document.getElementById('fetalWeightSection');
@@ -365,7 +365,7 @@
   if(open)panel.scrollIntoView({behavior:'smooth',block:'start'});
  });
 })();
-</script><!-- app-centiles-fix.js is the single portal controller; loading app.js as well duplicated auth and form handlers. --><script type="module" src="patient-orders.js?v=20261016-collapsible-v2"></script><script type="module" src="app-centiles-fix.js?v=20261025-profile-disclosure-v1"></script>
+</script><!-- app-centiles-fix.js is the single portal controller; loading app.js as well duplicated auth and form handlers. --><script type="module" src="patient-orders.js?v=20261016-collapsible-v2"></script><script type="module" src="app-centiles-fix.js?v=20261025-profile-disclosure-fix2-v1"></script>
 <script>
 (function(){
  const target=document.getElementById('adminPatientProfile');
