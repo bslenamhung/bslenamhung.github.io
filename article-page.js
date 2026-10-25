@@ -40,7 +40,7 @@ function upsertLink(rel,href){let l=document.head.querySelector(`link[rel="${rel
 
 function articleSlugPage(a){
  const raw=String(a?.slug||a?.title||'').trim();
- const slug=raw.normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,120);
+ const slug=raw.normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,120);
  return slug||articleIdPage(a);
 }
 function articleUrlPage(a){
@@ -222,7 +222,7 @@ function setMeta(a){
 }
 (async()=>{
  document.getElementById('year').textContent=new Date().getFullYear();
- const root=document.getElementById('articlePage'); const params=new URLSearchParams(location.search); const id=params.get('id')||''; const requestedSlug=params.get('slug')||((location.pathname.match(/\\/bai-viet\\/([^/]+)\\.html$/)||[])[1]||'');
+ const root=document.getElementById('articlePage'); const params=new URLSearchParams(location.search); const id=params.get('id')||''; const requestedSlug=params.get('slug')||((location.pathname.match(/\/bai-viet\/([^/]+)\.html$/)||[])[1]||'');
  const data=await loadSite(); const list=Array.isArray(data.articles)?data.articles:[];
  const normalizedRequestedSlug=decodeURIComponent(requestedSlug).toLowerCase();
  const a=list.find(x=>x&&x.published!==false&&(articleIdPage(x)===id||String(x.id||'')===id||(requestedSlug&&articleSlugPage(x).toLowerCase()===normalizedRequestedSlug)));
