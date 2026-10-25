@@ -19,8 +19,8 @@
     var path = window.location.pathname;
     var match = path.match(/^\/bai-viet\/([^/]+)\.html$/);
     if(match){
-      var id = decodeURIComponent(match[1]);
-      window.location.replace('/bai-viet.html?id=' + encodeURIComponent(id));
+      var slug = decodeURIComponent(match[1]);
+      window.location.replace('/bai-viet.html?slug=' + encodeURIComponent(slug));
     }
   })();
   </script>
