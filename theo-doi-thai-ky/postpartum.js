@@ -1,6 +1,6 @@
 import {createClient} from "https://esm.sh/@supabase/supabase-js@2";
-// Separate Supabase clients on the same page can contend for the same Web Lock in iOS Safari.
-const db=createClient("https://ckwhjyzomppsdplnkdeq.supabase.co","sb_publishable_FmJK_HkQxhoQ04dIzI1mCg_eupXeR48",{auth:{lock:async(_name,_acquireTimeout,fn)=>await fn()}});
+// Use the Supabase SDK's default auth coordination; custom locks can re-enable legacy lock behavior.
+const db=createClient("https://ckwhjyzomppsdplnkdeq.supabase.co","sb_publishable_FmJK_HkQxhoQ04dIzI1mCg_eupXeR48");
 const $=id=>document.getElementById(id);let user=null,profile=null,postpartum=null,measurements=[],directory=[];
 const today=()=>{const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10)};
 function dateToISO(value){
