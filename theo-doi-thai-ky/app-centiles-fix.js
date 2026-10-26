@@ -494,6 +494,7 @@ async function loadPatients() {
 }
 async function loadSelectedPatient() {
   selectedPatient = $("patientSelect").value || null;
+  $("adminPatientRecords").hidden = !selectedPatient;
   $("recordEntryPanel").hidden = !selectedPatient;
   $("testUploadPanel").hidden = !selectedPatient;
   $("adminPatientHistory").replaceChildren(); $("adminTestHistory").replaceChildren(); $("adminPatientProfile").replaceChildren(); drawChart([], "adminWeightChart", "adminWeightChartEmpty");
