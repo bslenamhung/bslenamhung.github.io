@@ -486,9 +486,21 @@ async function refreshAdminPatientCounts(){
  setAdminPatientCount(active,adminPatientCounts);
 }
 async function loadPatients() {
+ // Keep confirmed births in the postpartum workflow, not in the active pregnancy list.
+ // Read confirmation status first; if this check fails, do not silently show a misleading list.
+ const { data: postpartumRows, error: postpartumError } = await db
+  .from("patient_postpartum_profiles")
+  .select("patient_user_id")
+  .eq("status","confirmed");
+ if (postpartumError) {
+  console.error("Không kiểm tra được trạng thái xác nhận sinh:", postpartumError);
+  toast("Không thể kiểm tra trạng thái sau sinh. Vui lòng tải lại trang.");
+  return;
+ }
+ const confirmedBirthIds = new Set((postpartumRows||[]).map(row=>row.patient_user_id).filter(Boolean));
  const { data, error } = await db.from("profiles").select("user_id,username,display_name,phone,due_date,created_at").order("created_at",{ascending:false});
  if (error) { toast("Không tải được danh sách hồ sơ."); return; }
- patientDirectory=(data||[]).filter(p=>p.user_id!==user.id);
+ patientDirectory=(data||[]).filter(p=>p.user_id!==user.id&&!confirmedBirthIds.has(p.user_id));
  renderPatientOptions();
  await Promise.all([loadDueDateReminders(),refreshAdminPatientCounts()]);
 }
