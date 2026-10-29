@@ -1,5 +1,7 @@
 import fs from "node:fs/promises";
 const BASE = "https://bslenamhung.github.io";
+const DEFAULT_SHARE_IMAGE = BASE + "/theo-doi-thai-ky/clinic-logo-bs-hung.jpg";
+function absoluteImage(v){const raw=String(v??"").trim();if(!raw)return DEFAULT_SHARE_IMAGE;try{return new URL(raw,BASE+"/").href;}catch{return DEFAULT_SHARE_IMAGE;}}
 function esc(v=""){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function txt(v=""){return String(v??"").replace(/<[^>]*>/g," ").replace(/&nbsp;|&#160;/gi," ").replace(/&amp;/gi,"&").replace(/\s+/g," ").trim();}
 function slugify(a){const raw=String(a?.slug||a?.title||"").trim();const s=raw.normalize("NFKD").replace(/[\u0300-\u036f]/g,"").replace(/đ/g,"d").replace(/Đ/g,"D").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,120);return s||String(a?.id||"article").toLowerCase().replace(/[^a-z0-9-]+/g,"-");}
@@ -9,7 +11,7 @@ function render(a,all){
  const slug=slugify(a),url=BASE+"/bai-viet/"+encodeURIComponent(slug)+".html";
  const title=txt(a.seoTitle||a.title||"Bài viết Sản Phụ khoa");
  const desc=txt(a.seoDescription||a.desc||a.content||"Kiến thức Sản Phụ khoa từ BS Lê Nam Hùng.").slice(0,160);
- const image=String(a.seoImage||a.image||"").trim(),spec=txt(a.specialty||"Sản Phụ khoa");
+ const image=absoluteImage(a.seoImage||a.image),spec=txt(a.specialty||"Sản Phụ khoa");
  const published=date(a.publishedAt||a.createdAt||a.created_at),modified=date(a.updatedAt||a.updated_at||published);
  const schema={"@context":"https://schema.org","@type":"BlogPosting",headline:txt(a.title||title),description:desc,author:{"@type":"Person",name:"ThS.BSNT Lê Nam Hùng",url:BASE+"/bac-si-san-phu-khoa-quang-tri.html"},publisher:{"@type":"Organization",name:"Phòng khám chuyên khoa Phụ sản BS Hùng",url:BASE+"/"},mainEntityOfPage:{"@type":"WebPage","@id":url},url:url,inLanguage:"vi-VN",articleSection:spec};
  if(image)schema.image=[image];if(a.keywords)schema.keywords=String(a.keywords);if(published)schema.datePublished=published;if(modified)schema.dateModified=modified;
@@ -22,8 +24,8 @@ function render(a,all){
  const dateHtml=published?'<div class="article-published-date">📅 Ngày xuất bản: <strong>'+new Intl.DateTimeFormat("vi-VN",{day:"2-digit",month:"2-digit",year:"numeric"}).format(new Date(published))+"</strong></div>":"";
  return '<!doctype html>\n<!-- Generated from published Supabase content. Do not edit manually. -->\n<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'+
  '<title>'+esc(title)+'</title><meta name="description" content="'+esc(desc)+'"><meta name="robots" content="index,follow,max-image-preview:large"><link rel="canonical" href="'+url+'">'+
- '<meta property="og:type" content="article"><meta property="og:locale" content="vi_VN"><meta property="og:title" content="'+esc(title)+'"><meta property="og:description" content="'+esc(desc)+'"><meta property="og:url" content="'+url+'">'+(image?'<meta property="og:image" content="'+esc(image)+'">':"")+
- '<meta name="twitter:card" content="'+(image?"summary_large_image":"summary")+'"><meta name="twitter:title" content="'+esc(title)+'"><meta name="twitter:description" content="'+esc(desc)+'">'+(image?'<meta name="twitter:image" content="'+esc(image)+'">':"")+
+ '<meta property="og:type" content="article"><meta property="og:locale" content="vi_VN"><meta property="og:title" content="'+esc(title)+'"><meta property="og:description" content="'+esc(desc)+'"><meta property="og:url" content="'+url+'">'+'<meta property="og:image" content="'+esc(image)+'"><meta property="og:image:secure_url" content="'+esc(image)+'"><meta property="og:image:alt" content="'+esc(title)+'"><meta property="og:site_name" content="BS Lê Nam Hùng | Sản Phụ khoa">'+
+ '<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="'+esc(title)+'"><meta name="twitter:description" content="'+esc(desc)+'"><meta name="twitter:image" content="'+esc(image)+'">'+
  '<script type="application/ld+json">'+jsonHtml(schema)+'</script><link rel="stylesheet" href="../style.css?v=78"><link rel="stylesheet" href="../seo-local.css?v=3"></head><body>'+
  '<header class="site-header"><div class="container nav-wrap"><a class="brand" href="../index.html"><strong>BS<br>Lê Nam Hùng</strong><span>Sản Phụ khoa</span></a><button class="nav-toggle" id="navToggle" type="button" aria-label="Mở menu" aria-expanded="false">☰</button><nav id="mainNav"><a href="../index.html">Trang chủ</a><a href="../index.html#about">Về BS Lê Nam Hùng</a><a href="../index.html#specialties">Chuyên môn</a><a href="../index.html#clinic">Phòng khám</a><a href="../index.html#contact">Liên hệ</a></nav></div></header>'+
  '<main><section class="section"><div class="container"><nav class="article-breadcrumb" aria-label="Breadcrumb"><a href="../index.html">Trang chủ</a><span aria-hidden="true">›</span><a href="../index.html#articles">Bài viết</a><span aria-hidden="true">›</span><span>'+esc(spec)+'</span></nav>'+
