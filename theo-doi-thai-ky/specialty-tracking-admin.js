@@ -158,4 +158,8 @@ function init(kind){
  $(c.visitForm).addEventListener("submit",e=>saveVisit(kind,e));
 }
 ["togglePregnancyAdmin","toggleObstetricTracking","togglePostpartumAdmin","toggleRegistrationApproval"].forEach(id=>$(id)?.addEventListener("click",()=>{["infertilityAdminPanel","gynecologyAdminPanel"].forEach(panelId=>{const panel=$(panelId);if(panel)panel.hidden=true;});}));
+const adminTileIds=["togglePregnancyAdmin","toggleObstetricTracking","togglePostpartumAdmin","toggleRegistrationApproval","toggleInfertilityAdmin","toggleGynecologyAdmin"];
+adminTileIds.forEach(id=>$(id)?.addEventListener("click",event=>{
+ adminTileIds.forEach(otherId=>$(otherId)?.classList.toggle("active",otherId===event.currentTarget.id));
+}));
 if(db){init("infertility");init("gynecology");refreshSpecialtyCounts();}
