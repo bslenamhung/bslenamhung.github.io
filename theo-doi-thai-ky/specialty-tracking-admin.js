@@ -34,8 +34,9 @@ const isAdmin = async () => {
  return !error && data?.session?.user?.app_metadata?.role==="admin";
 };
 const dateText = v => v ? new Date(v+"T12:00:00").toLocaleDateString("vi-VN") : "—";
+function upperName(value){return String(value??"").toLocaleUpperCase("vi-VN");}
 function setFormValues(form,row,fields){
- fields.forEach(k=>{const el=form.elements.namedItem(k);if(el)el.value=row?.[k]??"";});
+ fields.forEach(k=>{const el=form.elements.namedItem(k);if(el)el.value=(k==="patient_name"||k==="partner_name")?upperName(row?.[k]??""):(row?.[k]??"");});
 }
 function getFormValues(form,fields){
  const out={};fields.forEach(k=>{const el=form.elements.namedItem(k);if(el)out[k]=el.value.trim()===""?null:el.value.trim();});
@@ -113,7 +114,7 @@ async function loadVisits(kind,id){
 async function saveRecord(kind,event){
  event.preventDefault();const c=configs[kind],s=state[kind],form=$(c.form),status=$(c.status);
  if(!await isAdmin()){status.textContent="Phiên quản trị không hợp lệ. Vui lòng đăng nhập lại.";return;}
- const values=getFormValues(form,c.fields);if(!values.patient_name){status.textContent="Vui lòng nhập họ tên bệnh nhân.";return;}
+ const values=getFormValues(form,c.fields);values.patient_name=upperName(values.patient_name);if("partner_name" in values)values.partner_name=upperName(values.partner_name);if(!values.patient_name){status.textContent="Vui lòng nhập họ tên bệnh nhân.";return;}
  const {data:auth}=await db.auth.getUser();const payload={...values,updated_at:new Date().toISOString()};
  let query;
  if(s.editingId)query=db.from(c.table).update(payload).eq("id",s.editingId).select("*").single();
@@ -136,6 +137,10 @@ async function saveVisit(kind,event){
 }
 function init(kind){
  const c=configs[kind],s=state[kind];
+ ["patient_name","partner_name"].forEach(name=>{
+  const field=$(c.form).elements.namedItem(name);
+  if(field){field.addEventListener("input",()=>{const start=field.selectionStart,end=field.selectionEnd;field.value=upperName(field.value);try{field.setSelectionRange(start,end);}catch(_){};});}
+ });
  $(c.toggle).addEventListener("click",async()=>{if(!await isAdmin()){alert("Khu vực này chỉ dành cho tài khoản quản trị.");return;}switchPanel(kind);await loadRows(kind);});
  $(c.refresh).addEventListener("click",()=>loadRows(kind));
  $(c.search).addEventListener("input",()=>renderRows(kind));
