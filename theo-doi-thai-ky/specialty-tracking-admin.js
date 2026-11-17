@@ -57,13 +57,21 @@ function switchPanel(kind){
  ["togglePregnancyAdmin","toggleObstetricTracking","togglePostpartumAdmin","toggleRegistrationApproval","toggleInfertilityAdmin","toggleGynecologyAdmin"].forEach(id=>{const b=$(id);if(b){const on=id===c.toggle;b.classList.toggle("active",on);b.setAttribute("aria-expanded",String(on));}});
  $(c.panel).scrollIntoView({behavior:"smooth",block:"start"});
 }
+async function refreshSpecialtyCounts(){
+ if(!await isAdmin())return;
+ for(const [kind,id] of [["infertility","infertilityPatientCount"],["gynecology","gynecologyPatientCount"]]){
+  const {count,error}=await db.from(configs[kind].table).select("id",{count:"exact",head:true});
+  const badge=$(id);if(badge&&!error)badge.textContent=String(count??0);
+  if(error)console.error("Không tải được số lượng "+kind,error);
+ }
+}
 async function loadRows(kind){
  const c=configs[kind],s=state[kind],status=$(c.status),list=$(c.list);
  if(!await isAdmin()){status.textContent="Chỉ tài khoản quản trị của phòng khám mới được truy cập khu vực này.";list.replaceChildren();return;}
  status.textContent="Đang tải hồ sơ…";list.replaceChildren();
  const {data,error}=await db.from(c.table).select("*").order("updated_at",{ascending:false});
  if(error){status.textContent="Không tải được hồ sơ. Vui lòng thử Làm mới. ("+error.code+")";console.error(error);return;}
- s.rows=data||[];renderRows(kind);
+ s.rows=data||[];const badge=$(kind==="infertility"?"infertilityPatientCount":"gynecologyPatientCount");if(badge)badge.textContent=String(s.rows.length);renderRows(kind);
  status.textContent="Có "+s.rows.length+" hồ sơ trong nhóm theo dõi.";
 }
 function renderRows(kind){
@@ -138,4 +146,4 @@ function init(kind){
  $(c.visitForm).addEventListener("submit",e=>saveVisit(kind,e));
 }
 ["togglePregnancyAdmin","toggleObstetricTracking","togglePostpartumAdmin","toggleRegistrationApproval"].forEach(id=>$(id)?.addEventListener("click",()=>{["infertilityAdminPanel","gynecologyAdminPanel"].forEach(panelId=>{const panel=$(panelId);if(panel)panel.hidden=true;});}));
-if(db){init("infertility");init("gynecology");}
+if(db){init("infertility");init("gynecology");refreshSpecialtyCounts();}
