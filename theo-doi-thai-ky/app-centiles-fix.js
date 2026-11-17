@@ -1164,7 +1164,7 @@ function showAdminView(view){
   button.classList.toggle("active",selected);
   button.setAttribute("aria-expanded",String(selected));
  });
- if(view==="pregnancy")setAdminPatientCount("pregnancy",adminPatientCounts);
+ if(view==="pregnancy"){setAdminPatientCount("pregnancy",adminPatientCounts);loadPatients();}
  if(view==="obstetric"){setAdminPatientCount("obstetric",adminPatientCounts);loadPatients();}
  if(view==="registration")loadRegistrationRequests();
  const active=panels[view];
