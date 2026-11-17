@@ -68,6 +68,7 @@ async function refreshSpecialtyCounts(){
 }
 async function loadRows(kind){
  const c=configs[kind],s=state[kind],status=$(c.status),list=$(c.list);
+ $(c.detail).hidden=true;s.selected=null;
  if(!await isAdmin()){status.textContent="Chỉ tài khoản quản trị của phòng khám mới được truy cập khu vực này.";list.replaceChildren();return;}
  status.textContent="Đang tải hồ sơ…";list.replaceChildren();
  const {data,error}=await db.from(c.table).select("*").order("updated_at",{ascending:false});
@@ -137,6 +138,12 @@ async function saveVisit(kind,event){
 }
 function init(kind){
  const c=configs[kind],s=state[kind];
+ const detailHead=$(c.detail).querySelector(".specialtyDetailHead");
+ if(detailHead&&!detailHead.querySelector(".specialtyBackToList")){
+  const back=document.createElement("button");back.type="button";back.className="secondary specialtyBackToList";back.textContent="← Quay lại danh sách";
+  back.addEventListener("click",()=>{$(c.detail).hidden=true;s.selected=null;$(c.list).scrollIntoView({behavior:"smooth",block:"start"});});
+  detailHead.append(back);
+ }
  ["patient_name","partner_name"].forEach(name=>{
   const field=$(c.form).elements.namedItem(name);
   if(field){field.addEventListener("input",()=>{const start=field.selectionStart,end=field.selectionEnd;field.value=upperName(field.value);try{field.setSelectionRange(start,end);}catch(_){};});}
