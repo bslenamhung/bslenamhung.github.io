@@ -178,7 +178,7 @@ async function routeUser() {
   if(!user?.id){view("loginView");fail("loginError","Phiên đăng nhập chưa có thông tin tài khoản. Vui lòng đăng nhập lại.");return;}
   let data,error;
   try{
-    const result=await db.from("profiles").select("user_id,username,display_name,phone,address,para,medical_history,pre_pregnancy_weight_kg,height_cm,ultrasound_abnormalities,due_date,date_of_birth").eq("user_id",user.id).maybeSingle();
+    const result=await db.from("profiles").select("user_id,username,display_name,phone,address,para,blood_group,medical_history,pre_pregnancy_weight_kg,height_cm,ultrasound_abnormalities,due_date,date_of_birth").eq("user_id",user.id).maybeSingle();
     data=result.data;error=result.error;
   }catch(err){error=err;}
   if(error){
@@ -365,6 +365,7 @@ async function loadPatient() {
   $("patientProfilePhone").textContent = profile.phone || "Chưa cập nhật";
   $("patientProfileAddress").textContent = profile.address || "Chưa cập nhật";
   $("patientProfilePara").textContent = profile.para || "Chưa cập nhật";
+  $("patientProfileBloodGroup").textContent = profile.blood_group || "Chưa cập nhật";
   $("patientProfileHistory").textContent = profile.medical_history || "Chưa cập nhật";
   $("patientProfilePreWeight").textContent = profile.pre_pregnancy_weight_kg != null ? String(profile.pre_pregnancy_weight_kg).replace(".", ",") + " kg" : "Chưa cập nhật";
   $("patientProfileHeight").textContent = profile.height_cm != null ? String(profile.height_cm).replace(".", ",") + " cm" : "Chưa cập nhật";
@@ -513,13 +514,13 @@ async function loadSelectedPatient() {
   $("editPatientForm").hidden=true; $("editPatientButton").hidden=true; $("deletePatientButton").hidden=true;
   fail("recordMessage",""); fail("testMessage",""); fail("editPatientMessage","");
   if (!selectedPatient) return;
-  const { data: p, error: pError } = await db.from("profiles").select("username,display_name,phone,address,para,medical_history,pre_pregnancy_weight_kg,height_cm,ultrasound_abnormalities,due_date,date_of_birth").eq("user_id",selectedPatient).single();
+  const { data: p, error: pError } = await db.from("profiles").select("username,display_name,phone,address,para,blood_group,medical_history,pre_pregnancy_weight_kg,height_cm,ultrasound_abnormalities,due_date,date_of_birth").eq("user_id",selectedPatient).single();
   if (pError) { toast("Không tải được thông tin bệnh nhân."); return; }
-  [["Họ tên",p.display_name],["Ngày sinh",p.date_of_birth?dateVi(p.date_of_birth):null],["Tên đăng nhập",p.username],["Số điện thoại",p.phone],["Địa chỉ",p.address],["PARA",p.para],["Tiền sử bệnh",p.medical_history],["Cân nặng trước mang thai",p.pre_pregnancy_weight_kg!=null?String(p.pre_pregnancy_weight_kg).replace(".",",")+" kg":null],["Chiều cao",p.height_cm!=null?String(p.height_cm).replace(".",",")+" cm":null],["BMI trước mang thai",prePregnancyBmi(p.pre_pregnancy_weight_kg,p.height_cm)?.text||"Chưa đủ dữ liệu cân nặng và chiều cao trước mang thai"],["Chú ý thai kỳ lần này",p.ultrasound_abnormalities],["Ngày dự sinh",p.due_date?dateVi(p.due_date):null],["Tuổi thai theo ngày khám",p.due_date?gestationText(gestationAt(p.due_date,dueDateIso($("scanDate").value)||todayLocal())):null]].forEach(([label,value])=>{
+  [["Họ tên",p.display_name],["Ngày sinh",p.date_of_birth?dateVi(p.date_of_birth):null],["Tên đăng nhập",p.username],["Số điện thoại",p.phone],["Địa chỉ",p.address],["PARA",p.para],["Nhóm máu",p.blood_group],["Tiền sử bệnh",p.medical_history],["Cân nặng trước mang thai",p.pre_pregnancy_weight_kg!=null?String(p.pre_pregnancy_weight_kg).replace(".",",")+" kg":null],["Chiều cao",p.height_cm!=null?String(p.height_cm).replace(".",",")+" cm":null],["BMI trước mang thai",prePregnancyBmi(p.pre_pregnancy_weight_kg,p.height_cm)?.text||"Chưa đủ dữ liệu cân nặng và chiều cao trước mang thai"],["Chú ý thai kỳ lần này",p.ultrasound_abnormalities],["Ngày dự sinh",p.due_date?dateVi(p.due_date):null],["Tuổi thai theo ngày khám",p.due_date?gestationText(gestationAt(p.due_date,dueDateIso($("scanDate").value)||todayLocal())):null]].forEach(([label,value])=>{
     const line=document.createElement("div"); const strong=document.createElement("strong"); strong.textContent=label+": "; line.append(strong,document.createTextNode(value || "Chưa cập nhật")); $("adminPatientProfile").append(line);
   });
   $("editPatientName").value=p.display_name||""; $("editPatientDob").value=isoToDateVi(p.date_of_birth); $("editPatientPhone").value=p.phone||""; $("editPatientAddress").value=p.address||"";
-  $("editPatientPara").value=p.para||""; $("editPatientHistory").value=p.medical_history||""; $("editPatientPreWeight").value=p.pre_pregnancy_weight_kg??""; $("editPatientHeight").value=p.height_cm??""; $("editPatientUltrasoundAbnormalities").value=p.ultrasound_abnormalities||""; $("editPatientDueDate").value=isoToDateVi(p.due_date||"");
+  $("editPatientPara").value=p.para||""; $("editPatientBloodGroup").value=p.blood_group||""; $("editPatientHistory").value=p.medical_history||""; $("editPatientPreWeight").value=p.pre_pregnancy_weight_kg??""; $("editPatientHeight").value=p.height_cm??""; $("editPatientUltrasoundAbnormalities").value=p.ultrasound_abnormalities||""; $("editPatientDueDate").value=isoToDateVi(p.due_date||"");
   $("editPatientButton").hidden=false; $("deletePatientButton").hidden=false;
   const { data, error } = await db.from("fetal_weight_records").select("id,scan_date,follow_up_date,ga_weeks,ga_days,efw_grams,note").eq("patient_user_id", selectedPatient).order("scan_date", { ascending:false });
   if (error) { toast("Không tải được lịch sử bệnh nhân."); return; }
@@ -594,14 +595,14 @@ $("editPatientDueDate").addEventListener("input",()=>{const iso=dueDateIso($("ed
 $("editPatientForm").addEventListener("submit",async e=>{
  e.preventDefault();fail("editPatientMessage","");
  if(user?.app_metadata?.role!=="admin"||!selectedPatient){fail("editPatientMessage","Vui lòng chọn hồ sơ bệnh nhân.");return;}
- const display_name=$("editPatientName").value.trim().toLocaleUpperCase("vi-VN"),dobRaw=$("editPatientDob").value.trim(),date_of_birth=dobRaw?dueDateIso(dobRaw):null,phone=$("editPatientPhone").value.trim(),address=$("editPatientAddress").value.trim().toLocaleUpperCase("vi-VN"),para=$("editPatientPara").value.trim(),medical_history=$("editPatientHistory").value.trim(),preWeightRaw=$("editPatientPreWeight").value.trim(),heightRaw=$("editPatientHeight").value.trim(),ultrasound_abnormalities=$("editPatientUltrasoundAbnormalities").value.trim(),pre_pregnancy_weight_kg=preWeightRaw===""?null:Number(preWeightRaw),height_cm=heightRaw===""?null:Number(heightRaw),due_date=dueDateIso($("editPatientDueDate").value);
+ const display_name=$("editPatientName").value.trim().toLocaleUpperCase("vi-VN"),dobRaw=$("editPatientDob").value.trim(),date_of_birth=dobRaw?dueDateIso(dobRaw):null,phone=$("editPatientPhone").value.trim(),address=$("editPatientAddress").value.trim().toLocaleUpperCase("vi-VN"),para=$("editPatientPara").value.trim(),blood_group=$("editPatientBloodGroup").value||null,medical_history=$("editPatientHistory").value.trim(),preWeightRaw=$("editPatientPreWeight").value.trim(),heightRaw=$("editPatientHeight").value.trim(),ultrasound_abnormalities=$("editPatientUltrasoundAbnormalities").value.trim(),pre_pregnancy_weight_kg=preWeightRaw===""?null:Number(preWeightRaw),height_cm=heightRaw===""?null:Number(heightRaw),due_date=dueDateIso($("editPatientDueDate").value);
  if(!display_name){fail("editPatientMessage","Vui lòng nhập họ tên.");return;} if(dobRaw&&!date_of_birth){fail("editPatientMessage","Ngày sinh không hợp lệ. Vui lòng nhập theo dd/mm/yyyy.");return;} if(date_of_birth&&date_of_birth>todayLocal()){fail("editPatientMessage","Ngày sinh không thể ở tương lai.");return;}
  if(para&&!/^\d{4}$/.test(para)){fail("editPatientMessage","PARA phải gồm đúng 4 chữ số hoặc để trống.");return;}
  if(preWeightRaw!==""&&(!Number.isFinite(pre_pregnancy_weight_kg)||pre_pregnancy_weight_kg<1||pre_pregnancy_weight_kg>300)){fail("editPatientMessage","Cân nặng trước mang thai phải từ 1 đến 300 kg.");return;}
  if(heightRaw!==""&&(!Number.isFinite(height_cm)||height_cm<50||height_cm>250)){fail("editPatientMessage","Chiều cao phải từ 50 đến 250 cm.");return;}
  if(ultrasound_abnormalities.length>2000){fail("editPatientMessage","Thông tin bất thường trên siêu âm quá dài.");return;}
  const g=due_date?gestationAt(due_date,todayLocal()):null;if(due_date&&(!g||g.invalid)){fail("editPatientMessage","Ngày dự sinh không hợp lệ hoặc tuổi thai ngoài khoảng 0–42 tuần.");return;}
- const {error}=await db.from("profiles").update({display_name,date_of_birth,phone:phone||null,address:address||null,para:para||null,medical_history:medical_history||null,pre_pregnancy_weight_kg,height_cm,ultrasound_abnormalities:ultrasound_abnormalities||null,due_date}).eq("user_id",selectedPatient);
+ const {error}=await db.from("profiles").update({display_name,date_of_birth,phone:phone||null,address:address||null,para:para||null,blood_group,medical_history:medical_history||null,pre_pregnancy_weight_kg,height_cm,ultrasound_abnormalities:ultrasound_abnormalities||null,due_date}).eq("user_id",selectedPatient);
  if(error){fail("editPatientMessage","Không cập nhật được hồ sơ: "+error.message);return;}
  fail("editPatientMessage","Đã cập nhật hồ sơ thành công.");await loadPatients();$("patientSelect").value=selectedPatient;await loadSelectedPatient();await refreshRecordGestation();
 });
@@ -726,7 +727,7 @@ $("createPatientForm").addEventListener("submit", async e => {
   if (user?.app_metadata?.role !== "admin") { fail("createMessage", "Tài khoản không có quyền quản trị."); return; }
   const display_name = $("newPatientName").value.trim().toLocaleUpperCase("vi-VN"), username = $("newUsername").value.trim().toLowerCase(), password = $("newPassword").value, dobRaw=$("newPatientDob").value.trim(), date_of_birth=dobRaw?dueDateIso(dobRaw):null;
   const phone = $("newPatientPhone").value.trim(), address = $("newPatientAddress").value.trim().toLocaleUpperCase("vi-VN");
-  const para=$("newPatientPara").value.trim(), medical_history=$("newPatientHistory").value.trim(), preWeightRaw=$("newPatientPreWeight").value.trim(), heightRaw=$("newPatientHeight").value.trim(), pre_pregnancy_weight_kg=preWeightRaw===""?null:Number(preWeightRaw), height_cm=heightRaw===""?null:Number(heightRaw), ultrasound_abnormalities=$("newPatientUltrasoundAbnormalities").value.trim(), due_date=dueDateIso($("newPatientDueDate").value);
+  const para=$("newPatientPara").value.trim(), blood_group=$("newPatientBloodGroup").value||null, medical_history=$("newPatientHistory").value.trim(), preWeightRaw=$("newPatientPreWeight").value.trim(), heightRaw=$("newPatientHeight").value.trim(), pre_pregnancy_weight_kg=preWeightRaw===""?null:Number(preWeightRaw), height_cm=heightRaw===""?null:Number(heightRaw), ultrasound_abnormalities=$("newPatientUltrasoundAbnormalities").value.trim(), due_date=dueDateIso($("newPatientDueDate").value);
   const newGa=due_date?gestationAt(due_date,todayLocal()):null;
   if($("newPatientDueDate").value.trim()&&!due_date){fail("createMessage","Ngày dự sinh không hợp lệ. Hãy nhập đúng dạng dd/mm/yyyy hoặc để trống nếu chưa có.");return;}
   if(due_date&&(!newGa||newGa.invalid)){fail("createMessage","Ngày dự sinh không hợp lệ. Kiểm tra ngày nhập và tuổi thai trong khoảng 0–42 tuần.");return;}
@@ -750,7 +751,7 @@ $("createPatientForm").addEventListener("submit", async e => {
   }
   const { data: createdProfile, error: createdProfileLookupError } = await db.from("profiles").select("user_id").eq("username", username).single();
   if (createdProfileLookupError || !createdProfile) { fail("createMessage", "Tài khoản đã tạo, nhưng chưa xác minh được hồ sơ để lưu các thông tin bổ sung. Hãy chọn bệnh nhân và cập nhật lại hồ sơ."); return; }
-  const { error: extraProfileError } = await db.from("profiles").update({ pre_pregnancy_weight_kg, height_cm, ultrasound_abnormalities: ultrasound_abnormalities || null }).eq("user_id", createdProfile.user_id);
+  const { error: extraProfileError } = await db.from("profiles").update({ blood_group, pre_pregnancy_weight_kg, height_cm, ultrasound_abnormalities: ultrasound_abnormalities || null }).eq("user_id", createdProfile.user_id);
   if (extraProfileError) { fail("createMessage", "Tài khoản đã tạo, nhưng 3 thông tin bổ sung chưa lưu được. Hãy chọn bệnh nhân vừa tạo, nhập lại các trường này trong phần Sửa / cập nhật hồ sơ. Lỗi: " + extraProfileError.message); return; }
   const registrationRequestId=$("registrationRequestId")?.value;
   if(registrationRequestId){
