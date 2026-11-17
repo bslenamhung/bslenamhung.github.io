@@ -137,4 +137,5 @@ function init(kind){
  $(c.edit).addEventListener("click",()=>{if(!s.selected)return;s.editingId=s.selected.id;setFormValues($(c.form),s.selected,c.fields);$(c.title).textContent="Cập nhật hồ sơ "+s.selected.record_code;$(c.form).hidden=false;$(c.form).scrollIntoView({behavior:"smooth",block:"start"});});
  $(c.visitForm).addEventListener("submit",e=>saveVisit(kind,e));
 }
+["togglePregnancyAdmin","toggleObstetricTracking","togglePostpartumAdmin","toggleRegistrationApproval"].forEach(id=>$(id)?.addEventListener("click",()=>{["infertilityAdminPanel","gynecologyAdminPanel"].forEach(panelId=>{const panel=$(panelId);if(panel)panel.hidden=true;});}));
 if(db){init("infertility");init("gynecology");}
